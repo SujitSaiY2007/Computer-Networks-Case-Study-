@@ -7,11 +7,36 @@
 ## Review 2 project status — 13 September 2026
 
 - Review 1 established the problem, motivation and literature directions.
-- The 45-study working pool has now been converted into a **Review 2 candidate primary-study set of 40 papers** after a relevance/venue-quality audit and targeted supplementation.
-- The Review 2 target is **36 journal articles + 4 peer-reviewed conference papers = 90% journal references**.
+- The 45-study working pool has been converted into a **Review 2 candidate primary-study set of 40 papers** after a relevance/venue-quality audit and targeted supplementation.
+- The Review 2 candidate target is **36 journal articles + 4 peer-reviewed conference papers = 90% journal references**.
 - Preprints are not counted in the primary 40 unless their peer-reviewed publication status is later verified.
 - Existing review papers are retained as background/comparison literature and are not counted as primary studies.
-- The final 40 remain subject to full-text screening, quality assessment, duplicate checking and final DOI/database verification before the manuscript reference list is frozen.
+- The candidate 40 remain subject to full-text screening, quality assessment, duplicate checking and final DOI/database verification before the manuscript reference list is frozen.
+
+## 🚦 Multi-chat execution system
+
+This project is now being executed through a **controlled multi-chat workflow** so that each future chat has complete context, performs one defined phase, and hands the project cleanly to the next chat.
+
+### Start here for every new project chat
+
+1. Read [`project/CHAT_HANDOFF.md`](project/CHAT_HANDOFF.md) first.
+2. Read [`project/MASTER_EXECUTION_PLAN.md`](project/MASTER_EXECUTION_PLAN.md).
+3. Read the canonical project/research files named by the active continuation prompt.
+4. Execute the **Active Continuation Prompt** only; do not restart completed phases.
+5. Before ending, update `project/CHAT_HANDOFF.md` with the completed work and replace its active continuation prompt with the next unfinished task.
+6. Commit the updated handoff and relevant artifacts to GitHub.
+
+### Current next chat
+
+**CHAT 01 — Full-Text Verification and Final Candidate Screening**
+
+The live prompt for that chat is stored in `project/CHAT_HANDOFF.md`; the complete roadmap and all future prompts are stored in `project/MASTER_EXECUTION_PLAN.md`.
+
+### Planned phase sequence
+
+**01 Verification → 02 Extraction → 03 Quality Assessment → 04 Critical Synthesis/Taxonomy → 05 Evidence-Based Gaps → 06 Experimental Architecture → 07 Testbed/Instrumentation → 08 Prototype → 09 Experiments → 10 Results Analysis → 11 Review 2 PPT → 12 Manuscript → 13 Final Audit**
+
+The handoff file is the live checkpoint; the master execution plan is the durable roadmap.
 
 ## Core research questions
 
@@ -33,18 +58,26 @@ The course guidance requires a transparent search, screening, quality assessment
 
 ## Review 2 working files
 
-- `research/REVIEW2_PAPER_SELECTION_AND_AUDIT.md` — selected 40-paper primary evidence set, 90% journal ratio, per-paper methodology/merits/demerits/field and quality-assessment framework.
+- `project/MASTER_EXECUTION_PLAN.md` — complete multi-chat execution roadmap, phase dependencies, deliverables and continuation prompts.
+- `project/CHAT_HANDOFF.md` — live cross-chat checkpoint; always read this first and update it before ending a project chat.
+- `project/PROJECT_SCOPE_AND_RQS.md` — frozen topic boundary, RQs, contribution logic.
+- `research/REVIEW2_PAPER_SELECTION_AND_AUDIT.md` — selected 40-paper candidate primary evidence set, 90% journal ratio, per-paper methodology/merits/demerits/field and quality-assessment framework.
 - `research/RESEARCH_GAPS_AND_FUTURE_AGENDA.md` — evidence-based gaps, existing technologies, proposed solution direction and evaluation framework.
 - `review2/REVIEW_2_SLIDE_PLAN.md` — Review 2 presentation plan aligned with the course manuscript guidelines and Review 1.
 
 ## Repository structure
 
 - `project/PROJECT_SCOPE_AND_RQS.md` — frozen topic boundary, RQs, contribution logic.
+- `project/MASTER_EXECUTION_PLAN.md` — master execution roadmap and all chat-specific continuation prompts.
+- `project/CHAT_HANDOFF.md` — live state, decisions, unresolved issues and the next exact prompt.
 - `research/RESEARCH_EVIDENCE_MATRIX.md` — broader 45-study working evidence table.
 - `research/RELEVANCY_AUDIT.md` — audit of the initial 18-paper list and screening decisions.
 - `research/SEARCH_LOG.md` — search sources, query families, and verification status.
+- `research/REVIEW2_PAPER_SELECTION_AND_AUDIT.md` — Review 2 candidate paper set and verification framework.
+- `research/RESEARCH_GAPS_AND_FUTURE_AGENDA.md` — evidence-based gaps and future agenda.
 - `review1/REVIEW_1_SLIDE_PLAN.md` — Review 1 presentation structure and selected papers.
 - `review1/Review_1_eBPF_Runtime_Security.pptx` — Review 1 presentation artifact.
+- `review2/REVIEW_2_SLIDE_PLAN.md` — Review 2 presentation structure.
 
 ## Intended synthesis framework
 
@@ -58,8 +91,12 @@ and compare studies using:
 
 ## Canonical-source rule
 
-If later chats produce a conflicting paper count, relevance decision, scope statement, or project structure, **this repository and its latest committed evidence matrix are the reference point**. New papers must be added through the same extraction fields and must not silently replace earlier records.
+If later chats produce a conflicting paper count, relevance decision, scope statement, or project structure, **the latest committed repository state and especially `project/CHAT_HANDOFF.md` are the reference point**. New papers must be added through the same extraction fields and must not silently replace earlier records.
 
 ## Quality warning
 
 Several papers in the initial user-provided list contain incomplete or garbled numeric fields. Those values are not reconstructed by guesswork. Publisher/DOI metadata is preferred where verified; otherwise the record remains marked for full-text verification.
+
+## Workflow principle
+
+The objective is not to create a long chain of disconnected chats. It is to create **one continuous research process with versioned checkpoints**. Each chat owns one phase; each phase leaves behind evidence, files, decisions and a customized continuation prompt for the next phase. This makes the GitHub repository the project's durable memory and prevents context loss between chats.
