@@ -4,14 +4,14 @@
 
 **eBPF-Assisted Machine Learning for Cloud-Native Runtime Security: Telemetry Overhead, Kernel Enforcement, and Detection Trade-offs**
 
-## Current project status — 25 August 2026
+## Review 2 project status — 13 September 2026
 
-- Review boundary: cloud-native, containerized runtime security using eBPF/eBPF-derived telemetry and/or kernel enforcement, with ML as a central detection component where applicable.
-- Publication window: January 2020 through the final search date.
-- Minimum target evidence base: 45 relevant primary studies; course guidance recommends approximately 40–80 where the topic permits.
-- Current uploaded research list contains **18 entries**, not 22. Two of those are generic cloud-native MLOps architecture papers and should not be counted in the primary runtime-security evidence set.
-- This repository therefore treats the attached list as the **initial candidate pool**, audits it, and adds independently verified literature.
-- The working evidence set currently contains **45 candidate studies** after the relevancy audit; each record is assigned a tier so adjacent eBPF studies are not presented as direct cloud-native ML evidence.
+- Review 1 established the problem, motivation and literature directions.
+- The 45-study working pool has now been converted into a **Review 2 candidate primary-study set of 40 papers** after a relevance/venue-quality audit and targeted supplementation.
+- The Review 2 target is **36 journal articles + 4 peer-reviewed conference papers = 90% journal references**.
+- Preprints are not counted in the primary 40 unless their peer-reviewed publication status is later verified.
+- Existing review papers are retained as background/comparison literature and are not counted as primary studies.
+- The final 40 remain subject to full-text screening, quality assessment, duplicate checking and final DOI/database verification before the manuscript reference list is frozen.
 
 ## Core research questions
 
@@ -21,20 +21,40 @@
 4. What kernel-level enforcement mechanisms exist, and what is the detection-to-mitigation latency?
 5. How reproducible are datasets, testbeds, attack scenarios, metrics, and reported performance gains?
 
+## Review design
+
+**Systematic mapping study / scoping-style evidence map with critical technical synthesis.** The review is designed to classify the literature, compare evaluation practices and evidence, assess research quality, identify supported gaps and produce a defensible future research agenda.
+
 ## Evidence policy
 
-The course guidance requires a transparent search, screening, quality assessment, extraction matrix, and critical synthesis rather than a sequence of paper summaries. It also requires Scopus or Web of Science, IEEE Xplore, and ACM Digital Library as the minimum databases, with specialist sources such as USENIX, SpringerLink, ScienceDirect, arXiv, and relevant repositories added as appropriate.
+The course guidance requires a transparent search, screening, quality assessment, extraction matrix, and critical synthesis rather than a sequence of paper summaries. It also requires Scopus or Web of Science, IEEE Xplore, and ACM Digital Library as the minimum databases, with specialist sources such as USENIX, SpringerLink, ScienceDirect and relevant repositories added as appropriate.
 
 **Important:** a paper is not included merely because it contains the word eBPF. Direct relevance is judged against the technology + runtime-security problem + cloud/container environment + evidence requirements. Existing surveys/reviews are used for discovery and comparison, not automatically counted as primary studies.
+
+## Review 2 working files
+
+- `research/REVIEW2_PAPER_SELECTION_AND_AUDIT.md` — selected 40-paper primary evidence set, 90% journal ratio, per-paper methodology/merits/demerits/field and quality-assessment framework.
+- `research/RESEARCH_GAPS_AND_FUTURE_AGENDA.md` — evidence-based gaps, existing technologies, proposed solution direction and evaluation framework.
+- `review2/REVIEW_2_SLIDE_PLAN.md` — Review 2 presentation plan aligned with the course manuscript guidelines and Review 1.
 
 ## Repository structure
 
 - `project/PROJECT_SCOPE_AND_RQS.md` — frozen topic boundary, RQs, contribution logic.
-- `research/RESEARCH_EVIDENCE_MATRIX.md` — canonical paper-level evidence table.
-- `research/RELEVANCY_AUDIT.md` — audit of the uploaded 18-paper list and screening decisions.
+- `research/RESEARCH_EVIDENCE_MATRIX.md` — broader 45-study working evidence table.
+- `research/RELEVANCY_AUDIT.md` — audit of the initial 18-paper list and screening decisions.
 - `research/SEARCH_LOG.md` — search sources, query families, and verification status.
 - `review1/REVIEW_1_SLIDE_PLAN.md` — Review 1 presentation structure and selected papers.
-- `review1/Review_1_eBPF_Runtime_Security.pptx` — generated presentation artifact.
+- `review1/Review_1_eBPF_Runtime_Security.pptx` — Review 1 presentation artifact.
+
+## Intended synthesis framework
+
+The review will synthesize evidence across:
+
+**Telemetry extraction → feature representation → ML placement → detection decision → kernel enforcement**
+
+and compare studies using:
+
+**detection quality ↔ latency ↔ CPU/memory/event-processing overhead ↔ safety ↔ reproducibility.**
 
 ## Canonical-source rule
 
@@ -42,4 +62,4 @@ If later chats produce a conflicting paper count, relevance decision, scope stat
 
 ## Quality warning
 
-Several papers in the initial user-provided list contain incomplete or garbled numeric fields in the source document. Those values are not reconstructed by guesswork. Where a publisher/DOI source was verified, the verified metadata is preferred; otherwise the record is marked for full-text verification.
+Several papers in the initial user-provided list contain incomplete or garbled numeric fields. Those values are not reconstructed by guesswork. Publisher/DOI metadata is preferred where verified; otherwise the record remains marked for full-text verification.
