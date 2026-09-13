@@ -43,6 +43,7 @@ This file is intentionally short enough to be the first context file opened, whi
 - Candidate primary-study set: **40 papers**
 - Candidate composition: **36 journals + 4 peer-reviewed conferences = 90% journals**
 - Full-text verification: **NEXT**
+- Paper acquisition/archive: **PLANNED IMMEDIATELY AFTER VERIFICATION**
 - Extraction matrix: **NOT FINAL**
 - Quality assessment: **NOT FINAL**
 - Evidence taxonomy: **PROVISIONAL**
@@ -61,18 +62,27 @@ A recent 2026 systematic literature review on eBPF cybersecurity exists. Therefo
 
 The 40 papers are candidate studies selected for verification. They must not be described as fully verified/final until Chat 01 completes the screening and records inclusion/exclusion decisions.
 
+### New paper-archive rule
+
+After Chat 01 verifies the retained primary-study set, Chat 02A will acquire and archive legitimate full-text PDFs before detailed extraction. Actual copyrighted PDFs remain in the user's private/local archive and are **not** committed to the public GitHub repository. The repository will contain the access register, DOI/official links, acquisition status and verification notes.
+
 ---
 
 ## Read before starting the next chat
 
 Mandatory:
 
+- `project/CHAT_HANDOFF.md`
 - `project/MASTER_EXECUTION_PLAN.md`
 - `project/PROJECT_SCOPE_AND_RQS.md`
 - `research/REVIEW2_PAPER_SELECTION_AND_AUDIT.md`
 - `research/RESEARCH_EVIDENCE_MATRIX.md`
 - `research/RELEVANCY_AUDIT.md`
 - `research/SEARCH_LOG.md`
+
+For paper acquisition specifically:
+
+- `research/PAPER_ACQUISITION_AND_ARCHIVE.md`
 
 As needed:
 
@@ -90,9 +100,9 @@ As needed:
 >
 > Verify the 40 candidate papers against original publisher/DOI/academic records and full text where available. For every candidate, verify title, authors, year, venue, publisher, DOI, publication type, date-window eligibility, peer-review status, direct relevance to the project RQs, and actual technical evidence. Classify retained studies as core or supporting; classify reviews as background/comparison rather than primary evidence. Record an explicit exclusion reason for every excluded candidate. Do not reconstruct missing values by guesswork. Recalculate the final retained journal/conference ratio after screening.
 >
-> The goal is a defensible, auditable primary-study baseline for the extraction matrix. Do not move into implementation or final manuscript drafting in this chat.
+> The goal is a defensible, auditable primary-study baseline for the paper-acquisition phase and subsequent extraction matrix. Do not move into implementation or final manuscript drafting in this chat.
 >
-> Before ending the chat, update this file with: status, completed work, changed files, decisions frozen, unresolved issues, deviations from plan, and the exact continuation prompt for **CHAT 02 — Evidence Extraction Matrix**. Commit the updated handoff and related research files to GitHub.
+> Before ending the chat, update `project/CHAT_HANDOFF.md` with: status, completed work, changed files, decisions frozen, unresolved issues, deviations from plan, the final retained-study count, and the exact continuation prompt for **CHAT 02A — Paper Acquisition & Archive**. Commit the updated handoff and related research files to GitHub.
 
 ---
 
@@ -109,13 +119,27 @@ Completed:
 - Defined exact continuation-prompt workflow.
 - Established Chat 01 as the next project task.
 
+### Workflow amendment — Paper acquisition phase
+**Status:** COMPLETE
+
+Completed:
+- Inserted **CHAT 02A — Paper Acquisition & Archive** between verification and evidence extraction.
+- Created `research/PAPER_ACQUISITION_AND_ARCHIVE.md`.
+- Established legitimate-access and private/local-PDF rules.
+- Established the paper access register requirements.
+- Updated this handoff so Chat 01 now hands off to Chat 02A rather than directly to extraction.
+
+Design decision:
+- The existing Chat 02–13 numbering remains stable. The acquisition checkpoint is intentionally labelled **02A** rather than renumbering all later phases.
+
 Changed files:
-- `project/MASTER_EXECUTION_PLAN.md`
+- `research/PAPER_ACQUISITION_AND_ARCHIVE.md`
 - `project/CHAT_HANDOFF.md`
-- `README.md` (to be updated in this setup sequence)
+- `README.md` / workflow documentation as applicable
 
 Next task:
 - CHAT 01 — Full-text verification and final candidate screening.
+- After Chat 01: CHAT 02A — Paper Acquisition & Archive.
 
 ---
 
@@ -142,7 +166,7 @@ Copy this structure into the completion log when closing a chat:
 - None / ...
 
 **Next task:**
-- CHAT XX+1 — ...
+- CHAT XX — ...
 
 **Updated continuation prompt:**
 > [Exact prompt for the next chat, customized to the newly completed state.]
