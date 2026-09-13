@@ -34,7 +34,9 @@ The live prompt for that chat is stored in `project/CHAT_HANDOFF.md`; the comple
 
 ### Planned phase sequence
 
-**01 Verification → 02 Extraction → 03 Quality Assessment → 04 Critical Synthesis/Taxonomy → 05 Evidence-Based Gaps → 06 Experimental Architecture → 07 Testbed/Instrumentation → 08 Prototype → 09 Experiments → 10 Results Analysis → 11 Review 2 PPT → 12 Manuscript → 13 Final Audit**
+**01 Verification → 02A Paper Acquisition & Archive → 02 Extraction → 03 Quality Assessment → 04 Critical Synthesis/Taxonomy → 05 Evidence-Based Gaps → 06 Experimental Architecture → 07 Testbed/Instrumentation → 08 Prototype → 09 Experiments → 10 Results Analysis → 11 Review 2 PPT → 12 Manuscript → 13 Final Audit**
+
+**Important:** Chat 02A is a mandatory checkpoint. We verify the retained studies first, then obtain/record legitimate full-text access, then perform detailed evidence extraction.
 
 The handoff file is the live checkpoint; the master execution plan is the durable roadmap.
 
@@ -62,6 +64,7 @@ The course guidance requires a transparent search, screening, quality assessment
 - `project/CHAT_HANDOFF.md` — live cross-chat checkpoint; always read this first and update it before ending a project chat.
 - `project/PROJECT_SCOPE_AND_RQS.md` — frozen topic boundary, RQs, contribution logic.
 - `research/REVIEW2_PAPER_SELECTION_AND_AUDIT.md` — selected 40-paper candidate primary evidence set, 90% journal ratio, per-paper methodology/merits/demerits/field and quality-assessment framework.
+- `research/PAPER_ACQUISITION_AND_ARCHIVE.md` — mandatory full-text acquisition, legitimate-access and private/local PDF archive protocol.
 - `research/RESEARCH_GAPS_AND_FUTURE_AGENDA.md` — evidence-based gaps, existing technologies, proposed solution direction and evaluation framework.
 - `review2/REVIEW_2_SLIDE_PLAN.md` — Review 2 presentation plan aligned with the course manuscript guidelines and Review 1.
 
@@ -74,6 +77,7 @@ The course guidance requires a transparent search, screening, quality assessment
 - `research/RELEVANCY_AUDIT.md` — audit of the initial 18-paper list and screening decisions.
 - `research/SEARCH_LOG.md` — search sources, query families, and verification status.
 - `research/REVIEW2_PAPER_SELECTION_AND_AUDIT.md` — Review 2 candidate paper set and verification framework.
+- `research/PAPER_ACQUISITION_AND_ARCHIVE.md` — paper download/access/archive workflow and register requirements.
 - `research/RESEARCH_GAPS_AND_FUTURE_AGENDA.md` — evidence-based gaps and future agenda.
 - `review1/REVIEW_1_SLIDE_PLAN.md` — Review 1 presentation structure and selected papers.
 - `review1/Review_1_eBPF_Runtime_Security.pptx` — Review 1 presentation artifact.
@@ -88,6 +92,10 @@ The review will synthesize evidence across:
 and compare studies using:
 
 **detection quality ↔ latency ↔ CPU/memory/event-processing overhead ↔ safety ↔ reproducibility.**
+
+## Paper PDF policy
+
+Full-text PDFs are treated as research working materials. The public repository stores metadata, DOI/official links, acquisition status and verification notes—not unauthorized copyrighted publisher PDFs. Legitimately obtainable PDFs should be retained in the user's private/local research archive and linked to the study IDs used in the evidence matrix.
 
 ## Canonical-source rule
 
