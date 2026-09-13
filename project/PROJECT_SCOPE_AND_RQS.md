@@ -17,7 +17,27 @@ This review examines eBPF-assisted machine learning architectures for runtime in
 - RQ5: What datasets, cloud testbeds, attack scenarios, metrics, and reproducibility artifacts are used?
 
 ## Review contribution
-The intended contribution is not simply a survey of eBPF tools. The review will build an evidence-derived taxonomy across **telemetry extraction → feature representation → ML placement → detection decision → kernel enforcement**, then compare studies using a common framework for **overhead, detection quality, latency, safety, and reproducibility**. The final research agenda will focus on evidence-supported gaps such as dynamic workload drift, constrained in-kernel inference, event loss under stress, and safe active enforcement.
+The intended contribution is not simply a survey of eBPF tools. The review will build an evidence-derived taxonomy across **telemetry extraction → feature representation → ML placement → detection decision → kernel enforcement**, then compare studies using a common framework for **overhead, detection quality, latency, safety, and reproducibility**. The final research agenda will focus on evidence-supported gaps such as dynamic workload drift, constrained in-kernel inference, event loss under stress, safe active enforcement, adversarial robustness, portability and reproducibility.
 
 ## Review design
-Working design: systematic mapping / scoping-style evidence map with critical technical synthesis. PRISMA 2020 is used as the reporting guide where appropriate. The course guide states that emerging fields with heterogeneous terminology and evidence are suitable for scoping or systematic mapping, while a systematic review requires explicit reproducible screening and quality assessment.
+**Systematic mapping study / scoping-style evidence map with critical technical synthesis.** PRISMA 2020 is used as the reporting guide where appropriate. The field contains heterogeneous architectures, ML methods, datasets and evaluation environments, so the review prioritizes classification, evidence mapping, comparison and research-gap synthesis rather than pooled effect estimation.
+
+## Review 2 evidence policy
+The Review 2 primary evidence target is **40 studies: 36 journal articles and 4 peer-reviewed conference papers (90% journals)**. The 45-study working pool remains a broader discovery/evidence map; it is not automatically the final reference list. Preprints and generic cloud/AI architecture papers are not counted as primary evidence unless they later satisfy the frozen eligibility criteria.
+
+Each final study is screened and extracted using the same fields: bibliographic metadata, publication status, research problem, cloud/container environment, eBPF hook, telemetry granularity, feature representation, ML method and placement, dataset/workload, attack scenario, baseline, evaluation environment, metrics, overhead, latency, event loss, enforcement mechanism, limitations, reproducibility and quality notes.
+
+## Quality-assessment policy
+Quality is assessed using the course-guideline categories **clearly reported / partially reported / not reported** for objective clarity, technical description, dataset/workload transparency, baseline adequacy, evaluation validity, experimental detail, reproducibility, limitation disclosure, external validity and statistical reporting. A numerical score is not used merely to create an artificial ranking.
+
+## Citation policy
+The manuscript will use **Harvard author–date** citation consistently. Every DOI and bibliographic record must be verified against a publisher, DOI registry or academic database before the reference list is frozen.
+
+## Final synthesis framework
+The final manuscript will organize evidence around:
+
+**Telemetry extraction → feature representation → ML placement → detection decision → kernel enforcement**
+
+and compare studies using:
+
+**detection quality ↔ latency ↔ CPU/memory/event-processing overhead ↔ safety ↔ reproducibility.**
