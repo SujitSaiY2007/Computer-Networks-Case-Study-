@@ -30,7 +30,7 @@ This file is intentionally short enough to be the first context file opened, whi
 
 **Course:** BACSE203 Computer Networks Case Study
 
-**Current stage:** Review 2 preparation → CHAT 03 Quality Assessment
+**Current stage:** Review 2 preparation → CHAT 07 Prototype Implementation / Experimental Infrastructure
 
 **Project principle:** repository state + original paper evidence + course guidelines are the durable source of truth.
 
@@ -525,3 +525,94 @@ P021 → Takagaki & Mizutani (2025), DOI 10.1002/tee.70070. P031 → Rohliyanto 
 > Do not implement the prototype or run final experiments in CHAT 06. Produce the architecture/testbed specification first.
 >
 > Completion requires the architecture requirements traceability, selected architecture with alternatives rejected for explicit reasons, experiment matrix, workload/attack/test conditions, measurement/statistical plan, safety constraints, reproducibility plan, feasibility risks, updated control files, and the exact next continuation prompt.
+
+
+---
+
+## CHAT 06 — Experimental Architecture + Testbed Specification
+**Status:** COMPLETE
+
+**Completed work**
+- Audited the committed main state at the end of CHAT 05.
+- Converted G1–G5 into explicit architecture and testbed requirements.
+- Compared baseline, eBPF-only, user-space ML, feasibility-gated kernel-local ML, and controlled-enforcement configurations.
+- Selected a student-feasible single-host native-container architecture.
+- Specified syscall/process telemetry, BPF ring-buffer transport, timestamps, event-loss accounting and feature pipeline.
+- Selected Logistic Regression as the primary placement-comparison model because the same mathematical model can be represented in user space and a bounded fixed-point kernel-local implementation.
+- Specified safe anomaly scenarios, development/ID/shifted distributions, staged enforcement, metrics, statistics, ablations and reproducibility artifacts.
+- Added explicit feasibility gates and fallbacks rather than assuming kernel-local ML will work.
+- Created `research/CHAT06_EXPERIMENTAL_ARCHITECTURE_AND_TESTBED.md`.
+
+**Files changed**
+- research/CHAT06_EXPERIMENTAL_ARCHITECTURE_AND_TESTBED.md
+- research/RESEARCH_GAPS_AND_FUTURE_AGENDA.md
+- README.md
+- project/MASTER_EXECUTION_PLAN.md
+- project/CHAT_HANDOFF.md
+
+**Decisions frozen**
+- 40-study baseline unchanged; P021/P031 unchanged.
+- Primary architecture: single-host Linux + native containers + syscall/process eBPF telemetry + ring buffer + common feature pipeline + user-space LR.
+- Kernel-local fixed-point LR is feasibility-gated; hybrid/user-space fallback is mandatory if the gate fails.
+- No GPU, Kafka, distributed cluster, continual-learning framework or multimodal telemetry in the primary experiment.
+- Kubernetes is deferred for the primary controlled experiment.
+- Enforcement is staged, isolated and reversible.
+- CHAT 06 produced no prototype and no final experimental result.
+
+**Evidence/technical basis**
+- Current upstream Linux documentation was checked for BPF verifier, libbpf, ring buffer, BPF LSM and cgroup mechanisms.
+- Ubuntu kernel documentation was checked for the LTS/GA kernel baseline.
+- These sources establish mechanism availability, not performance results.
+
+**Next task**
+- CHAT 07 — Prototype Implementation / Experimental Infrastructure.
+
+## Active continuation prompt — CHAT 07 — Prototype Implementation / Experimental Infrastructure
+
+> Continue the BACSE203 Computer Networks Case Study from the latest committed main state.
+>
+> CHAT 01, CHAT 02A, CHAT 02, CHAT 03, CHAT 04, CHAT 05 and CHAT 06 are COMPLETE.
+>
+> The canonical primary-study baseline remains exactly **40 studies = 36 journal articles + 4 peer-reviewed conference papers = 90% journals**. Do not add, remove, replace or re-screen any primary study. P021 and P031 remain unchanged.
+>
+> Read first:
+> 1. project/CHAT_HANDOFF.md
+> 2. README.md
+> 3. project/MASTER_EXECUTION_PLAN.md
+> 4. project/PROJECT_SCOPE_AND_RQS.md
+> 5. research/CHAT05_RESEARCH_GAP_CONSOLIDATION.md
+> 6. research/RESEARCH_GAPS_AND_FUTURE_AGENDA.md
+> 7. research/CHAT06_EXPERIMENTAL_ARCHITECTURE_AND_TESTBED.md
+> 8. research/RESEARCH_EVIDENCE_MATRIX.md
+>
+> Implement only the architecture frozen in CHAT 06. Do not broaden scope.
+>
+> Primary implementation target:
+> - single-host Ubuntu 24.04 LTS baseline with the exact kernel package/version recorded in the environment manifest;
+> - native Docker containers;
+> - libbpf + bpftool + Clang/LLVM;
+> - syscall/process tracepoint telemetry;
+> - BPF ring-buffer transport with event sequence/loss accounting;
+> - deterministic feature aggregation;
+> - user-space Logistic Regression as the first ML path;
+> - staged observe/log/controlled-mitigation state machine;
+> - complete experiment manifest and reproducibility capture.
+>
+> Treat kernel-local fixed-point Logistic Regression as a feasibility-gated implementation. Attempt it only after the user-space path and telemetry accounting are stable. If the verifier/load or equivalence gate fails, use the documented hybrid fallback; do not weaken safety or invent a result.
+>
+> CHAT 07 must produce infrastructure and validation checks, not final research conclusions. Do not run the final experiment matrix or claim measured superiority.
+>
+> Required completion:
+> 1. repository implementation structure created;
+> 2. environment/preflight script created;
+> 3. BPF telemetry loader and ring-buffer path implemented;
+> 4. event sequence/loss accounting implemented;
+> 5. feature pipeline and data schema implemented;
+> 6. user-space LR training/inference path implemented;
+> 7. staged policy state machine implemented in safe test mode;
+> 8. reproducibility manifest capture implemented;
+> 9. unit/integration/smoke tests pass;
+> 10. kernel-local feasibility gate either passes or is explicitly blocked with evidence and fallback retained;
+> 11. README, master plan and handoff updated;
+> 12. exact CHAT 08 continuation prompt prepared.
+
