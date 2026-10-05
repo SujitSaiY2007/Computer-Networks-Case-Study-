@@ -189,3 +189,23 @@ Native BPF/container validation is blocked in the current execution environment 
 No final experiment, performance result, superiority claim, novelty claim, or kernel-local ML result is claimed.
 
 
+
+
+## Review 2 literature-corpus completion — 5 October 2026
+
+The faculty Review 2 instruction requires a **minimum of 50 references and a literature-survey table covering all 50 papers**.
+
+This requirement is now satisfied without altering the canonical evidence baseline:
+
+- **40 canonical primary studies:** unchanged; 36 journals + 4 peer-reviewed conferences = 90% journals.
+- **10 supporting/background references:** R041–R050, selected to strengthen eBPF meta-security/verifier safety, cloud-native telemetry/latency, service-mesh performance and runtime-security context.
+- **Total Review 2 presentation corpus: 50 references.**
+
+The complete faculty-format table is at:
+review2/REVIEW2_50_PAPER_LITERATURE_TABLE.md
+
+The ten additions are explicitly labelled as supporting/background references. Secondary reviews are not counted as primary evidence and do not change CHAT 01–06 conclusions.
+
+### Review 2 status
+
+The literature corpus is now ready for Review 2 PPT preparation at the literature level. The next technical project milestone remains CHAT 07 prototype validation; no implementation result is implied by this literature update.
