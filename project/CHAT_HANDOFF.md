@@ -227,8 +227,8 @@ Copy this structure into the completion log when closing a chat:
 
 **Acquisition counts:**
 - Retained studies: **40**
-- Legitimate full-text copies/routes located and marked OBTAINED: **22**
-- Institutional/library access required: **18**
+- Legitimate full-text copies/routes located and marked OBTAINED: **26**
+- Institutional/library access required: **14**
 - Legitimately unavailable: **0**
 - Metadata/PDF records needing review: **0**
 
