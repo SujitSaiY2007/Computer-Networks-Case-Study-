@@ -16,6 +16,8 @@ def manifest(config:dict)->dict:
       "environment":{
         "os":platform.platform(),"kernel":platform.release(),"architecture":platform.machine(),
         "cpu_count":__import__("os").cpu_count(),"python":sys.version.split()[0],
+        "docker":_cmd(["docker","--version"]),"libbpf":_cmd(["bash","-lc","ldconfig -p | grep libbpf | head -1"]),
+        "bpftool":_cmd(["bpftool","version"]),"clang":_cmd(["clang","--version"]),"python_dependencies":_deps(),
       },
       "configuration":config,
     }
@@ -23,3 +25,4 @@ def manifest(config:dict)->dict:
 def write_manifest(path,config):
     Path(path).parent.mkdir(parents=True,exist_ok=True)
     Path(path).write_text(json.dumps(manifest(config),indent=2,sort_keys=True)+"\n",encoding="utf-8")
+\ndef _cmd(cmd):\n    try: return subprocess.check_output(cmd,text=True,stderr=subprocess.STDOUT).strip()[:500]\n    except Exception: return "UNAVAILABLE"\n\ndef _deps():\n    out={}\n    for name in ("numpy","sklearn"):\n        try:\n            m=__import__(name); out[name]=getattr(m,"__version__","unknown")\n        except Exception: out[name]="missing"\n    return out\n
