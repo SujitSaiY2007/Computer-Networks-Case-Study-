@@ -612,3 +612,13 @@ CHAT 02 COMPLETE. All 40 active studies have a canonical extraction record. The 
 ## CHAT 03 completion checkpoint — 5 October 2026
 
 **Status: COMPLETE.** The formal qualitative quality assessment of all 40 retained studies is recorded in `research/CHAT03_QUALITY_ASSESSMENT.md`. No numerical score was assigned and the 40-study baseline was not changed. Next phase: **CHAT 04 — Critical Synthesis / Technology Taxonomy**.
+
+
+## CHAT 04 completion checkpoint — 5 October 2026
+
+**Status: COMPLETE.** CHAT 04 translated the completed CHAT 02 extraction and CHAT 03 quality assessment into a cross-paper technology taxonomy and critical synthesis. The frozen 40-study baseline remains unchanged. The artifact is `research/CHAT04_CRITICAL_SYNTHESIS.md`. It distinguishes reported evidence, cross-paper synthesis and inference; separates Core from Supporting/Adjacent evidence; documents convergence/divergence/trade-offs; and labels candidate gap observations as preliminary rather than final.
+
+### Next phase
+**CHAT 05 — Research Gap Consolidation / Evidence-to-Design Bridge**
+
+CHAT 05 must consolidate only evidence-supported research gaps and map them to RQs and design requirements. It must not add studies, alter the baseline, or implement the experimental architecture/prototype.
