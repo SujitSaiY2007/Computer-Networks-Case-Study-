@@ -3,6 +3,18 @@
 **Status:** final 40-study baseline is canonical as of 5 October 2026; the older 45-study discovery rows are retained only as historical audit context.
 **Important:** this is not the final PRISMA-included set. Full-text screening, duplicate checking, quality assessment, and extraction must still be completed.
 
+
+## Canonical final-40 replacement records — 5 October 2026
+
+The historical 45-study discovery rows above are retained only for audit provenance. The active final 40-study baseline uses these replacement records:
+
+| Active ID | Study | Year | Venue | Tier | Why it matters | Verification/source |
+|---:|---|---:|---|---|---|---|
+| P021 | Deep Analysis of Containerized Web Server Performance Using eBPF-Captured Data | 2025 | IEEJ Transactions on Electrical and Electronic Engineering | Supporting | Direct container-level eBPF syscall telemetry with Random Forest regression of CPU, memory and disk-I/O relationships; useful for telemetry overhead/performance evidence. | DOI 10.1002/tee.70070; directly accessible full text |
+| P031 | Evaluasi Efektivitas Firewall Pre-filtering berbasis eBPF/XDP menggunakan Random Forest untuk Deteksi Anomali Trafik pada Docker Swarm | 2026 | JURIKOM (Jurnal Riset Komputer) | Core | Direct eBPF/XDP + Random Forest + Docker Swarm security experiment with kernel-space rule execution, DDoS detection, CPU overhead and response-time measurements. | DOI 10.30865/jurikom.v13i2.9618; publisher PDF directly accessible |
+
+The superseded P021 and P031 records are not part of the active final 40. The final composition remains **40 studies: 36 journals + 4 peer-reviewed conferences = 90% journals**.
+
 ## Tier definitions
 
 - **Core:** directly studies eBPF-assisted runtime security/detection/enforcement in containers/cloud-native environments.
