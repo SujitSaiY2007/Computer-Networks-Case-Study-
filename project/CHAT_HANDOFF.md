@@ -455,3 +455,73 @@ P021 → Takagaki & Mizutani (2025), DOI 10.1002/tee.70070. P031 → Rohliyanto 
 
 **Updated continuation prompt:**
 > See the exact CHAT 05 prompt at the top of this file.
+
+---
+
+## CHAT 05 — Research Gap Consolidation / Evidence-to-Design Bridge
+**Status:** COMPLETE
+
+**Completed work**
+- Evaluated all six CHAT 04 candidate observations against the completed 40-study evidence base.
+- Retained five final gaps; merged A and C as one end-to-end measurement/completeness gap.
+- Mapped each retained gap to the actual RQs and to derived requirements.
+- Formulated the central research problem and a cautious novelty position.
+- Recorded rejected/downgraded overclaims and remaining uncertainty.
+- Created `research/CHAT05_RESEARCH_GAP_CONSOLIDATION.md` and consolidated `research/RESEARCH_GAPS_AND_FUTURE_AGENDA.md`.
+
+**Files changed**
+- `research/CHAT05_RESEARCH_GAP_CONSOLIDATION.md`
+- `research/RESEARCH_GAPS_AND_FUTURE_AGENDA.md`
+- `research/RESEARCH_EVIDENCE_MATRIX.md`
+- `README.md`
+- `project/MASTER_EXECUTION_PLAN.md`
+- `project/CHAT_HANDOFF.md`
+
+**Decisions frozen**
+- 40-study baseline unchanged: 36 journals + 4 peer-reviewed conferences.
+- P021/P031 unchanged.
+- Final gaps: G1 end-to-end latency/telemetry completeness; G2 distribution-shift robustness; G3 common-protocol ML-placement comparison; G4 safe enforcement evaluation; G5 reproducible environment/artifact specification.
+- Contribution is framed as controlled evaluation/integration and reproducibility, not an unsupported “first” claim.
+
+**Unresolved issues**
+- Exact architecture, hardware/software constraints, datasets/workloads and attack scenarios remain open.
+- Robustness and enforcement scope must remain student-feasible.
+
+## Active continuation prompt — CHAT 06 — Experimental Architecture + Testbed Specification
+
+> Continue the BACSE203 Computer Networks Case Study from the latest committed `main` state.
+>
+> CHAT 01, CHAT 02A, CHAT 02, CHAT 03, CHAT 04 and CHAT 05 are COMPLETE.
+>
+> The canonical baseline remains exactly **40 studies = 36 journal articles + 4 peer-reviewed conference papers = 90% journals**. Do not add, remove, replace or re-screen any primary study. P021 and P031 remain unchanged.
+>
+> Read first:
+> 1. `project/CHAT_HANDOFF.md`
+> 2. `README.md`
+> 3. `project/MASTER_EXECUTION_PLAN.md`
+> 4. `project/PROJECT_SCOPE_AND_RQS.md`
+> 5. `research/CHAT01_FULLTEXT_VERIFICATION.md`
+> 6. `research/PAPER_ACQUISITION_AND_ARCHIVE.md`
+> 7. `research/CHAT02_EVIDENCE_EXTRACTION.md`
+> 8. `research/CHAT03_QUALITY_ASSESSMENT.md`
+> 9. `research/CHAT04_CRITICAL_SYNTHESIS.md`
+> 10. `research/CHAT05_RESEARCH_GAP_CONSOLIDATION.md`
+> 11. `research/RESEARCH_GAPS_AND_FUTURE_AGENDA.md`
+> 12. `research/RESEARCH_EVIDENCE_MATRIX.md`
+>
+> Objective: translate G1–G5 into a **feasible experimental architecture and testbed specification**. Do not silently change the RQs or claim novelty not established by the literature.
+>
+> Derive explicit requirements first: end-to-end timestamping/telemetry completeness; at least two feasible ML-placement variants; one feasible distribution-shift condition; staged measurable enforcement safety; and reproducible environment/artifact capture.
+>
+> Compare feasible alternatives before selecting one. At minimum assess:
+> 1. baseline/no security ML;
+> 2. eBPF telemetry only;
+> 3. eBPF + user-space ML;
+> 4. eBPF + lightweight in-kernel or kernel-local ML **only if technically feasible**;
+> 5. eBPF + ML + controlled enforcement.
+>
+> Specify telemetry hooks, feature pipeline, model placement, decision/policy mechanism, enforcement point, benign workloads, attack scenarios, ground truth, train/test split, distribution-shift condition, controls, metrics, ablations, safety/rollback conditions and reproducibility artifacts. Every component must trace to an RQ or validated gap and remain student-feasible.
+>
+> Do not implement the prototype or run final experiments in CHAT 06. Produce the architecture/testbed specification first.
+>
+> Completion requires the architecture requirements traceability, selected architecture with alternatives rejected for explicit reasons, experiment matrix, workload/attack/test conditions, measurement/statistical plan, safety constraints, reproducibility plan, feasibility risks, updated control files, and the exact next continuation prompt.
