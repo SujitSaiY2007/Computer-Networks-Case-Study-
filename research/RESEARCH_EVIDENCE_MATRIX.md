@@ -1,6 +1,6 @@
 # Research Evidence Matrix — Final 40-Study Baseline + Historical Discovery Records
 
-**Status:** final 40-study baseline is canonical as of 5 October 2026; the older 45-study discovery rows are retained only as historical audit context.
+**Status:** final 40-study baseline is canonical as of 5 October 2026. Detailed CHAT 02 extraction is complete in `research/CHAT02_EVIDENCE_EXTRACTION.md`; older discovery rows are retained only as historical audit context.
 **Important:** this is not the final PRISMA-included set. Full-text screening, duplicate checking, quality assessment, and extraction must still be completed.
 
 
@@ -111,3 +111,8 @@ Because an inaccessible paper's missing field cannot legitimately be classified 
 ## CHAT 02 replacement checkpoint — 5 October 2026
 
 P021 and P031 were replaced with directly accessible journal primary studies. Canonical baseline: 40 studies, 36 journals, 4 peer-reviewed conferences.
+
+
+## CHAT 02 extraction pointer — 5 October 2026
+
+The canonical field-level extraction for the active 40-study baseline is now maintained in **research/CHAT02_EVIDENCE_EXTRACTION.md**. That file is the authoritative CHAT 02 evidence-extraction artifact; this matrix remains the study-set and provenance/control matrix.
