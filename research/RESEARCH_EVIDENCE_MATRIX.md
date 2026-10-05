@@ -1,6 +1,6 @@
-# Research Evidence Matrix — 45-Study Working Set
+# Research Evidence Matrix — Final 40-Study Baseline + Historical Discovery Records
 
-**Status:** working canonical evidence set as of 25 August 2026.
+**Status:** final 40-study baseline is canonical as of 5 October 2026; the older 45-study discovery rows are retained only as historical audit context.
 **Important:** this is not the final PRISMA-included set. Full-text screening, duplicate checking, quality assessment, and extraction must still be completed.
 
 ## Tier definitions
