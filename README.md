@@ -6,6 +6,9 @@
 
 ## Review 2 project status — 5 October 2026
 
+- **CHAT 06 COMPLETE:** experimental architecture, testbed, telemetry, feature pipeline, ML placement, distribution-shift, staged enforcement, metrics, statistics, ablations, reproducibility and risk controls are frozen in `research/CHAT06_EXPERIMENTAL_ARCHITECTURE_AND_TESTBED.md`.
+- **Selected architecture:** single-host Linux + native containers + eBPF syscall/process telemetry + ring buffer + common feature pipeline + user-space Logistic Regression, with a feasibility-gated fixed-point kernel-local LR variant and staged controlled enforcement.
+
 - Review 1 established the problem, motivation and literature directions.
 - The 45-study working pool was converted into a provisional 40-paper set and has now undergone CHAT 01 verification. The current primary-study baseline is the verified 40-study set.
 - The Review 2 candidate target is **36 journal articles + 4 peer-reviewed conference papers = 90% journal references**.
