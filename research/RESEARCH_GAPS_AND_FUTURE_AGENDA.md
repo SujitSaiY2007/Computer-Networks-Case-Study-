@@ -141,3 +141,25 @@ These are requirements, **not the final architecture**.
 **CHAT 05 — COMPLETE.** All six CHAT 04 candidates were evaluated; A/C were merged to avoid redundancy. Final gaps have study-level support, RQ mappings and logically derived requirements. The 40-study baseline remains unchanged.
 
 **Next phase:** **CHAT 06 — Experimental Architecture + Testbed Specification**.
+
+
+---
+
+## CHAT 06 architecture handoff
+
+**Status:** COMPLETE
+
+The five validated gaps are now translated into the authoritative experimental specification at:
+
+- `research/CHAT06_EXPERIMENTAL_ARCHITECTURE_AND_TESTBED.md`
+
+The selected minimum architecture is a single-host Linux/container testbed with one primary syscall/process telemetry modality, BPF ring-buffer transport, a common feature pipeline, user-space Logistic Regression, a feasibility-gated fixed-point kernel-local Logistic Regression placement variant, and staged controlled enforcement.
+
+Important scope controls:
+- no GPU, Kafka, distributed cluster, continual-learning framework or multimodal telemetry in the primary experiment;
+- Kubernetes is deferred rather than required for the first controlled test;
+- kernel-local ML is a feasibility-gated variant, not a claimed guaranteed capability;
+- enforcement is isolated, staged and reversible;
+- no experimental result is implied by the architecture document.
+
+**Next phase:** CHAT 07 — Prototype Implementation / Experimental Infrastructure.
