@@ -11,7 +11,7 @@
 - The Review 2 candidate target is **36 journal articles + 4 peer-reviewed conference papers = 90% journal references**.
 - Preprints are not counted in the primary 40 unless their peer-reviewed publication status is later verified.
 - Existing review papers are retained as background/comparison literature and are not counted as primary studies.
-- CHAT 01 full-text screening/verification is complete. The verified 40 now enter CHAT 02A paper acquisition; quality assessment and detailed extraction remain downstream.
+- CHAT 01 screening and CHAT 02 evidence extraction are COMPLETE. The canonical extraction is in research/CHAT02_EVIDENCE_EXTRACTION.md. CHAT 03 quality assessment is next.
 
 ## 🚦 Multi-chat execution system
 
@@ -34,7 +34,7 @@ The live prompt for that chat is stored in `project/CHAT_HANDOFF.md`; the comple
 
 ### Planned phase sequence
 
-**01 Verification → 02A Paper Acquisition & Archive → 02 Extraction → 03 Quality Assessment → 04 Critical Synthesis/Taxonomy → 05 Evidence-Based Gaps → 06 Experimental Architecture → 07 Testbed/Instrumentation → 08 Prototype → 09 Experiments → 10 Results Analysis → 11 Review 2 PPT → 12 Manuscript → 13 Final Audit**
+**01 Verification [COMPLETE] → 02A Acquisition [COMPLETE as access register] → 02 Extraction [COMPLETE] → 03 Quality Assessment [NEXT] → 04 Critical Synthesis/Taxonomy → 05 Evidence-Based Gaps → 06 Experimental Architecture → 07 Testbed/Instrumentation → 08 Prototype → 09 Experiments → 10 Results Analysis → 11 Review 2 PPT → 12 Manuscript → 13 Final Audit**
 
 **Important:** Chat 02A is a mandatory checkpoint. We verify the retained studies first, then obtain/record legitimate full-text access, then perform detailed evidence extraction.
 
@@ -73,7 +73,8 @@ The course guidance requires a transparent search, screening, quality assessment
 - `project/PROJECT_SCOPE_AND_RQS.md` — frozen topic boundary, RQs, contribution logic.
 - `project/MASTER_EXECUTION_PLAN.md` — master execution roadmap and all chat-specific continuation prompts.
 - `project/CHAT_HANDOFF.md` — live state, decisions, unresolved issues and the next exact prompt.
-- `research/RESEARCH_EVIDENCE_MATRIX.md` — broader 45-study working evidence table.
+- `research/RESEARCH_EVIDENCE_MATRIX.md` — study-set/provenance control matrix.
+- `research/CHAT02_EVIDENCE_EXTRACTION.md` — canonical CHAT 02 field-level extraction for all 40 active studies.
 - `research/RELEVANCY_AUDIT.md` — audit of the initial 18-paper list and screening decisions.
 - `research/SEARCH_LOG.md` — search sources, query families, and verification status.
 - `research/REVIEW2_PAPER_SELECTION_AND_AUDIT.md` — Review 2 candidate paper set and verification framework.
@@ -160,3 +161,7 @@ The complete row-level access register is in research/PAPER_ACQUISITION_AND_ARCH
 The 40-study baseline remains frozen at **36 journals + 4 peer-reviewed conferences = 90% journals**. A direct check of the connected Library and mounted local workspace found **no retained P001–P040 study PDFs**. The acquisition register still records 26 legitimate full-text routes and 14 institutional/library-access requirements, but those routes do not establish local corpus availability. Evidence extraction therefore has **not** begun and no inaccessible field is being labelled “Not reported.”
 
 The next action is to materialize the private/local corpus legitimately or provide legitimate institutional/library access for the unresolved studies, then resume CHAT 02.
+
+## CHAT 02 completion — 5 October 2026
+
+CHAT 02 Evidence Extraction is COMPLETE. The canonical field-level matrix is research/CHAT02_EVIDENCE_EXTRACTION.md. Missing fields are explicitly marked NR/NA rather than inferred. The next phase is CHAT 03 — Quality Assessment.
