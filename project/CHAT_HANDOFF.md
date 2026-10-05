@@ -44,8 +44,8 @@ This file is intentionally short enough to be the first context file opened, whi
 - Verified composition: **36 journals + 4 peer-reviewed conferences = 90% journals**
 - CHAT 01 screening: **COMPLETE**
 - Candidate correction: **1 survey removed; 1 verified journal primary study substituted**
-- Paper acquisition/archive: **NEXT — CHAT 02A**
-- Extraction matrix: **NOT FINAL**
+- Paper acquisition/archive: **PARTIAL — 12 retained records still require legitimate institutional/library access**
+- Extraction matrix: **NOT FINAL — corpus gate remains open**
 - Quality assessment: **NOT FINAL**
 - Evidence taxonomy: **PROVISIONAL**
 - Research-gap agenda: **PROVISIONAL / DEVELOPED**
@@ -335,3 +335,8 @@ Copy this structure into the completion log when closing a chat:
 
 **Updated continuation prompt:**
 > Resume CHAT 02 — EVIDENCE EXTRACTION MATRIX from the latest committed state. Re-check the corpus/access gate first. Do not alter the frozen 40-study baseline. Once authoritative full texts are available, extract only supported evidence for all 40 studies, use “Not reported” only after full-text inspection, keep reported results separate from interpretation, and do not perform quality assessment or later phases. If extraction is completed, update the handoff with the exact continuation prompt for CHAT 03 — Quality Assessment.
+
+
+## CHAT 02 replacement checkpoint — 5 October 2026
+
+P021 → Takagaki & Mizutani (2025), DOI 10.1002/tee.70070. P031 → Rohliyanto & Utami (2026), DOI 10.30865/jurikom.v13i2.9618. Both are directly accessible journal primary studies. The replacement decision is complete; the full CHAT 02 extraction gate is not yet complete because the remaining corpus is not actually present in the current environment.
