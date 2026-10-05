@@ -35,6 +35,8 @@ static uint64_t first_seq;
 static uint64_t last_seq;
 static uint64_t sequence_gaps;
 
+struct telemetry_counters { uint64_t generated; uint64_t submitted; uint64_t reservation_failures; };
+
 struct event {
     uint64_t t0_ns;
     uint64_t seq;
