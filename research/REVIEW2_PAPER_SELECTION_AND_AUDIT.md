@@ -163,3 +163,8 @@ See research/CHAT01_FULLTEXT_VERIFICATION.md for the auditable 40-row screening 
 ## CHAT 02 replacement checkpoint — 5 October 2026
 
 P021 and P031 were replaced before detailed extraction with directly accessible journal primary studies. The frozen composition remains 40 studies: 36 journals + 4 peer-reviewed conferences.
+
+
+## CHAT 02 extraction checkpoint — 5 October 2026
+
+**Status: COMPLETE.** The frozen 40-study baseline (36 journals + 4 peer-reviewed conferences) has been field-extracted in `research/CHAT02_EVIDENCE_EXTRACTION.md`. P021 and P031 are the active corrected replacement records. CHAT 03 must assess quality using the qualitative framework already defined here and must not restart selection.
