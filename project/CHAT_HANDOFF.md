@@ -209,3 +209,75 @@ Copy this structure into the completion log when closing a chat:
 
 **Next task:**
 - CHAT 02A — Paper Acquisition & Archive.
+
+
+---
+
+## CHAT 02A — Paper Acquisition & Archive
+**Status:** PARTIAL/BLOCKED
+
+**Completed work:**
+- Preserved the verified 40-study baseline exactly: 36 journal articles + 4 peer-reviewed conferences.
+- Created/finalized the acquisition register in research/PAPER_ACQUISITION_AND_ARCHIVE.md with one row for every retained study.
+- Located and recorded legitimate publisher, institutional, author-repository, KCI, USENIX, Springer, MDPI, TechScience, Wiley and other scholarly access routes where available.
+- Checked accessible full-text records against title/DOI/publication metadata.
+- Recorded institutional/library access requirements instead of excluding papers.
+- Confirmed that no unauthorized or pirated source was used.
+- Attempted local PDF materialization; the execution environment did not successfully download/materialize an openly accessible Springer PDF. Therefore no local PDF archive is falsely claimed as complete.
+
+**Acquisition counts:**
+- Retained studies: **40**
+- Legitimate full-text copies/routes located and marked OBTAINED: **22**
+- Institutional/library access required: **18**
+- Legitimately unavailable: **0**
+- Metadata/PDF records needing review: **0**
+
+**Important qualification:** “OBTAINED” means a legitimate full-text copy was located/accessed through the recorded scholarly route; it does **not** mean that a local PDF file was successfully materialized in this environment.
+
+**DOI/title/PDF mismatches:**
+- No new mismatch requiring a change to the frozen 40-study baseline.
+- The previously verified P004 author-version record contains pre-publication pagination artefacts; the DOI/publisher metadata remains canonical.
+- P034 remains the verified replacement for the excluded review article; no new bibliographic issue was found.
+
+**Unresolved acquisition problems:**
+- Local/private PDF materialization remains incomplete.
+- The 18 institutional/library-access records require the user's legitimate institutional/library route before detailed extraction.
+- Supplementary-material availability has not yet been systematically checked.
+
+**Files changed:**
+- research/PAPER_ACQUISITION_AND_ARCHIVE.md
+- project/CHAT_HANDOFF.md
+- README.md
+- project/MASTER_EXECUTION_PLAN.md
+
+**Deviations from planned workflow:**
+- CHAT 02A could not reach the local-PDF completion gate because the runtime could not materialize web-hosted PDFs. The project was deliberately left PARTIAL/BLOCKED rather than claiming completion.
+- No paper-selection or classification decision was changed.
+
+**Next task:** Resolve legitimate local full-text access/materialization, then begin **CHAT 02 — Evidence Extraction Matrix** only after the corpus is stable.
+
+### Exact continuation prompt — CHAT 02 — Evidence Extraction Matrix
+
+> Continue the BACSE203 Computer Networks Case Study from the latest committed GitHub state.
+>
+> First read:
+> 1. project/CHAT_HANDOFF.md
+> 2. README.md
+> 3. project/MASTER_EXECUTION_PLAN.md
+> 4. project/PROJECT_SCOPE_AND_RQS.md
+> 5. research/CHAT01_FULLTEXT_VERIFICATION.md
+> 6. research/REVIEW2_PAPER_SELECTION_AND_AUDIT.md
+> 7. research/RESEARCH_EVIDENCE_MATRIX.md
+> 8. research/PAPER_ACQUISITION_AND_ARCHIVE.md
+>
+> Do not restart paper selection and do not alter the frozen 40-study baseline: 36 journals + 4 peer-reviewed conferences, 90% journals.
+>
+> First verify whether the private/local full-text corpus has been materialized or whether legitimate institutional/library access is available for the studies marked accordingly. Use the acquisition register as the authoritative access map. Do not exclude a study merely because access remains difficult.
+>
+> Once a stable full-text corpus is available, execute CHAT 02 — EVIDENCE EXTRACTION MATRIX. For each of the 40 retained studies extract only evidence supported by the authoritative full text: authors, year, venue/publisher, DOI, publication type, cloud/container/Kubernetes environment, eBPF hook and telemetry type, telemetry granularity, feature representation, ML algorithm, ML placement, dataset/workload, attack/threat scenario, baseline, testbed, CPU overhead, memory overhead, event rate/buffering/event loss, detection metrics, inference/detection latency, detection-to-mitigation latency, enforcement mechanism, legitimate-operation impact, reproducibility artifacts, limitations, external-validity concerns and RQ1–RQ5 mapping.
+>
+> Use “Not reported” whenever the paper does not provide a field. Do not infer numerical values from abstracts, search snippets, reviews, or other papers. Keep reported results separate from cross-paper interpretation.
+>
+> Do not perform formal quality scoring, final cross-paper conclusions, research-gap freezing, experimental architecture design, prototype implementation, or Review 2 slide creation in CHAT 02.
+>
+> At the end, update project/CHAT_HANDOFF.md and all relevant research status files with the extraction status, missing-evidence issues, files changed, and the exact next continuation prompt for CHAT 03 — Quality Assessment.
