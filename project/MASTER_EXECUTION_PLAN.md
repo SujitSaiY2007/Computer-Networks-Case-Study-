@@ -591,3 +591,12 @@ The detailed screening record is research/CHAT01_FULLTEXT_VERIFICATION.md.
 **CHAT 02A — Paper Acquisition & Archive**
 
 Do not restart CHAT 01. Do not begin detailed extraction yet. Follow research/PAPER_ACQUISITION_AND_ARCHIVE.md and the active prompt in project/CHAT_HANDOFF.md.
+
+
+# Live execution checkpoint — 5 October 2026
+
+**CHAT 02 status: BLOCKED AT CORPUS GATE.**
+
+The frozen primary baseline remains 40 studies: 36 journals + 4 peer-reviewed conferences (90% journals). A direct local/library verification found no retained P001–P040 PDFs in the mounted workspace or connected Library. The acquisition register's 26 “OBTAINED” entries represent legitimate full-text routes, not proof of local materialization. Fourteen records still require legitimate institutional/library access.
+
+**CHAT 02 rule:** do not infer or mark fields “Not reported” for inaccessible papers. Resume field-level extraction only after the authoritative full text is legitimately available. If extraction completes, the next phase is CHAT 03 — Quality Assessment.
