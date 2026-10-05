@@ -43,28 +43,24 @@ struct {
 static __always_inline int emit_event(__u32 type)
 {
     __u32 key = 0;
-    struct telemetry_counters *c = (struct telemetry_counters *)0;
-    c = (struct telemetry_counters *)__builtin_preserve_access_index(0);
-    (void)c;
-
+    struct telemetry_counters *c = bpf_map_lookup_elem(&counters, &key);
     struct telemetry_event *e;
     __u64 id = bpf_get_current_pid_tgid();
     __u64 cg = bpf_get_current_cgroup_id();
+    if (c) __sync_fetch_and_add(&c->generated, 1);
 
-    /* Array-map updates are intentionally delegated to user-space accounting
-       when kernel helper availability differs. The event sequence is generated
-       from the per-event timestamp/PID tuple only if an atomic map counter is
-       unavailable. */
     e = bpf_ringbuf_reserve(&events, sizeof(*e), 0);
-    if (!e)
+    if (!e) {
+        if (c) __sync_fetch_and_add(&c->reservation_failures, 1);
         return 0;
+    }
 
     e->t0_ns = bpf_ktime_get_ns();
-    e->seq = e->t0_ns ^ id;
+    e->seq = c ? __sync_fetch_and_add(&c->submitted, 1) + 1 : e->t0_ns ^ id;
     e->event_type = type;
     e->pid = (__u32)(id >> 32);
     e->tid = (__u32)id;
-    e->cpu = 0;
+    e->cpu = bpf_get_smp_processor_id();
     e->cgroup_id = cg;
     e->status = 0;
     e->reserved = 0;
