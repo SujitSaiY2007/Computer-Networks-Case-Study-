@@ -127,3 +127,14 @@ Those remain later experimental questions.
 
 Resume CHAT 07 on the required Linux host. First run preflight, then compile/load the BPF program, validate ring-buffer counters and container/cgroup identity, run the pure-Python tests, execute the complete smoke path, and only then attempt the kernel-local feasibility gate.
 
+
+
+## 10. Implementation refinement after initial checkpoint
+
+The prototype was extended with:
+
+- `prototype/python/workloads.py`: B1–B4 deterministic baseline workloads and A1–A3 bounded safe anomaly workloads;
+- `prototype/python/identity_probe.py`: Docker container → PID → cgroup identity inspection;
+- corrected quick-start commands to use the actual loader path.
+
+These are **implemented capabilities**, not validated experimental results. Native Docker/cgroup/BPF integration remains blocked until the required Linux validation host is available.
