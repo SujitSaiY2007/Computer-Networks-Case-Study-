@@ -51,3 +51,35 @@ The following records were independently checked against publisher/academic page
 - Preprints remain candidates but must be labeled as preprints and should not silently be treated as peer-reviewed primary studies.
 - Reviews/surveys are discovery/context sources, not automatic members of the primary evidence set.
 - Do not report final PRISMA numbers until duplicate removal and full-text screening are completed.
+
+
+## CHAT 01 verification update — 5 October 2026
+
+CHAT 01 has completed the candidate-study verification stage.
+
+### Result
+
+- Verified primary baseline: **40 studies**
+- Journals: **36**
+- Peer-reviewed conferences: **4**
+- Journal share: **90.0%**
+- Core: **14**
+- Supporting/Adjacent: **26**
+- Preprint-only primary studies retained: **0**
+- Retraction flags found in the scholarly identifier audit: **0**
+
+### Screening correction
+
+The provisional candidate *Extended Berkeley Packet Filter: An Application Perspective* was confirmed as a review article and therefore removed from the primary-study count. It remains background/comparison literature.
+
+Replacement: *Container-Specific Service Mesh-Based System for Mitigating Lateral Movement Attacks*, IEEE Transactions on Cloud Computing (2026), DOI 10.1109/TCC.2026.3657486.
+
+### Metadata corrections
+
+CHAT 01 also reconciled stale working metadata against authoritative records for several studies, including CODAX, Optimus, Coda, BeaCon and Vaccine. The detailed row-level decisions are recorded in research/CHAT01_FULLTEXT_VERIFICATION.md.
+
+### Next phase
+
+**CHAT 02A — Paper Acquisition & Archive.**
+
+Final PRISMA/search counts remain intentionally unfrozen until the required database searches, duplicate removal and subsequent full-text screening are formally documented.
