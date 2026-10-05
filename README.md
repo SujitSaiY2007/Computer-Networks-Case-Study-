@@ -4,14 +4,14 @@
 
 **eBPF-Assisted Machine Learning for Cloud-Native Runtime Security: Telemetry Overhead, Kernel Enforcement, and Detection Trade-offs**
 
-## Review 2 project status — 13 September 2026
+## Review 2 project status — 5 October 2026
 
 - Review 1 established the problem, motivation and literature directions.
-- The 45-study working pool has been converted into a **Review 2 candidate primary-study set of 40 papers** after a relevance/venue-quality audit and targeted supplementation.
+- The 45-study working pool was converted into a provisional 40-paper set and has now undergone CHAT 01 verification. The current primary-study baseline is the verified 40-study set.
 - The Review 2 candidate target is **36 journal articles + 4 peer-reviewed conference papers = 90% journal references**.
 - Preprints are not counted in the primary 40 unless their peer-reviewed publication status is later verified.
 - Existing review papers are retained as background/comparison literature and are not counted as primary studies.
-- The candidate 40 remain subject to full-text screening, quality assessment, duplicate checking and final DOI/database verification before the manuscript reference list is frozen.
+- CHAT 01 full-text screening/verification is complete. The verified 40 now enter CHAT 02A paper acquisition; quality assessment and detailed extraction remain downstream.
 
 ## 🚦 Multi-chat execution system
 
@@ -28,7 +28,7 @@ This project is now being executed through a **controlled multi-chat workflow** 
 
 ### Current next chat
 
-**CHAT 01 — Full-Text Verification and Final Candidate Screening**
+**CHAT 02A — Paper Acquisition & Archive**
 
 The live prompt for that chat is stored in `project/CHAT_HANDOFF.md`; the complete roadmap and all future prompts are stored in `project/MASTER_EXECUTION_PLAN.md`.
 
