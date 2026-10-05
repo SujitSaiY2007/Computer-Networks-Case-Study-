@@ -1,0 +1,13 @@
+{
+  "experiment_id":"CHAT07_INFRASTRUCTURE",
+  "configuration_id":"baseline-user-space-lr",
+  "run_id":"manual",
+  "timestamp_utc":"REPLACE_AT_RUNTIME",
+  "feature_window_ns":1000000000,
+  "telemetry_hooks":["sys_enter_execve","sys_enter_openat","sys_enter_connect","sys_enter_unlinkat"],
+  "ring_buffer_bytes":1048576,
+  "model":"logistic_regression",
+  "threshold":0.5,
+  "mitigation_mode":"disabled_by_default",
+  "seed":0
+}
