@@ -174,3 +174,7 @@ CHAT 02 Evidence Extraction is COMPLETE. The canonical field-level matrix is res
 ## CHAT 04 completion checkpoint — 5 October 2026
 
 **CHAT 04 — COMPLETE.** The evidence-grounded critical synthesis and technology taxonomy are recorded in `research/CHAT04_CRITICAL_SYNTHESIS.md`. The frozen baseline remains **40 studies: 36 journals + 4 peer-reviewed conferences = 90% journals**. No study was added, removed or replaced. Preliminary gap observations remain explicitly non-final. The next phase is **CHAT 05 — Research Gap Consolidation / Evidence-to-Design Bridge**.
+
+## CHAT 05 completion checkpoint — 5 October 2026
+
+**CHAT 05 — COMPLETE.** The authoritative gap framework is in `research/CHAT05_RESEARCH_GAP_CONSOLIDATION.md` and `research/RESEARCH_GAPS_AND_FUTURE_AGENDA.md`. Five validated gaps were retained: end-to-end latency/telemetry completeness, distribution-shift robustness, common-protocol ML placement comparison, safe enforcement evaluation, and reproducible environment/artifact specification. The frozen baseline remains **40 primary studies: 36 journals + 4 peer-reviewed conferences**. Next phase: **CHAT 06 — Experimental Architecture + Testbed Specification**.
