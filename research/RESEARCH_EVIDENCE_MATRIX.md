@@ -95,3 +95,7 @@ Because an inaccessible paper's missing field cannot legitimately be classified 
 **Unresolved access IDs:** P002, P009, P014, P015, P019, P020, P021, P024, P026, P027, P031, P034, P035, P037.
 
 **Next action:** materialize the private/local full-text corpus or obtain legitimate institutional/library access, then resume CHAT 02 extraction.
+
+## CHAT 02 replacement checkpoint — 5 October 2026
+
+P021 and P031 were replaced with directly accessible journal primary studies. Canonical baseline: 40 studies, 36 journals, 4 peer-reviewed conferences.
