@@ -205,3 +205,16 @@ No paper is claimed as locally archived because the execution environment failed
 - [ ] Stable private local PDF corpus ready for CHAT 02 — NOT YET.
 
 **CHAT 02A status: PARTIAL/BLOCKED.**
+
+
+## CHAT 02 corpus verification checkpoint — 5 October 2026
+
+A direct verification was performed before evidence extraction:
+
+- Mounted local workspace: **0 retained P001–P040 PDFs found**.
+- Connected Library search: **no retained study PDFs surfaced**.
+- Therefore the existing “OBTAINED” status must continue to mean **legitimate full-text route located**, not **local PDF materialized**.
+- Institutional/library-access records remain unresolved for: **P002, P009, P014, P015, P019, P020, P021, P024, P026, P027, P031, P034, P035, P037**.
+- No study was excluded because of access difficulty.
+
+**CHAT 02 corpus gate: NOT PASSED.** Evidence extraction must wait until authoritative full text is legitimately available. Do not use “Not reported” for a field that has not yet been inspected in the authoritative full text.
