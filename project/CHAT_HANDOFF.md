@@ -30,7 +30,7 @@ This file is intentionally short enough to be the first context file opened, whi
 
 **Course:** BACSE203 Computer Networks Case Study
 
-**Current stage:** Review 2 preparation → full-text verification/screening
+**Current stage:** Review 2 preparation → CHAT 02A paper acquisition/archive
 
 **Project principle:** repository state + original paper evidence + course guidelines are the durable source of truth.
 
