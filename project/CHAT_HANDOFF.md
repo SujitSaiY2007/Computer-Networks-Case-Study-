@@ -654,3 +654,64 @@ No performance, detection, robustness, enforcement, superiority or novelty claim
 
 ### Next
 Resume CHAT 07 on the required Ubuntu 24.04 LTS / 6.8-series validation host and complete the blocked gates before starting CHAT 08.
+
+
+---
+
+## Review 2 literature-corpus integration checkpoint — 5 October 2026
+
+**Status: COMPLETE**
+
+The faculty Review 2 instruction was checked and the remaining ten relevant, accessible references have been integrated into the repository without disturbing the canonical primary evidence baseline.
+
+### Completed
+
+- Built the Review 2 **50-reference literature corpus**.
+- Preserved the canonical **40 primary studies = 36 journals + 4 peer-reviewed conferences**.
+- Added **R041–R050** as explicitly labelled supporting/background references.
+- Created review2/REVIEW2_50_PAPER_LITERATURE_TABLE.md with the required faculty columns.
+- Updated review2/REVIEW_2_SLIDE_PLAN.md for the 50-reference requirement.
+- Updated research/REVIEW2_PAPER_SELECTION_AND_AUDIT.md, README.md and this handoff.
+- Kept secondary reviews clearly separate from primary evidence.
+- No final experimental, performance, superiority or novelty claim was introduced.
+
+### Important methodological decision
+
+The ten additions are a **Review 2 presentation/reference expansion**, not a replacement or silent modification of the 40-study systematic evidence baseline. CHAT 02–05 evidence and gap conclusions continue to use the canonical 40.
+
+### Active next task
+
+Resume **CHAT 07 — Prototype Implementation / Experimental Infrastructure** on the required Ubuntu 24.04 LTS / pinned 6.8-series validation host.
+
+The immediate CHAT 07 gates remain:
+1. preflight;
+2. native BPF build/load;
+3. ring-buffer event accounting;
+4. container PID/cgroup identity;
+5. feature pipeline and user-space LR;
+6. staged policy smoke test;
+7. reproducibility manifest;
+8. kernel-local LR feasibility gate only after prerequisites pass.
+
+Do not run the final experiment matrix or make superiority claims in CHAT 07.
+
+## Active continuation prompt — CHAT 07 after Review 2 corpus completion
+
+> Continue the BACSE203 Computer Networks Case Study from the latest committed main state.
+>
+> The **Review 2 literature-corpus requirement is COMPLETE**. The presentation corpus is now 50 references = 40 canonical primary studies + 10 supporting/background references. Do not alter this corpus unless a concrete bibliographic error is discovered.
+>
+> The canonical primary evidence baseline remains exactly **40 studies = 36 journal articles + 4 peer-reviewed conference papers = 90% journals**.
+>
+> Read first:
+> 1. project/CHAT_HANDOFF.md
+> 2. README.md
+> 3. project/MASTER_EXECUTION_PLAN.md
+> 4. research/CHAT06_EXPERIMENTAL_ARCHITECTURE_AND_TESTBED.md
+> 5. research/CHAT07_IMPLEMENTATION_AND_VALIDATION.md
+> 6. research/RESEARCH_GAPS_AND_FUTURE_AGENDA.md
+> 7. review2/REVIEW2_50_PAPER_LITERATURE_TABLE.md
+>
+> Resume CHAT 07 only. Run the required environment preflight on Ubuntu 24.04 LTS x86-64 with the pinned 6.8-series kernel and required Docker/libbpf/bpftool/Clang-BPF toolchain. Complete native telemetry, ring-buffer accounting, container identity, Python tests, smoke test and reproducibility validation. Attempt kernel-local fixed-point Logistic Regression only after those prerequisites pass. If the kernel-local gate fails, record the exact verifier/load evidence and retain the user-space/hybrid fallback.
+>
+> Do not run the final experiment matrix and do not make scientific performance, superiority or novelty claims in CHAT 07.
