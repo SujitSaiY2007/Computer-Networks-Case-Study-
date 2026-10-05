@@ -83,3 +83,15 @@ It was replaced by **Container-Specific Service Mesh-Based System for Mitigating
 The detailed screening table, explicit change log, evidence-strength labels and next-stage boundary are in research/CHAT01_FULLTEXT_VERIFICATION.md.
 
 **Important:** this is a verified screening baseline, not yet the detailed extraction/quality-assessment matrix. Missing technical fields remain **NR** until the authoritative full texts are acquired and extracted.
+
+## CHAT 02 corpus-gate checkpoint — 5 October 2026
+
+**Status: BLOCKED — extraction not started.**
+
+The verified 40-study baseline is unchanged: **36 journals + 4 peer-reviewed conferences = 90% journals**. The actual local/library availability check found no retained P001–P040 study PDFs in the mounted workspace or connected Library. The acquisition register remains the authoritative access map: 26 legitimate full-text routes are recorded, while 14 studies require institutional/library access.
+
+Because an inaccessible paper's missing field cannot legitimately be classified as “Not reported,” the detailed extraction matrix has not been populated from inaccessible sources. No quality scoring, cross-paper conclusions, gap freezing, architecture design, prototype work, experiments, or Review 2 slide work was performed in this checkpoint.
+
+**Unresolved access IDs:** P002, P009, P014, P015, P019, P020, P021, P024, P026, P027, P031, P034, P035, P037.
+
+**Next action:** materialize the private/local full-text corpus or obtain legitimate institutional/library access, then resume CHAT 02 extraction.
