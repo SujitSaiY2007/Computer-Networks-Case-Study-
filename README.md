@@ -180,4 +180,12 @@ CHAT 02 Evidence Extraction is COMPLETE. The canonical field-level matrix is res
 
 ## CHAT 05 completion checkpoint — 5 October 2026
 
-**CHAT 05 — COMPLETE.** The authoritative gap framework is in `research/CHAT05_RESEARCH_GAP_CONSOLIDATION.md` and `research/RESEARCH_GAPS_AND_FUTURE_AGENDA.md`. Five validated gaps were retained: end-to-end latency/telemetry completeness, distribution-shift robustness, common-protocol ML placement comparison, safe enforcement evaluation, and reproducible environment/artifact specification. The frozen baseline remains **40 primary studies: 36 journals + 4 peer-reviewed conferences**. Next phase: **CHAT 06 — Experimental Architecture + Testbed Specification**.
+**CHAT 05 — COMPLETE.** The authoritative gap framework is in `research/CHAT05_RESEARCH_GAP_CONSOLIDATION.md` and `research/RESEARCH_GAPS_AND_FUTURE_AGENDA.md`. Five validated gaps were retained: end-to-end latency/telemetry completeness, distribution-shift robustness, common-protocol ML placement comparison, safe enforcement evaluation, and reproducible environment/artifact specification. The frozen baseline remains **40 primary studies: 36 journals + 4 peer-reviewed conferences**. Next phase: **CHAT 06 — Experimental Architecture + Testbed Specification**.## CHAT 07 implementation checkpoint — 5 October 2026
+
+**CHAT 07 is INCOMPLETE / BLOCKED, not COMPLETE.** The minimum prototype structure has been created under `prototype/`, including BPF telemetry source/loader, ring-buffer accounting, deterministic feature aggregation, user-space Logistic Regression, staged policy logic, reproducibility capture, tests and CI configuration.
+
+Native BPF/container validation is blocked in the current execution environment because it lacks `bpftool`, Docker, libbpf development headers and a Clang installation with the BPF target. The exact evidence and remaining gates are recorded in `research/CHAT07_IMPLEMENTATION_AND_VALIDATION.md`.
+
+No final experiment, performance result, superiority claim, novelty claim, or kernel-local ML result is claimed.
+
+
