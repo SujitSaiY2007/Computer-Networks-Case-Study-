@@ -126,3 +126,7 @@ The canonical field-level extraction for the active 40-study baseline is now mai
 ## CHAT 04 synthesis pointer — 5 October 2026
 
 **CHAT 04 — COMPLETE.** The canonical cross-paper synthesis and technology taxonomy is maintained in `research/CHAT04_CRITICAL_SYNTHESIS.md`. The study baseline remains unchanged at 40 primary studies (36 journals + 4 peer-reviewed conferences). Candidate gap observations in CHAT 04 are preliminary and are not final research gaps.
+
+## CHAT 05 research-gap consolidation checkpoint — 5 October 2026
+
+**CHAT 05 — COMPLETE.** Final evidence-supported gaps are G1–G5: (G1) end-to-end latency + telemetry completeness; (G2) distribution-shift robustness; (G3) common-protocol ML placement comparison; (G4) safe active-enforcement evaluation; (G5) reproducible environment/artifact specification. Candidate A and C from CHAT 04 were merged because they represent one measurement/comparability problem. No primary study was changed.
