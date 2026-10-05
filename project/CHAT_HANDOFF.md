@@ -363,3 +363,52 @@ P021 → Takagaki & Mizutani (2025), DOI 10.1002/tee.70070. P031 → Rohliyanto 
 - CHAT 02 is complete; CHAT 03 is the next phase.
 
 **Next task:** CHAT 03 — Quality Assessment.
+
+
+## CHAT 03 — Quality Assessment
+**Status:** COMPLETE
+
+**Completed work:**
+- Assessed all 40 retained studies across the ten frozen qualitative dimensions.
+- Used only Clearly reported / Partially reported / Not reported.
+- Kept study role, reported evidence, quality judgement and cross-paper interpretation distinct.
+- Did not alter the 40-study baseline or replace any study.
+- Created `research/CHAT03_QUALITY_ASSESSMENT.md`.
+
+**Key quality findings:**
+- Objective clarity and technical/system description are the most consistently reported dimensions.
+- Statistical reporting, reproducibility and external validity are recurring weaknesses.
+- CPU/memory reporting is more common than standardized end-to-end latency, event-loss/buffering, or detection-to-mitigation latency.
+- Core studies provide stronger direct runtime-security evidence; Supporting/Adjacent studies provide important architecture, networking, enforcement and threat evidence but are not equivalent end-to-end ML evidence.
+
+**Files changed:**
+- research/CHAT03_QUALITY_ASSESSMENT.md
+- project/CHAT_HANDOFF.md
+- README.md
+- project/MASTER_EXECUTION_PLAN.md
+- research/RESEARCH_EVIDENCE_MATRIX.md
+- research/REVIEW2_PAPER_SELECTION_AND_AUDIT.md
+
+**Decisions frozen:**
+- CHAT 03 is complete.
+- The 40-study baseline remains unchanged: 36 journals + 4 peer-reviewed conferences.
+- No numerical quality score is used.
+- No final research gap is frozen in CHAT 03.
+
+**Next task:** CHAT 04 — Critical Synthesis / Technology Taxonomy.
+
+### Exact continuation prompt — CHAT 04
+
+> Continue the BACSE203 Computer Networks Case Study from the latest committed GitHub state.
+>
+> **CHAT 03 — Quality Assessment is COMPLETE.** The canonical baseline remains exactly **40 primary studies = 36 journal articles + 4 peer-reviewed conference papers = 90% journals**. Do not restart selection, acquisition, or evidence extraction. Do not replace P021 or P031.
+>
+> Read before starting: `project/CHAT_HANDOFF.md`, `README.md`, `project/MASTER_EXECUTION_PLAN.md`, `project/PROJECT_SCOPE_AND_RQS.md`, `research/CHAT01_FULLTEXT_VERIFICATION.md`, `research/REVIEW2_PAPER_SELECTION_AND_AUDIT.md`, `research/RESEARCH_EVIDENCE_MATRIX.md`, `research/CHAT02_EVIDENCE_EXTRACTION.md`, `research/PAPER_ACQUISITION_AND_ARCHIVE.md`, `research/CHAT03_QUALITY_ASSESSMENT.md`, and `research/RESEARCH_GAPS_AND_FUTURE_AGENDA.md`.
+>
+> **CHAT 04 objective — Critical Synthesis / Technology Taxonomy:** synthesize the completed extraction + quality evidence without changing the corpus. Build an evidence-grounded taxonomy covering telemetry sources/hooks, feature representations, ML families, ML placement, detection targets, enforcement mechanisms, adaptation/continual learning, overhead/latency measurement, datasets/workloads, and evaluation practices.
+>
+> Compare Core against Supporting/Adjacent evidence explicitly. Distinguish direct evidence from architectural/supporting evidence. Identify convergence, contradictions, trade-offs and evidence-strength patterns. Do not yet freeze the final research gaps or design the final experimental architecture.
+>
+> Required outputs: `research/CHAT04_CRITICAL_SYNTHESIS.md`; update `research/RESEARCH_EVIDENCE_MATRIX.md`, `README.md`, `project/MASTER_EXECUTION_PLAN.md`, and `project/CHAT_HANDOFF.md`; record the exact next continuation prompt for **CHAT 05 — Research Gap Consolidation / Evidence-to-Design Bridge**.
+>
+> Keep reported evidence, cross-paper synthesis, and new inference clearly separated. No numerical quality scoring and no new paper search unless a genuine bibliographic inconsistency must be documented without changing the baseline.
