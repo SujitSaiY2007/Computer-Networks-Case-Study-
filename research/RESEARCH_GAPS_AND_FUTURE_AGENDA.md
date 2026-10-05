@@ -209,3 +209,10 @@ Kubernetes / Container Workloads
 7. Portability and reproducibility.
 
 This priority order should be refined after the final full-text extraction matrix is completed; it is not yet a final conclusion.
+
+
+## CHAT 04 preliminary synthesis pointer — 5 October 2026
+
+CHAT 04 completed the cross-paper synthesis. The following observations are explicitly **preliminary / candidate observations**, not frozen final gaps: fragmented end-to-end latency measurement; narrower robustness/drift evidence than within-scenario detection evidence; under-standardized event-loss/buffering measurement; less standardized safe-enforcement evaluation; heterogeneous ML-placement comparisons; and reproducibility dependencies on kernel/runtime/configuration artifacts.
+
+The authoritative synthesis is `research/CHAT04_CRITICAL_SYNTHESIS.md`. CHAT 05 must validate, consolidate, reject or refine these observations before any final research-gap claim is adopted.
