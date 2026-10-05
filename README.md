@@ -131,3 +131,23 @@ The live prompt is stored in project/CHAT_HANDOFF.md. The mandatory acquisition 
 **01 Verification [COMPLETE] → 02A Paper Acquisition & Archive [NEXT] → 02 Extraction → 03 Quality Assessment → 04 Critical Synthesis/Taxonomy → 05 Evidence-Based Gaps → 06 Experimental Architecture → 07 Testbed/Instrumentation → 08 Prototype → 09 Experiments → 10 Results Analysis → 11 Review 2 PPT → 12 Manuscript → 13 Final Audit**
 
 CHAT 02A must not restart paper selection or begin detailed extraction. Its purpose is to establish a legitimate, auditable full-text corpus and access register for the already verified 40-study baseline.
+
+
+---
+
+## CHAT 02A status — 5 October 2026
+
+CHAT 02A paper acquisition/archive is **PARTIAL/BLOCKED**.
+
+- Frozen primary baseline: **40 studies**
+- Composition: **36 journals + 4 peer-reviewed conferences = 90% journals**
+- Legitimate full-text copies/routes located: **26**
+- Institutional/library access required: **14**
+- Legitimately unavailable: **0**
+- New DOI/title mismatches requiring correction: **0**
+- Unauthorized PDFs committed: **0**
+- Local/private PDF corpus: **not yet materialized**
+
+The complete row-level access register is in research/PAPER_ACQUISITION_AND_ARCHIVE.md. CHAT 02 evidence extraction must begin only after the local/private corpus is stable or legitimate institutional/library access has been obtained for the remaining records.
+
+**Important:** “OBTAINED” in the register means a legitimate full-text copy was located/accessed; it does not claim that a local PDF file was successfully materialized in the current execution environment.
