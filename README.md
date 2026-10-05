@@ -14,7 +14,7 @@
 - The Review 2 candidate target is **36 journal articles + 4 peer-reviewed conference papers = 90% journal references**.
 - Preprints are not counted in the primary 40 unless their peer-reviewed publication status is later verified.
 - Existing review papers are retained as background/comparison literature and are not counted as primary studies.
-- CHAT 01 screening and CHAT 02 evidence extraction are COMPLETE. The canonical extraction is in research/CHAT02_EVIDENCE_EXTRACTION.md. CHAT 03 quality assessment is next.
+- CHAT 01, CHAT 02A, CHAT 02, CHAT 03, CHAT 04, CHAT 05 and CHAT 06 are COMPLETE. The canonical CHAT 06 architecture is in research/CHAT06_EXPERIMENTAL_ARCHITECTURE_AND_TESTBED.md. CHAT 07 prototype implementation / experimental infrastructure is next.
 
 ## 🚦 Multi-chat execution system
 
@@ -31,13 +31,13 @@ This project is now being executed through a **controlled multi-chat workflow** 
 
 ### Current next chat
 
-**CHAT 05 — Research Gap Consolidation / Evidence-to-Design Bridge**
+**CHAT 07 — Prototype Implementation / Experimental Infrastructure**
 
-The live prompt is stored in `project/CHAT_HANDOFF.md`.
+The live prompt is stored in `project/CHAT_HANDOFF.md`..
 
 ### Planned phase sequence
 
-**01 Verification [COMPLETE] → 02A Acquisition [COMPLETE as access register] → 02 Extraction [COMPLETE] → 03 Quality Assessment [NEXT] → 04 Critical Synthesis/Taxonomy → 05 Evidence-Based Gaps → 06 Experimental Architecture → 07 Testbed/Instrumentation → 08 Prototype → 09 Experiments → 10 Results Analysis → 11 Review 2 PPT → 12 Manuscript → 13 Final Audit**
+**01 Verification [COMPLETE] → 02A Acquisition [COMPLETE as access register] → 02 Extraction [COMPLETE] → 03 Quality Assessment [COMPLETE] → 04 Critical Synthesis/Taxonomy [COMPLETE] → 05 Evidence-Based Gaps [COMPLETE] → 06 Experimental Architecture [COMPLETE] → 07 Prototype / Experimental Infrastructure [NEXT] → 08 Experiments → 09 Results Analysis → 10 Review 2 PPT → 11 Manuscript → 12 Final Audit**
 
 **Important:** Chat 02A is a mandatory checkpoint. We verify the retained studies first, then obtain/record legitimate full-text access, then perform detailed evidence extraction.
 
