@@ -40,10 +40,11 @@ This file is intentionally short enough to be the first context file opened, whi
 
 - Review 1: **COMPLETE**
 - Review 2 candidate paper selection: **PROVISIONAL / COMPLETE FOR CANDIDATE STAGE**
-- Candidate primary-study set: **40 papers**
-- Candidate composition: **36 journals + 4 peer-reviewed conferences = 90% journals**
-- Full-text verification: **NEXT**
-- Paper acquisition/archive: **PLANNED IMMEDIATELY AFTER VERIFICATION**
+- Verified primary-study baseline: **40 papers**
+- Verified composition: **36 journals + 4 peer-reviewed conferences = 90% journals**
+- CHAT 01 screening: **COMPLETE**
+- Candidate correction: **1 survey removed; 1 verified journal primary study substituted**
+- Paper acquisition/archive: **NEXT — CHAT 02A**
 - Extraction matrix: **NOT FINAL**
 - Quality assessment: **NOT FINAL**
 - Evidence taxonomy: **PROVISIONAL**
@@ -94,17 +95,17 @@ As needed:
 
 # Active Continuation Prompt
 
-> **CHAT 01 — Full-Text Verification and Final Candidate Screening**
+> **CHAT 02A — Paper Acquisition & Archive**
 >
-> Continue the BACSE203 project from the current repository state. First read `project/CHAT_HANDOFF.md`, `project/MASTER_EXECUTION_PLAN.md`, `project/PROJECT_SCOPE_AND_RQS.md`, `research/REVIEW2_PAPER_SELECTION_AND_AUDIT.md`, `research/RESEARCH_EVIDENCE_MATRIX.md`, `research/RELEVANCY_AUDIT.md`, and `research/SEARCH_LOG.md`. Do not restart Review 1 or invent a new paper list.
+> Continue the BACSE203 project from the completed **CHAT 01 screening phase**. First read project/CHAT_HANDOFF.md, project/MASTER_EXECUTION_PLAN.md, project/PROJECT_SCOPE_AND_RQS.md, research/CHAT01_FULLTEXT_VERIFICATION.md, research/REVIEW2_PAPER_SELECTION_AND_AUDIT.md, research/RESEARCH_EVIDENCE_MATRIX.md, and research/RELEVANCY_AUDIT.md.
 >
-> Verify the 40 candidate papers against original publisher/DOI/academic records and full text where available. For every candidate, verify title, authors, year, venue, publisher, DOI, publication type, date-window eligibility, peer-review status, direct relevance to the project RQs, and actual technical evidence. Classify retained studies as core or supporting; classify reviews as background/comparison rather than primary evidence. Record an explicit exclusion reason for every excluded candidate. Do not reconstruct missing values by guesswork. Recalculate the final retained journal/conference ratio after screening.
+> Do not restart paper selection. Use the verified 40-study baseline from CHAT 01: **36 journals + 4 peer-reviewed conferences = 90% journals**. Note that the old candidate “Extended Berkeley Packet Filter: An Application Perspective” is background/review literature and has been replaced by “Container-Specific Service Mesh-Based System for Mitigating Lateral Movement Attacks” (DOI 10.1109/TCC.2026.3657486).
 >
-> The goal is a defensible, auditable primary-study baseline for the paper-acquisition phase and subsequent extraction matrix. Do not move into implementation or final manuscript drafting in this chat.
+> Execute **CHAT 02A — Paper Acquisition & Archive**. For every retained primary study, locate the legitimate full-text PDF where available, preferably from the official publisher, DOI page, institutional repository, or author repository. Record the exact access source, acquisition status, PDF filename, DOI/title verification status, and any supplementary material. Do not bypass paywalls or access controls, and do not commit copyrighted PDFs to the public repository.
 >
-> Before ending the chat, update `project/CHAT_HANDOFF.md` with: status, completed work, changed files, decisions frozen, unresolved issues, deviations from plan, the final retained-study count, and the exact continuation prompt for **CHAT 02A — Paper Acquisition & Archive**. Commit the updated handoff and related research files to GitHub.
-
----
+> Create/update research/PAPER_ACQUISITION_AND_ARCHIVE.md or its access register as required, with one row for every retained study. Distinguish obtained, institutional/library access required, and legitimately unavailable. Do not exclude a study merely because immediate PDF access is unavailable.
+>
+> At the end, update project/CHAT_HANDOFF.md with the number of PDFs obtained, access problems, metadata/PDF mismatches, unresolved acquisition issues, and the exact continuation prompt for **CHAT 02 — Evidence Extraction Matrix**. Do not begin detailed extraction or quality assessment in CHAT 02A.
 
 ## Chat completion log
 
@@ -170,3 +171,41 @@ Copy this structure into the completion log when closing a chat:
 
 **Updated continuation prompt:**
 > [Exact prompt for the next chat, customized to the newly completed state.]
+
+
+### CHAT 01 — Full-text verification and final candidate screening
+**Status:** COMPLETE
+
+**Completed work:**
+- Audited the live repository state and canonical Review 2 control files.
+- Verified the 40-study candidate set against authoritative publisher/venue/DOI records and accessible full-text/abstract evidence.
+- Ran scholarly identifier/retraction checks across the candidate set.
+- Corrected the CODAX bibliographic title/DOI record and the Optimus/Coda DOI records where the repository metadata was stale.
+- Removed the non-primary review *Extended Berkeley Packet Filter: An Application Perspective* from the primary set.
+- Added the verified 2026 IEEE TCC primary study *Container-Specific Service Mesh-Based System for Mitigating Lateral Movement Attacks* as the replacement.
+- Confirmed the final screening baseline at 40 primary studies: 36 journals + 4 peer-reviewed conferences = 90% journals.
+- Classified 14 as Core and 26 as Supporting/Adjacent.
+
+**Files changed:**
+- research/CHAT01_FULLTEXT_VERIFICATION.md
+- research/REVIEW2_PAPER_SELECTION_AND_AUDIT.md
+- research/RESEARCH_EVIDENCE_MATRIX.md
+- research/RELEVANCY_AUDIT.md
+- project/CHAT_HANDOFF.md
+
+**Decisions frozen:**
+- The 40-study primary baseline is the verified starting point for CHAT 02A.
+- Reviews remain background/comparison literature and are not counted as primary evidence.
+- No preprint-only record is counted in the 40.
+- Detailed extraction and formal quality assessment remain separate downstream stages.
+
+**Evidence/issues discovered:**
+- Some retained studies have authoritative metadata/abstract evidence but require legitimate full-text acquisition before complete field-level extraction.
+- The 2026 IJCA host-anomaly study is retained only as Supporting/Adjacent evidence; venue/indexing quality must be considered during formal quality assessment.
+- Network/IoT/host-layer studies are intentionally retained only where they directly inform ML placement, telemetry overhead, safety, enforcement, or evaluation questions.
+
+**Deviations from plan:**
+- One candidate survey was removed because the frozen scope requires primary studies. One verified journal primary study was substituted to preserve the target composition without relabeling the survey.
+
+**Next task:**
+- CHAT 02A — Paper Acquisition & Archive.
