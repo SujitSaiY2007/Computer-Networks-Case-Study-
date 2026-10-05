@@ -151,3 +151,12 @@ CHAT 02A paper acquisition/archive is **PARTIAL/BLOCKED**.
 The complete row-level access register is in research/PAPER_ACQUISITION_AND_ARCHIVE.md. CHAT 02 evidence extraction must begin only after the local/private corpus is stable or legitimate institutional/library access has been obtained for the remaining records.
 
 **Important:** “OBTAINED” in the register means a legitimate full-text copy was located/accessed; it does not claim that a local PDF file was successfully materialized in the current execution environment.
+
+
+## Live status override — 5 October 2026
+
+**Current phase:** CHAT 02 — Evidence Extraction Matrix, **BLOCKED at the full-text corpus gate**.
+
+The 40-study baseline remains frozen at **36 journals + 4 peer-reviewed conferences = 90% journals**. A direct check of the connected Library and mounted local workspace found **no retained P001–P040 study PDFs**. The acquisition register still records 26 legitimate full-text routes and 14 institutional/library-access requirements, but those routes do not establish local corpus availability. Evidence extraction therefore has **not** begun and no inaccessible field is being labelled “Not reported.”
+
+The next action is to materialize the private/local corpus legitimately or provide legitimate institutional/library access for the unresolved studies, then resume CHAT 02.
