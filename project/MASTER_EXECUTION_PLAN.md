@@ -698,3 +698,30 @@ The current execution environment cannot validate native BPF/container integrati
 Resume CHAT 07 on Ubuntu 24.04 LTS x86-64 with the pinned 6.8-series kernel and required Docker/libbpf/bpftool/Clang-BPF toolchain. Run preflight first, then complete native telemetry, ring-buffer accounting, container identity, Python tests, smoke test and reproducibility validation. Attempt kernel-local fixed-point LR only after those prerequisites pass. If it fails, record exact verifier/load evidence and retain the user-space/hybrid fallback.
 
 Do not run the final experiment matrix or make scientific performance/superiority claims in CHAT 07.
+
+
+---
+
+## Review 2 literature-corpus completion checkpoint — 5 October 2026
+
+**Status: COMPLETE**
+
+The faculty Review 2 requirement for a minimum of 50 references and a literature-survey table covering all 50 papers has been integrated into the repository.
+
+### Frozen distinction
+
+- **Primary evidence baseline:** 40 studies, unchanged.
+- **Primary composition:** 36 journal articles + 4 peer-reviewed conference papers = 90% journals.
+- **Review 2 presentation corpus:** 50 references total.
+- **Additional supporting/background references:** R041–R050.
+- No primary study was replaced, renumbered or re-screened.
+
+### Canonical Review 2 artifact
+
+review2/REVIEW2_50_PAPER_LITERATURE_TABLE.md
+
+This file contains the required Review 2 fields for the 50-reference presentation corpus: serial number, title, venue/year, dataset/workload/evidence base, methodology/algorithm, advantages/novelty and disadvantages/gaps/limitations.
+
+### Next phase
+
+Resume **CHAT 07 — Prototype Implementation / Experimental Infrastructure** on the required Linux validation host. The Review 2 literature requirement does not require CHAT 07 to be scientifically complete before PPT preparation.
