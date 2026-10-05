@@ -95,32 +95,55 @@ As needed:
 
 # Active Continuation Prompt
 
-> **CHAT 05 — RESEARCH GAP CONSOLIDATION / EVIDENCE-TO-DESIGN BRIDGE**
+> **CHAT 07 — PROTOTYPE IMPLEMENTATION / EXPERIMENTAL INFRASTRUCTURE**
 >
-> Continue the BACSE203 Computer Networks Case Study from the latest committed GitHub state.
+> Continue the BACSE203 Computer Networks Case Study from the latest committed main state.
 >
-> CHAT 01, CHAT 02A, CHAT 02, CHAT 03 and **CHAT 04 — Critical Synthesis / Technology Taxonomy** are COMPLETE.
+> CHAT 01, CHAT 02A, CHAT 02, CHAT 03, CHAT 04, CHAT 05 and CHAT 06 are COMPLETE.
 >
-> The canonical primary-study baseline remains frozen at **40 studies = 36 journal articles + 4 peer-reviewed conference papers = 90% journals**. Do not add, remove, replace, or re-screen primary studies. P021 and P031 remain unchanged.
+> The canonical primary-study baseline remains exactly **40 studies = 36 journal articles + 4 peer-reviewed conference papers = 90% journals**. Do not add, remove, replace or re-screen any primary study. P021 and P031 remain unchanged.
 >
 > Read first:
-> 1. `project/CHAT_HANDOFF.md`
-> 2. `README.md`
-> 3. `project/MASTER_EXECUTION_PLAN.md`
-> 4. `project/PROJECT_SCOPE_AND_RQS.md`
-> 5. `research/CHAT02_EVIDENCE_EXTRACTION.md`
-> 6. `research/CHAT03_QUALITY_ASSESSMENT.md`
-> 7. `research/CHAT04_CRITICAL_SYNTHESIS.md`
-> 8. `research/RESEARCH_EVIDENCE_MATRIX.md`
-> 9. `research/RESEARCH_GAPS_AND_FUTURE_AGENDA.md`
+> 1. project/CHAT_HANDOFF.md
+> 2. README.md
+> 3. project/MASTER_EXECUTION_PLAN.md
+> 4. project/PROJECT_SCOPE_AND_RQS.md
+> 5. research/CHAT05_RESEARCH_GAP_CONSOLIDATION.md
+> 6. research/RESEARCH_GAPS_AND_FUTURE_AGENDA.md
+> 7. research/CHAT06_EXPERIMENTAL_ARCHITECTURE_AND_TESTBED.md
+> 8. research/RESEARCH_EVIDENCE_MATRIX.md
 >
-> Use CHAT 04's preliminary observations only as candidate hypotheses. Do not simply copy them into final gaps. Consolidate the evidence into a defensible research-gap framework by distinguishing directly established capabilities, recurring limitations, unresolved technical tensions, genuinely evidence-supported candidate gaps, and observations that are too weak, redundant, or outside project scope.
+> Implement only the architecture frozen in CHAT 06. Do not broaden scope.
 >
-> For each retained gap, map supporting primary studies, CHAT 03 evidence-strength limitations, affected RQs, and the exact technical/design requirement that follows. Keep reported evidence, synthesis and inference explicitly separated.
+> Primary implementation target:
+> - single-host Ubuntu 24.04 LTS baseline with the exact kernel package/version recorded in the environment manifest;
+> - native Docker containers;
+> - libbpf + bpftool + Clang/LLVM;
+> - syscall/process tracepoint telemetry;
+> - BPF ring-buffer transport with event sequence/loss accounting;
+> - deterministic feature aggregation;
+> - user-space Logistic Regression as the first ML path;
+> - staged observe/log/controlled-mitigation state machine;
+> - complete experiment manifest and reproducibility capture.
 >
-> Do not implement the prototype or conduct experiments. Do not create the final Review 2 PPT. Produce the evidence-to-design bridge that will feed CHAT 06 — Experimental Architecture + Testbed Specification.
+> Treat kernel-local fixed-point Logistic Regression as a feasibility-gated implementation. Attempt it only after the user-space path and telemetry accounting are stable. If the verifier/load or equivalence gate fails, use the documented hybrid fallback; do not weaken safety or invent a result.
 >
-> At completion, update the relevant research files, `README.md`, `project/MASTER_EXECUTION_PLAN.md`, and `project/CHAT_HANDOFF.md`. Record **CHAT 05 — COMPLETE** only after the gap consolidation is evidence-grounded, and place the exact continuation prompt for **CHAT 06 — Experimental Architecture + Testbed Specification** in the handoff.
+> CHAT 07 must produce infrastructure and validation checks, not final research conclusions. Do not run the final experiment matrix or claim measured superiority.
+>
+> Required completion:
+> 1. repository implementation structure created;
+> 2. environment/preflight script created;
+> 3. BPF telemetry loader and ring-buffer path implemented;
+> 4. event sequence/loss accounting implemented;
+> 5. feature pipeline and data schema implemented;
+> 6. user-space LR training/inference path implemented;
+> 7. staged policy state machine implemented in safe test mode;
+> 8. reproducibility manifest capture implemented;
+> 9. unit/integration/smoke tests pass;
+> 10. kernel-local feasibility gate either passes or is explicitly blocked with evidence and fallback retained;
+> 11. README, master plan and handoff updated;
+> 12. exact CHAT 08 continuation prompt prepared.
+
 
 # Chat completion log
 
