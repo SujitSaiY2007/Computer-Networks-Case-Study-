@@ -173,3 +173,44 @@ P021 and P031 were replaced before detailed extraction with directly accessible 
 ## CHAT 03 quality-assessment checkpoint — 5 October 2026
 
 **Status: COMPLETE.** All 40 retained primary studies have undergone formal qualitative quality assessment using the frozen ten-dimension framework. No numerical quality score was assigned and no study was added, removed or replaced. See `research/CHAT03_QUALITY_ASSESSMENT.md`. Next phase: **CHAT 04 — Critical Synthesis / Technology Taxonomy**.
+
+
+## 5. Review 2 50-reference presentation corpus — 5 October 2026
+
+The faculty Review 2 instruction requires a literature-survey table for all 50 papers and a minimum of 50 references. To satisfy that presentation requirement without compromising the evidence methodology, the project now distinguishes:
+
+- **40 canonical primary studies:** unchanged, 36 journals + 4 peer-reviewed conferences = 90% journals.
+- **10 supporting/background references:** R041–R050, selected for direct relevance to eBPF meta-security, verifier safety, cloud-native telemetry/latency, service-mesh performance and established runtime-security surveys.
+
+The 10 supporting references are **not counted as primary studies** and do not alter the CHAT 01–06 evidence baseline.
+
+The complete faculty-format table is maintained in review2/REVIEW2_50_PAPER_LITERATURE_TABLE.md with the requested fields:
+
+1. serial number;
+2. paper title;
+3. journal/venue and year;
+4. dataset/workload/evidence base;
+5. methodology/algorithm;
+6. advantages/novelty;
+7. disadvantages/gaps/limitations.
+
+### Added references
+
+| Ref. | Study | Role | Why added |
+|---:|---|---|---|
+| R041 | KRAKENGUARD: Towards Fine-Grained eBPF Isolation | Supporting technical | Multi-tenant eBPF isolation and policy-constrained loading |
+| R042 | BeeBox: Hardening BPF against Transient Execution Attacks | Supporting technical | eBPF meta-security and performance/security trade-off |
+| R043 | Validating the eBPF Verifier via State Embedding | Supporting technical | Verifier correctness and kernel-safety constraint |
+| R044 | Enhancing Packet Tracing of Microservices in Container Overlay Networks using eBPF | Supporting technical | Kubernetes telemetry and latency measurement |
+| R045 | Monitoring Network Flows in Containerized Environments | Supporting technical | Explicit eBPF flow-monitoring architecture and performance feasibility |
+| R046 | Network shortcut in data plane of service mesh with eBPF | Supporting technical | Cloud-native service-mesh latency/CPU/memory context |
+| R047 | Design and implementation of an intrusion detection system by using Extended BPF in the Linux kernel | Supporting technical | Kernel/user-space IDS placement and throughput context |
+| R048 | SoK: Run-time security for cloud microservices. Are we there yet? | Background/secondary | Runtime-security taxonomy and reproducibility/benchmark context |
+| R049 | A Container Security Survey: Exploits, Attacks, and Defenses | Background/secondary | Broad container threat/defense context and eBPF dual-role context |
+| R050 | eBPF-based cybersecurity mechanisms: a systematic literature review | Background/secondary | Current 2026 eBPF-security synthesis and gap-positioning context |
+
+### Methodological boundary
+
+The 10 additions are presentation references, not a silent expansion of the primary systematic-mapping evidence set. The project must continue to use the 40-study baseline for formal CHAT 02 extraction, CHAT 03 quality assessment, CHAT 04 synthesis and CHAT 05 gap consolidation. Review papers are explicitly secondary evidence.
+
+The complete table and source/provenance details are in review2/REVIEW2_50_PAPER_LITERATURE_TABLE.md.
