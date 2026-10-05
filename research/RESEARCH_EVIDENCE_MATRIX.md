@@ -116,3 +116,8 @@ P021 and P031 were replaced with directly accessible journal primary studies. Ca
 ## CHAT 02 extraction pointer — 5 October 2026
 
 The canonical field-level extraction for the active 40-study baseline is now maintained in **research/CHAT02_EVIDENCE_EXTRACTION.md**. That file is the authoritative CHAT 02 evidence-extraction artifact; this matrix remains the study-set and provenance/control matrix.
+
+
+## CHAT 03 quality-assessment checkpoint — 5 October 2026
+
+**CHAT 03 — COMPLETE.** The 40-study extraction has now been quality-assessed using the ten-dimensional qualitative framework. See `research/CHAT03_QUALITY_ASSESSMENT.md`. The baseline remains unchanged. Next phase: **CHAT 04 — Critical Synthesis / Technology Taxonomy**.
