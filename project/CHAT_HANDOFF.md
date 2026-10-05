@@ -95,17 +95,30 @@ As needed:
 
 # Active Continuation Prompt
 
-> **CHAT 02A — Paper Acquisition & Archive**
+> **CHAT 02 — EVIDENCE EXTRACTION MATRIX — CORPUS GATE**
 >
-> Continue the BACSE203 project from the completed **CHAT 01 screening phase**. First read project/CHAT_HANDOFF.md, project/MASTER_EXECUTION_PLAN.md, project/PROJECT_SCOPE_AND_RQS.md, research/CHAT01_FULLTEXT_VERIFICATION.md, research/REVIEW2_PAPER_SELECTION_AND_AUDIT.md, research/RESEARCH_EVIDENCE_MATRIX.md, and research/RELEVANCY_AUDIT.md.
+> Continue the BACSE203 Computer Networks Case Study from the latest committed GitHub state.
 >
-> Do not restart paper selection. Use the verified 40-study baseline from CHAT 01: **36 journals + 4 peer-reviewed conferences = 90% journals**. Note that the old candidate “Extended Berkeley Packet Filter: An Application Perspective” is background/review literature and has been replaced by “Container-Specific Service Mesh-Based System for Mitigating Lateral Movement Attacks” (DOI 10.1109/TCC.2026.3657486).
+> The frozen primary baseline remains exactly **40 studies: 36 journal articles + 4 peer-reviewed conference papers = 90% journals**. Do not restart selection, substitute studies, or change the baseline.
 >
-> Execute **CHAT 02A — Paper Acquisition & Archive**. For every retained primary study, locate the legitimate full-text PDF where available, preferably from the official publisher, DOI page, institutional repository, or author repository. Record the exact access source, acquisition status, PDF filename, DOI/title verification status, and any supplementary material. Do not bypass paywalls or access controls, and do not commit copyrighted PDFs to the public repository.
+> Before extracting any evidence, re-check the private/local corpus and legitimate institutional/library access using `research/PAPER_ACQUISITION_AND_ARCHIVE.md) as the authoritative access map.
 >
-> Create/update research/PAPER_ACQUISITION_AND_ARCHIVE.md or its access register as required, with one row for every retained study. Distinguish obtained, institutional/library access required, and legitimately unavailable. Do not exclude a study merely because immediate PDF access is unavailable.
+> Current verification result from 5 October 2026:
+> - No P001–P040 study PDFs are present in the mounted local workspace.
+> - The connected Library search did not surface the retained study PDFs.
+> - 26 studies have legitimate full-text routes recorded, but those routes do not establish local corpus materialization.
+> - 14 studies still require legitimate institutional/library access: P002, P009, P014, P015, P019, P020, P021, P024, P026, P027, P031, P034, P035, P037.
+> - 0 studies are legitimately unavailable.
 >
-> At the end, update project/CHAT_HANDOFF.md with the number of PDFs obtained, access problems, metadata/PDF mismatches, unresolved acquisition issues, and the exact continuation prompt for **CHAT 02 — Evidence Extraction Matrix**. Do not begin detailed extraction or quality assessment in CHAT 02A.
+> Therefore **do not begin field-level extraction yet** unless the missing full texts become legitimately accessible. Do not treat unavailable evidence as “Not reported”; that label is only valid after the authoritative full text has been inspected and the field is absent.
+>
+> Once the full-text corpus/access is stable, extract all 40 studies using only authoritative full text. Required fields include authors, year, venue/publisher, DOI/persistent identifier, publication type, cloud/container/Kubernetes environment, eBPF hook and telemetry type, telemetry granularity, feature representation, ML algorithm, ML placement, dataset/workload, attack/threat scenario, baseline, testbed, CPU overhead, memory overhead, event rate/buffering/event loss, detection metrics, inference/detection latency, detection-to-mitigation latency, enforcement mechanism, legitimate-operation impact, reproducibility artifacts, reported limitations, external-validity concerns, and RQ1–RQ5 mapping.
+>
+> Do not infer numerical values from abstracts, snippets, reviews, or other papers. Keep reported results separate from cross-paper interpretation. Do not perform formal quality scoring, final cross-paper conclusions, research-gap freezing, experimental architecture design, prototype implementation, or Review 2 slide creation.
+>
+> If the corpus is still incomplete, update the acquisition/access status and handoff only; do not fabricate completion.
+>
+> If extraction becomes complete, update `project/CHAT_HANDOFF.md` and all relevant research status files and create the exact continuation prompt for **CHAT 03 — Quality Assessment**.
 
 ## Chat completion log
 
@@ -281,3 +294,44 @@ Copy this structure into the completion log when closing a chat:
 > Do not perform formal quality scoring, final cross-paper conclusions, research-gap freezing, experimental architecture design, prototype implementation, or Review 2 slide creation in CHAT 02.
 >
 > At the end, update project/CHAT_HANDOFF.md and all relevant research status files with the extraction status, missing-evidence issues, files changed, and the exact next continuation prompt for CHAT 03 — Quality Assessment.
+
+
+### CHAT 02 — Corpus verification checkpoint — 5 October 2026
+**Status:** BLOCKED AT CORPUS GATE
+
+**Completed work:**
+- Re-read the required canonical project/research control files from the latest committed `main` state.
+- Preserved the frozen 40-study baseline exactly: 36 journals + 4 peer-reviewed conferences = 90% journals.
+- Rechecked the authoritative acquisition map against the actual connected Library and mounted local workspace.
+- Confirmed that no retained P001–P040 PDFs are present in the mounted local workspace.
+- Confirmed that the connected Library search did not surface the retained study PDFs.
+- Confirmed that the 14 institutional/library-access records remain unresolved from this environment.
+- Did not start evidence extraction, because doing so would require treating inaccessible full text as if it had been inspected.
+
+**Files changed:**
+- project/CHAT_HANDOFF.md
+- README.md
+- project/MASTER_EXECUTION_PLAN.md
+- research/RESEARCH_EVIDENCE_MATRIX.md
+- research/PAPER_ACQUISITION_AND_ARCHIVE.md
+
+**Decisions frozen:**
+- The 40-study baseline is unchanged.
+- No study is excluded because of access difficulty.
+- “Not reported” will only be used after authoritative full-text inspection shows that the field is absent.
+- CHAT 02 remains unfinished until the corpus/access gate is satisfied.
+
+**Evidence/issues discovered:**
+- 0 local P001–P040 PDFs found in the mounted workspace.
+- 0 retained study PDFs surfaced by the connected Library search.
+- 26 legitimate full-text routes remain recorded, but “OBTAINED” in the acquisition register does not prove local materialization.
+- 14 studies still require legitimate institutional/library access: P002, P009, P014, P015, P019, P020, P021, P024, P026, P027, P031, P034, P035, P037.
+
+**Deviations from plan:**
+- CHAT 02 cannot honestly be marked complete. Extraction is deferred until the corpus/access gate is satisfied.
+
+**Next task:**
+- Resume CHAT 02 — Evidence Extraction Matrix after the private/local corpus is materialized or legitimate institutional/library access is available for the unresolved records.
+
+**Updated continuation prompt:**
+> Resume CHAT 02 — EVIDENCE EXTRACTION MATRIX from the latest committed state. Re-check the corpus/access gate first. Do not alter the frozen 40-study baseline. Once authoritative full texts are available, extract only supported evidence for all 40 studies, use “Not reported” only after full-text inspection, keep reported results separate from interpretation, and do not perform quality assessment or later phases. If extraction is completed, update the handoff with the exact continuation prompt for CHAT 03 — Quality Assessment.
