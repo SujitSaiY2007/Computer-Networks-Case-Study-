@@ -5,6 +5,9 @@
 #define __uint(name, val) int (*name)[val]
 #define __type(name, val) typeof(val) *name
 #define __array(name, val) typeof(val) *name[]
+#define __always_inline inline __attribute__((always_inline))
+static void *(*bpf_map_lookup_elem)(void *map, const void *key) = (void *)1;
+static unsigned int (*bpf_get_smp_processor_id)(void) = (void *)8;
 #define __ulong(name, val) enum { ___bpf_concat(name, __LINE__) = val }
 
 static void *(*bpf_ringbuf_reserve)(void *ringbuf, unsigned long size, unsigned long flags) = (void *)131;
