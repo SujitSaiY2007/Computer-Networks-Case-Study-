@@ -130,6 +130,33 @@ At the end, update `project/CHAT_HANDOFF.md` with the completed extraction statu
 
 ---
 
+## CHAT 02A — Paper Acquisition & Archive
+
+### Objective
+Create a stable, auditable full-text access corpus after CHAT 01 verification and before evidence extraction.
+
+### Current result — 5 October 2026
+- Verified baseline preserved: 40 studies.
+- Composition preserved: 36 journals + 4 peer-reviewed conferences.
+- Legitimate full-text copies/routes located: 26.
+- Institutional/library access required: 14.
+- Legitimately unavailable: 0.
+- New metadata/PDF mismatch requiring baseline correction: 0.
+- No unauthorized PDFs committed.
+- Local/private PDF materialization remains incomplete because the current execution environment could not successfully materialize an openly accessible PDF.
+
+### Deliverables
+- research/PAPER_ACQUISITION_AND_ARCHIVE.md with one row for every retained study.
+- Legitimate publisher/DOI/institutional/author-repository access route for each study.
+- Explicit acquisition status and PDF-to-record verification state.
+- Private/local archive readiness before CHAT 02.
+
+### Completion gate
+CHAT 02A is **PARTIAL/BLOCKED** until the private/local PDF corpus is materialized or legitimate institutional/library access is available for the remaining records. No paper is excluded merely because access is difficult.
+
+### Next continuation prompt
+Continue from the acquisition register and begin CHAT 02 only after the full-text corpus is stable. Extract only evidence supported by the authoritative full texts and use “Not reported” for missing fields.
+
 ## CHAT 02 — Evidence Extraction Matrix
 
 ### Objective
