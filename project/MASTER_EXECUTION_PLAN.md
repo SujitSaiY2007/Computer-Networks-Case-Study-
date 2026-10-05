@@ -630,3 +630,29 @@ CHAT 05 must consolidate only evidence-supported research gaps and map them to R
 Canonical artifact: `research/CHAT05_RESEARCH_GAP_CONSOLIDATION.md`.
 
 **Next phase:** CHAT 06 — Experimental Architecture + Testbed Specification. CHAT 06 must translate G1–G5 into a feasible architecture, experiment matrix, workloads, metrics, safety controls and reproducibility plan without changing the RQs or 40-study baseline.
+
+
+---
+
+## CHAT 06 completion addendum — 5 October 2026
+
+**Status: COMPLETE**
+
+CHAT 06 froze the experimental architecture and testbed specification in `research/CHAT06_EXPERIMENTAL_ARCHITECTURE_AND_TESTBED.md`.
+
+### Frozen architecture
+Single-host Ubuntu 24.04 LTS baseline → native Docker containers → syscall/process eBPF telemetry → BPF ring buffer → common feature aggregation → user-space Logistic Regression, with a feasibility-gated fixed-point kernel-local LR placement variant → common threshold/policy → staged controlled enforcement → reproducibility recorder.
+
+### Frozen controls
+- 40-study evidence baseline unchanged.
+- G1–G5 remain authoritative.
+- No GPU/Kafka/distributed cluster/continual-learning framework/multimodal telemetry in the primary experiment.
+- Kubernetes is deferred.
+- Kernel-local ML is not assumed to be feasible.
+- Enforcement is observe → detect/log → controlled mitigation with rollback.
+- CHAT 06 contains no implementation or final experimental results.
+
+### Next phase
+**CHAT 07 — Prototype Implementation / Experimental Infrastructure**
+
+The next phase must implement the frozen architecture, beginning with environment/preflight validation and the telemetry-only path before attempting kernel-local ML.
