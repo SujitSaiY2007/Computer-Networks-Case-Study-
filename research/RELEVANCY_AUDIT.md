@@ -34,3 +34,18 @@ Do not copy numerical claims from the source document into the manuscript withou
 
 ## Recommended final composition
 The 45-study working matrix is deliberately broader than the final PRISMA-included set. It contains direct core studies plus adjacent/supporting evidence for telemetry overhead, kernel enforcement, verifier safety, and eBPF isolation. This avoids artificially inflating the direct evidence base while still supporting the review's central trade-offs.
+
+
+## CHAT 01 correction — 5 October 2026
+
+The earlier relevance audit treated **Extended Berkeley Packet Filter: An Application Perspective** as supporting primary evidence. This was incorrect: the IEEE record explicitly identifies it as a review of eBPF application domains. It is therefore **background/comparison only** and is excluded from the primary 40.
+
+Replacement selected after verification:
+
+- **Container-Specific Service Mesh-Based System for Mitigating Lateral Movement Attacks** — IEEE Transactions on Cloud Computing, 2026, DOI 10.1109/TCC.2026.3657486.
+- Verified as a journal article and peer-reviewed primary study.
+- Directly relevant to Kubernetes/cloud-native runtime security.
+- Uses zero-copy eBPF syscall collection, lightweight ML anomaly detection, container-specific online learning and container isolation.
+- Identifier/title audit matched and no retraction flag was found.
+
+This correction preserves the 36-journal + 4-conference target without misclassifying a review as primary evidence.
