@@ -667,3 +667,34 @@ The authoritative CHAT 06 specification is `research/CHAT06_EXPERIMENTAL_ARCHITE
 **CHAT 06 is COMPLETE.** The architecture is frozen for implementation, with a feasibility-gated kernel-local ML branch and an explicit hybrid/user-space fallback.
 
 **Next:** CHAT 07 — Prototype Implementation / Experimental Infrastructure.
+
+
+---
+
+## CHAT 07 implementation checkpoint — 5 October 2026
+
+**Status: PARTIAL / BLOCKED.**
+
+The minimum prototype infrastructure has been created under `prototype/` and the detailed validation record is `research/CHAT07_IMPLEMENTATION_AND_VALIDATION.md`.
+
+Implemented capability:
+- environment/preflight capture;
+- BPF syscall/process telemetry source and libbpf loader;
+- ring-buffer event stream and loss-accounting fields;
+- deterministic 1-second feature aggregation;
+- user-space Logistic Regression training/inference artifact;
+- staged observe/detect-log/controlled-mitigation/rollback policy;
+- reproducibility manifest;
+- unit-test and CI scaffolding.
+
+The current execution environment cannot validate native BPF/container integration because Docker and bpftool are absent, libbpf development headers are absent, and the installed Clang has no BPF target. Therefore BPF load, ring-buffer integration, container/cgroup identity, complete smoke test and the kernel-local feasibility gate remain unvalidated.
+
+### CHAT 07 completion decision
+
+**Not complete.** The project must not proceed to final experiments until the remaining infrastructure gates are passed on the required Linux validation host.
+
+### Next continuation
+
+Resume CHAT 07 on Ubuntu 24.04 LTS x86-64 with the pinned 6.8-series kernel and required Docker/libbpf/bpftool/Clang-BPF toolchain. Run preflight first, then complete native telemetry, ring-buffer accounting, container identity, Python tests, smoke test and reproducibility validation. Attempt kernel-local fixed-point LR only after those prerequisites pass. If it fails, record exact verifier/load evidence and retain the user-space/hybrid fallback.
+
+Do not run the final experiment matrix or make scientific performance/superiority claims in CHAT 07.
