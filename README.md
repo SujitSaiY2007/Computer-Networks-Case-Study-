@@ -165,3 +165,8 @@ The next action is to materialize the private/local corpus legitimately or provi
 ## CHAT 02 completion — 5 October 2026
 
 CHAT 02 Evidence Extraction is COMPLETE. The canonical field-level matrix is research/CHAT02_EVIDENCE_EXTRACTION.md. Missing fields are explicitly marked NR/NA rather than inferred. The next phase is CHAT 03 — Quality Assessment.
+
+
+## CHAT 03 completion checkpoint — 5 October 2026
+
+**CHAT 03 — COMPLETE.** Formal qualitative quality assessment has been completed for all 40 retained primary studies in `research/CHAT03_QUALITY_ASSESSMENT.md`. The frozen baseline remains 40 studies: 36 journals + 4 peer-reviewed conferences (90%). No numerical quality score was assigned. The next phase is **CHAT 04 — Critical Synthesis / Technology Taxonomy**.
