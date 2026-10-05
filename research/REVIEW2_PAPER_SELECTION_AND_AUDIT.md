@@ -142,3 +142,20 @@ These reviews should be used to map terminology, prior taxonomies and gaps, but 
 **Review 2 paper list: SELECTED FOR FULL-TEXT VERIFICATION.**
 
 This is the correct point to lock the candidate set, complete the extraction matrix and quality assessment, and then write the evidence-based gap table. A paper should be moved out of the final 40 only if full-text screening reveals a scope, publication-status, evidence-quality, duplication or accessibility problem. Any replacement must preserve the 90% journal target.
+
+
+## CHAT 01 — Full-text verification/screening result (5 October 2026)
+
+The provisional 40-study list has been screened and is **no longer accepted unchanged**. One candidate was found to be a review rather than a primary study:
+
+- **Extended Berkeley Packet Filter: An Application Perspective** — IEEE Access, 2022, DOI 10.1109/ACCESS.2022.3226269. **Moved to background/comparison.**
+
+A verified journal primary study was substituted:
+
+- **Container-Specific Service Mesh-Based System for Mitigating Lateral Movement Attacks** — IEEE Transactions on Cloud Computing, 2026, DOI 10.1109/TCC.2026.3657486.
+
+The replacement directly contributes eBPF telemetry, ML anomaly detection, online learning/adaptation, container isolation, and CPU/collection-efficiency evidence. The resulting primary composition remains **36 journals + 4 peer-reviewed conferences = 90% journals**.
+
+See research/CHAT01_FULLTEXT_VERIFICATION.md for the auditable 40-row screening table, explicit decision reasons, evidence-strength labels and count check.
+
+**Status after CHAT 01:** verified screening baseline complete; detailed full-text acquisition/archive is the next checkpoint; extraction and formal quality assessment remain unfrozen.
