@@ -622,3 +622,11 @@ CHAT 02 COMPLETE. All 40 active studies have a canonical extraction record. The 
 **CHAT 05 — Research Gap Consolidation / Evidence-to-Design Bridge**
 
 CHAT 05 must consolidate only evidence-supported research gaps and map them to RQs and design requirements. It must not add studies, alter the baseline, or implement the experimental architecture/prototype.
+
+## CHAT 05 completion checkpoint — 5 October 2026
+
+**Status: COMPLETE.** CHAT 05 validated the CHAT 04 candidates and produced five evidence-supported gaps. The central problem is an evaluation/integration limitation rather than absence of component technologies. Candidate A/C were merged; overclaims about missing continual learning, multimodal telemetry, universal placement superiority, absent enforcement and eBPF insecurity were rejected/downgraded.
+
+Canonical artifact: `research/CHAT05_RESEARCH_GAP_CONSOLIDATION.md`.
+
+**Next phase:** CHAT 06 — Experimental Architecture + Testbed Specification. CHAT 06 must translate G1–G5 into a feasible architecture, experiment matrix, workloads, metrics, safety controls and reproducibility plan without changing the RQs or 40-study baseline.
