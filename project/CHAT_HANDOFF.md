@@ -30,7 +30,7 @@ This file is intentionally short enough to be the first context file opened, whi
 
 **Course:** BACSE203 Computer Networks Case Study
 
-**Current stage:** Review 2 preparation → CHAT 02A paper acquisition/archive
+**Current stage:** Review 2 preparation → CHAT 03 Quality Assessment
 
 **Project principle:** repository state + original paper evidence + course guidelines are the durable source of truth.
 
@@ -44,8 +44,8 @@ This file is intentionally short enough to be the first context file opened, whi
 - Verified composition: **36 journals + 4 peer-reviewed conferences = 90% journals**
 - CHAT 01 screening: **COMPLETE**
 - Candidate correction: **1 survey removed; 1 verified journal primary study substituted**
-- Paper acquisition/archive: **PARTIAL — 12 retained records still require legitimate institutional/library access**
-- Extraction matrix: **NOT FINAL — corpus gate remains open**
+- Paper acquisition/archive: **ACCESS REGISTER COMPLETE — local PDF archiving remains a private/local responsibility where required**
+- CHAT 02 evidence extraction: **COMPLETE**
 - Quality assessment: **NOT FINAL**
 - Evidence taxonomy: **PROVISIONAL**
 - Research-gap agenda: **PROVISIONAL / DEVELOPED**
@@ -340,3 +340,26 @@ Copy this structure into the completion log when closing a chat:
 ## CHAT 02 replacement checkpoint — 5 October 2026
 
 P021 → Takagaki & Mizutani (2025), DOI 10.1002/tee.70070. P031 → Rohliyanto & Utami (2026), DOI 10.30865/jurikom.v13i2.9618. Both are directly accessible journal primary studies. The replacement decision is complete; the full CHAT 02 extraction gate is not yet complete because the remaining corpus is not actually present in the current environment.
+
+
+## CHAT 02 — Evidence Extraction Matrix
+**Status:** COMPLETE
+
+**Completed work:**
+- Corrected P021 and P031 before extraction using directly accessible journal primary studies.
+- Created `research/CHAT02_EVIDENCE_EXTRACTION.md` containing the canonical extraction for all 40 active studies.
+- Extracted environment, telemetry, feature/ML placement, workload/attack, reported performance/latency, enforcement/response and RQ mapping.
+- Preserved the rule that unavailable numerical fields are **NR/NA**, not guessed.
+- Kept formal quality assessment and cross-paper conclusions outside CHAT 02.
+
+**Files changed:**
+- research/CHAT02_EVIDENCE_EXTRACTION.md
+- project/CHAT_HANDOFF.md
+- research/RESEARCH_EVIDENCE_MATRIX.md
+
+**Decisions frozen:**
+- 40-study baseline unchanged after the P021/P031 correction.
+- Composition remains 36 journals + 4 peer-reviewed conferences.
+- CHAT 02 is complete; CHAT 03 is the next phase.
+
+**Next task:** CHAT 03 — Quality Assessment.
