@@ -533,3 +533,34 @@ The project is ready for final submission when:
 **Next chat: CHAT 01 — Full-Text Verification and Final Candidate Screening.**
 
 The project should not move to extraction or implementation until the candidate primary-study set has been verified and the inclusion/exclusion decisions are recorded.
+
+
+## CHAT 01 completion update — 5 October 2026
+
+CHAT 01 is **COMPLETE**. The original provisional 40-paper list was screened against authoritative bibliographic records and available full-text/abstract evidence.
+
+### Frozen result entering CHAT 02A
+
+- **40 primary studies retained**
+- **36 journal articles**
+- **4 peer-reviewed conference papers**
+- **90.0% journals**
+- **14 Core**
+- **26 Supporting/Adjacent**
+- **0 preprint-only primary studies**
+- **0 duplicates removed**
+- **0 retraction flags in the scholarly identifier audit**
+
+### Material correction
+
+The provisional candidate **Extended Berkeley Packet Filter: An Application Perspective** was removed from the primary evidence set because it is a review article. It remains useful as background/comparison literature.
+
+It was replaced by **Container-Specific Service Mesh-Based System for Mitigating Lateral Movement Attacks**, IEEE Transactions on Cloud Computing (2026), DOI 10.1109/TCC.2026.3657486, which is a primary journal study directly relevant to eBPF telemetry, ML anomaly detection/online learning, container isolation and cloud-native runtime security.
+
+The detailed screening record is research/CHAT01_FULLTEXT_VERIFICATION.md.
+
+### Current phase
+
+**CHAT 02A — Paper Acquisition & Archive**
+
+Do not restart CHAT 01. Do not begin detailed extraction yet. Follow research/PAPER_ACQUISITION_AND_ARCHIVE.md and the active prompt in project/CHAT_HANDOFF.md.
