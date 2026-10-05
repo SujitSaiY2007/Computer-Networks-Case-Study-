@@ -8,7 +8,7 @@ Project:
 
 **eBPF-Assisted Machine Learning for Cloud-Native Runtime Security: Telemetry Overhead, Kernel Enforcement, and Detection Trade-offs**
 
-The project is currently between Review 1 and Review 2. CHAT 01 verification and CHAT 02 evidence extraction are complete; Review 2 now proceeds through quality assessment, synthesis, evidence-based gaps and the downstream experimental/presentation stages.
+The project is in Review 2 downstream execution. CHAT 01–06 are complete; CHAT 06 has frozen the experimental architecture and testbed. CHAT 07 prototype implementation / experimental infrastructure is next.
 
 ---
 
@@ -46,7 +46,7 @@ When information conflicts:
 - Review 1 is complete and the overall research idea has been accepted positively by the supervisor.
 - The working evidence pool has been refined to a **40-paper candidate primary-study set**.
 - Target composition: **36 journal articles + 4 peer-reviewed conference papers = 90% journals**.
-- The 40-study primary set is the **verified screening baseline**. It has undergone CHAT 01 DOI/metadata/publication-type/relevance verification; formal quality assessment remains pending.
+- The 40-study primary set is the **verified screening baseline**. CHAT 01 verification, CHAT 02 extraction, CHAT 03 quality assessment, CHAT 04 synthesis and CHAT 05 gap consolidation are complete.
 - Existing review papers are background/comparison literature, not primary studies.
 - A 2026 eBPF cybersecurity systematic literature review exists; therefore this project must not claim to be the first review of eBPF cybersecurity. Its narrower contribution is the intersection of **eBPF telemetry + ML runtime detection + kernel enforcement in cloud/container environments**, with explicit attention to overhead, ML placement, detection-to-mitigation latency, enforcement safety and evaluation practice.
 - Final manuscript should be a **critical synthesis**, not 40 independent paper summaries.
@@ -656,3 +656,14 @@ Single-host Ubuntu 24.04 LTS baseline → native Docker containers → syscall/p
 **CHAT 07 — Prototype Implementation / Experimental Infrastructure**
 
 The next phase must implement the frozen architecture, beginning with environment/preflight validation and the telemetry-only path before attempting kernel-local ML.
+
+
+---
+
+## CHAT 06 status correction
+
+The authoritative CHAT 06 specification is `research/CHAT06_EXPERIMENTAL_ARCHITECTURE_AND_TESTBED.md`.
+
+**CHAT 06 is COMPLETE.** The architecture is frozen for implementation, with a feasibility-gated kernel-local ML branch and an explicit hybrid/user-space fallback.
+
+**Next:** CHAT 07 — Prototype Implementation / Experimental Infrastructure.
