@@ -121,3 +121,8 @@ The canonical field-level extraction for the active 40-study baseline is now mai
 ## CHAT 03 quality-assessment checkpoint — 5 October 2026
 
 **CHAT 03 — COMPLETE.** The 40-study extraction has now been quality-assessed using the ten-dimensional qualitative framework. See `research/CHAT03_QUALITY_ASSESSMENT.md`. The baseline remains unchanged. Next phase: **CHAT 04 — Critical Synthesis / Technology Taxonomy**.
+
+
+## CHAT 04 synthesis pointer — 5 October 2026
+
+**CHAT 04 — COMPLETE.** The canonical cross-paper synthesis and technology taxonomy is maintained in `research/CHAT04_CRITICAL_SYNTHESIS.md`. The study baseline remains unchanged at 40 primary studies (36 journals + 4 peer-reviewed conferences). Candidate gap observations in CHAT 04 are preliminary and are not final research gaps.
