@@ -8,7 +8,7 @@ Project:
 
 **eBPF-Assisted Machine Learning for Cloud-Native Runtime Security: Telemetry Overhead, Kernel Enforcement, and Detection Trade-offs**
 
-The project is currently between Review 1 and Review 2. Review 2 requires evidence verification, paper selection, methodological/quality assessment, evidence-based research gaps, future-scope justification, and a defensible literature-review structure before implementation is finalized.
+The project is currently between Review 1 and Review 2. CHAT 01 verification is complete; Review 2 now proceeds through paper acquisition, extraction, quality assessment, synthesis, evidence-based gaps and the downstream experimental/presentation stages.
 
 ---
 
@@ -46,7 +46,7 @@ When information conflicts:
 - Review 1 is complete and the overall research idea has been accepted positively by the supervisor.
 - The working evidence pool has been refined to a **40-paper candidate primary-study set**.
 - Target composition: **36 journal articles + 4 peer-reviewed conference papers = 90% journals**.
-- The 40-paper set is **not yet final**. It must undergo full-text verification, quality assessment, duplicate checking, DOI/metadata verification and exclusion-reason logging.
+- The 40-study primary set is the **verified screening baseline**. It has undergone CHAT 01 DOI/metadata/publication-type/relevance verification; detailed extraction and formal quality assessment remain pending.
 - Existing review papers are background/comparison literature, not primary studies.
 - A 2026 eBPF cybersecurity systematic literature review exists; therefore this project must not claim to be the first review of eBPF cybersecurity. Its narrower contribution is the intersection of **eBPF telemetry + ML runtime detection + kernel enforcement in cloud/container environments**, with explicit attention to overhead, ML placement, detection-to-mitigation latency, enforcement safety and evaluation practice.
 - Final manuscript should be a **critical synthesis**, not 40 independent paper summaries.
@@ -530,9 +530,9 @@ The project is ready for final submission when:
 
 # 7. Current Next Action
 
-**Next chat: CHAT 01 — Full-Text Verification and Final Candidate Screening.**
+**Next chat: CHAT 02A — Paper Acquisition & Archive.**
 
-The project should not move to extraction or implementation until the candidate primary-study set has been verified and the inclusion/exclusion decisions are recorded.
+The project should not move to detailed extraction until CHAT 02A establishes the legitimate full-text acquisition/access register for the verified 40-study baseline.
 
 
 ## CHAT 01 completion update — 5 October 2026
