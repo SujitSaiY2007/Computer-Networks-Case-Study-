@@ -28,9 +28,9 @@ This project is now being executed through a **controlled multi-chat workflow** 
 
 ### Current next chat
 
-**CHAT 02A — Paper Acquisition & Archive**
+**CHAT 05 — Research Gap Consolidation / Evidence-to-Design Bridge**
 
-The live prompt for that chat is stored in `project/CHAT_HANDOFF.md`; the complete roadmap and all future prompts are stored in `project/MASTER_EXECUTION_PLAN.md`.
+The live prompt is stored in `project/CHAT_HANDOFF.md`.
 
 ### Planned phase sequence
 
@@ -169,4 +169,8 @@ CHAT 02 Evidence Extraction is COMPLETE. The canonical field-level matrix is res
 
 ## CHAT 03 completion checkpoint — 5 October 2026
 
-**CHAT 03 — COMPLETE.** Formal qualitative quality assessment has been completed for all 40 retained primary studies in `research/CHAT03_QUALITY_ASSESSMENT.md`. The frozen baseline remains 40 studies: 36 journals + 4 peer-reviewed conferences (90%). No numerical quality score was assigned. The next phase is **CHAT 04 — Critical Synthesis / Technology Taxonomy**.
+**CHAT 03 — COMPLETE.** Formal qualitative quality assessment was completed for all 40 retained primary studies in `research/CHAT03_QUALITY_ASSESSMENT.md`. No numerical quality score was assigned and the baseline was not changed.
+
+## CHAT 04 completion checkpoint — 5 October 2026
+
+**CHAT 04 — COMPLETE.** The evidence-grounded critical synthesis and technology taxonomy are recorded in `research/CHAT04_CRITICAL_SYNTHESIS.md`. The frozen baseline remains **40 studies: 36 journals + 4 peer-reviewed conferences = 90% journals**. No study was added, removed or replaced. Preliminary gap observations remain explicitly non-final. The next phase is **CHAT 05 — Research Gap Consolidation / Evidence-to-Design Bridge**.
