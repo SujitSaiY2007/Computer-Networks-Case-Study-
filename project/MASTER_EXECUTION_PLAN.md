@@ -8,7 +8,7 @@ Project:
 
 **eBPF-Assisted Machine Learning for Cloud-Native Runtime Security: Telemetry Overhead, Kernel Enforcement, and Detection Trade-offs**
 
-The project is currently between Review 1 and Review 2. CHAT 01 verification is complete; Review 2 now proceeds through paper acquisition, extraction, quality assessment, synthesis, evidence-based gaps and the downstream experimental/presentation stages.
+The project is currently between Review 1 and Review 2. CHAT 01 verification and CHAT 02 evidence extraction are complete; Review 2 now proceeds through quality assessment, synthesis, evidence-based gaps and the downstream experimental/presentation stages.
 
 ---
 
@@ -46,7 +46,7 @@ When information conflicts:
 - Review 1 is complete and the overall research idea has been accepted positively by the supervisor.
 - The working evidence pool has been refined to a **40-paper candidate primary-study set**.
 - Target composition: **36 journal articles + 4 peer-reviewed conference papers = 90% journals**.
-- The 40-study primary set is the **verified screening baseline**. It has undergone CHAT 01 DOI/metadata/publication-type/relevance verification; detailed extraction and formal quality assessment remain pending.
+- The 40-study primary set is the **verified screening baseline**. It has undergone CHAT 01 DOI/metadata/publication-type/relevance verification; formal quality assessment remains pending.
 - Existing review papers are background/comparison literature, not primary studies.
 - A 2026 eBPF cybersecurity systematic literature review exists; therefore this project must not claim to be the first review of eBPF cybersecurity. Its narrower contribution is the intersection of **eBPF telemetry + ML runtime detection + kernel enforcement in cloud/container environments**, with explicit attention to overhead, ML placement, detection-to-mitigation latency, enforcement safety and evaluation practice.
 - Final manuscript should be a **critical synthesis**, not 40 independent paper summaries.
@@ -154,8 +154,11 @@ Create a stable, auditable full-text access corpus after CHAT 01 verification an
 ### Completion gate
 CHAT 02A is **PARTIAL/BLOCKED** until the private/local PDF corpus is materialized or legitimate institutional/library access is available for the remaining records. No paper is excluded merely because access is difficult.
 
-### Next continuation prompt
-Continue from the acquisition register and begin CHAT 02 only after the full-text corpus is stable. Extract only evidence supported by the authoritative full texts and use “Not reported” for missing fields.
+### Completion status
+COMPLETE. Canonical extraction: research/CHAT02_EVIDENCE_EXTRACTION.md.
+
+### Next phase
+CHAT 03 — Quality Assessment.
 
 ## CHAT 02 — Evidence Extraction Matrix
 
@@ -600,3 +603,7 @@ Do not restart CHAT 01. Do not begin detailed extraction yet. Follow research/PA
 The frozen primary baseline remains 40 studies: 36 journals + 4 peer-reviewed conferences (90% journals). A direct local/library verification found no retained P001–P040 PDFs in the mounted workspace or connected Library. The acquisition register's 26 “OBTAINED” entries represent legitimate full-text routes, not proof of local materialization. Fourteen records still require legitimate institutional/library access.
 
 **CHAT 02 rule:** do not infer or mark fields “Not reported” for inaccessible papers. Resume field-level extraction only after the authoritative full text is legitimately available. If extraction completes, the next phase is CHAT 03 — Quality Assessment.
+
+## Current checkpoint — 5 October 2026
+
+CHAT 02 COMPLETE. All 40 active studies have a canonical extraction record. The next phase is CHAT 03 quality assessment; it must use qualitative reporting categories and must not introduce a numerical quality score or alter the frozen baseline without evidence.
