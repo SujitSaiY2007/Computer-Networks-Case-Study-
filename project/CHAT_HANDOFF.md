@@ -46,11 +46,11 @@ This file is intentionally short enough to be the first context file opened, whi
 - Candidate correction: **1 survey removed; 1 verified journal primary study substituted**
 - Paper acquisition/archive: **ACCESS REGISTER COMPLETE — local PDF archiving remains a private/local responsibility where required**
 - CHAT 02 evidence extraction: **COMPLETE**
-- Quality assessment: **NOT FINAL**
-- Evidence taxonomy: **PROVISIONAL**
-- Research-gap agenda: **PROVISIONAL / DEVELOPED**
-- Experimental architecture: **PROPOSED, NOT FROZEN**
-- Prototype: **NOT STARTED**
+- Quality assessment: **COMPLETE**
+- Evidence taxonomy: **COMPLETE**
+- Research-gap agenda: **COMPLETE**
+- Experimental architecture: **COMPLETE / FROZEN IN CHAT 06**
+- Prototype: **CHAT 07 PARTIAL / BLOCKED PENDING NATIVE LINUX VALIDATION**
 - Experiments: **NOT STARTED**
 - Review 2 PPT: **PLAN EXISTS, FINAL PPT NOT COMPLETE**
 - Manuscript: **NOT FINAL**
@@ -95,54 +95,38 @@ As needed:
 
 # Active Continuation Prompt
 
-> **CHAT 07 — PROTOTYPE IMPLEMENTATION / EXPERIMENTAL INFRASTRUCTURE**
+> **CHAT 07 — RESUME PROTOTYPE IMPLEMENTATION / EXPERIMENTAL INFRASTRUCTURE**
 >
-> Continue the BACSE203 Computer Networks Case Study from the latest committed main state.
+> Continue from the partially implemented CHAT 07 state on the latest committed `main`.
 >
-> CHAT 01, CHAT 02A, CHAT 02, CHAT 03, CHAT 04, CHAT 05 and CHAT 06 are COMPLETE.
->
-> The canonical primary-study baseline remains exactly **40 studies = 36 journal articles + 4 peer-reviewed conference papers = 90% journals**. Do not add, remove, replace or re-screen any primary study. P021 and P031 remain unchanged.
+> CHAT 01–06 remain COMPLETE. The canonical primary-study baseline remains exactly **40 studies = 36 journal articles + 4 peer-reviewed conference papers = 90% journals**. Do not add, remove, replace or re-screen any primary study. P021 and P031 remain unchanged.
 >
 > Read first:
-> 1. project/CHAT_HANDOFF.md
-> 2. README.md
-> 3. project/MASTER_EXECUTION_PLAN.md
-> 4. project/PROJECT_SCOPE_AND_RQS.md
-> 5. research/CHAT05_RESEARCH_GAP_CONSOLIDATION.md
-> 6. research/RESEARCH_GAPS_AND_FUTURE_AGENDA.md
-> 7. research/CHAT06_EXPERIMENTAL_ARCHITECTURE_AND_TESTBED.md
-> 8. research/RESEARCH_EVIDENCE_MATRIX.md
+> 1. `project/CHAT_HANDOFF.md`
+> 2. `README.md`
+> 3. `project/MASTER_EXECUTION_PLAN.md`
+> 4. `research/CHAT06_EXPERIMENTAL_ARCHITECTURE_AND_TESTBED.md`
+> 5. `research/CHAT07_IMPLEMENTATION_AND_VALIDATION.md`
 >
-> Implement only the architecture frozen in CHAT 06. Do not broaden scope.
+> CHAT 07 implementation files already exist under `prototype/`. Do not redesign the architecture.
 >
-> Primary implementation target:
-> - single-host Ubuntu 24.04 LTS baseline with the exact kernel package/version recorded in the environment manifest;
-> - native Docker containers;
-> - libbpf + bpftool + Clang/LLVM;
-> - syscall/process tracepoint telemetry;
-> - BPF ring-buffer transport with event sequence/loss accounting;
-> - deterministic feature aggregation;
-> - user-space Logistic Regression as the first ML path;
-> - staged observe/log/controlled-mitigation state machine;
-> - complete experiment manifest and reproducibility capture.
+> First run `prototype/preflight.sh` on the required Linux validation host. The previous execution environment was blocked because it lacked Docker, bpftool, libbpf development headers and a Clang BPF target.
 >
-> Treat kernel-local fixed-point Logistic Regression as a feasibility-gated implementation. Attempt it only after the user-space path and telemetry accounting are stable. If the verifier/load or equivalence gate fails, use the documented hybrid fallback; do not weaken safety or invent a result.
+> Then:
+> 1. validate/build/load the BPF telemetry;
+> 2. validate ring-buffer generated/submitted/consumed/reservation-failure/sequence-gap accounting;
+> 3. validate container → process → cgroup → BPF-event identity;
+> 4. run the Python unit tests and CI-equivalent tests;
+> 5. run the complete workload → BPF → ring-buffer → feature vector → user-space LR → decision → recorded-result smoke test;
+> 6. generate the reproducibility manifest;
+> 7. only after all preceding gates pass, attempt the fixed-point kernel-local LR feasibility gate;
+> 8. if the kernel-local gate fails, record exact verifier/load evidence and retain the user-space/hybrid fallback.
 >
-> CHAT 07 must produce infrastructure and validation checks, not final research conclusions. Do not run the final experiment matrix or claim measured superiority.
+> Do not run the final 10-repetition experiment matrix, distribution-shift study, final statistical tests, ablation study or superiority comparison in CHAT 07.
 >
-> Required completion:
-> 1. repository implementation structure created;
-> 2. environment/preflight script created;
-> 3. BPF telemetry loader and ring-buffer path implemented;
-> 4. event sequence/loss accounting implemented;
-> 5. feature pipeline and data schema implemented;
-> 6. user-space LR training/inference path implemented;
-> 7. staged policy state machine implemented in safe test mode;
-> 8. reproducibility manifest capture implemented;
-> 9. unit/integration/smoke tests pass;
-> 10. kernel-local feasibility gate either passes or is explicitly blocked with evidence and fallback retained;
-> 11. README, master plan and handoff updated;
-> 12. exact CHAT 08 continuation prompt prepared.
+> Update `research/CHAT07_IMPLEMENTATION_AND_VALIDATION.md`, `README.md`, `project/MASTER_EXECUTION_PLAN.md` and this handoff with exact validation evidence. Mark CHAT 07 **COMPLETE only if every completion criterion in the original CHAT 07 specification is actually satisfied**. Otherwise keep it BLOCKED/PARTIAL and state the exact remaining gate.
+>
+> If CHAT 07 becomes complete, prepare the exact CHAT 08 continuation prompt for controlled experiments. If it remains incomplete, prepare the next CHAT 07 continuation prompt instead.
 
 
 # Chat completion log
@@ -639,3 +623,34 @@ P021 → Takagaki & Mizutani (2025), DOI 10.1002/tee.70070. P031 → Rohliyanto 
 > 11. README, master plan and handoff updated;
 > 12. exact CHAT 08 continuation prompt prepared.
 
+
+
+---
+
+## CHAT 07 implementation checkpoint — 5 October 2026
+
+**Status: PARTIAL / BLOCKED — do not mark COMPLETE.**
+
+Implemented the minimum prototype infrastructure under `prototype/` and recorded the validation state in `research/CHAT07_IMPLEMENTATION_AND_VALIDATION.md`.
+
+### Implemented
+- preflight/environment capture;
+- BPF syscall/process telemetry source and libbpf loader;
+- ring-buffer event stream and accounting fields;
+- deterministic 1-second feature aggregation;
+- user-space Logistic Regression artifact/inference path;
+- staged safe-default policy state machine;
+- reproducibility manifest;
+- baseline configuration;
+- unit tests and GitHub Actions CI configuration.
+
+### Validation blocker
+The current execution host is not the frozen CHAT 06 environment: Docker and bpftool are absent, libbpf development headers are absent, and the installed Clang has no BPF target. Therefore native BPF load, ring-buffer integration, container identity integration and the full smoke path could not honestly be marked passed.
+
+The kernel-local LR feasibility gate was correctly **not attempted** because its prerequisites are not yet validated.
+
+### Scientific boundary
+No performance, detection, robustness, enforcement, superiority or novelty claim is made from CHAT 07 implementation work.
+
+### Next
+Resume CHAT 07 on the required Ubuntu 24.04 LTS / 6.8-series validation host and complete the blocked gates before starting CHAT 08.
