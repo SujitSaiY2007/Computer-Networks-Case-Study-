@@ -1,0 +1,48 @@
+from __future__ import annotations
+import argparse,os,socket,subprocess,time,tempfile
+from pathlib import Path
+
+def idle(duration): time.sleep(duration)
+def file_processing(duration,seed=0):
+    root=Path(tempfile.mkdtemp(prefix="chat07-files-"))
+    try:
+        end=time.monotonic()+duration; i=0
+        while time.monotonic()<end:
+            p=root/f"f-{seed}-{i%32}.dat"; p.write_bytes(b"chat07"*128); _=p.read_bytes()
+            if i%4==0: p.unlink(missing_ok=True)
+            i+=1
+    finally:
+        for p in root.glob("*"): p.unlink(missing_ok=True)
+        root.rmdir()
+def process_churn(duration):
+    end=time.monotonic()+duration
+    while time.monotonic()<end:
+        p=subprocess.Popen(["true"]); p.wait()
+def local_client_server(duration,port=39077):
+    end=time.monotonic()+duration; srv=socket.socket(); srv.setsockopt(socket.SOL_SOCKET,socket.SO_REUSEADDR,1)
+    srv.bind(("127.0.0.1",port)); srv.listen(16); srv.settimeout(.1)
+    try:
+        while time.monotonic()<end:
+            try:
+                c,_=srv.accept(); c.recv(64); c.sendall(b"ok"); c.close()
+            except TimeoutError: pass
+    finally: srv.close()
+def exec_burst(duration,count=100):
+    end=time.monotonic()+duration
+    while time.monotonic()<end:
+        for _ in range(count): subprocess.run(["true"],check=True)
+def abnormal_file_access(duration): file_processing(duration,seed=991)
+def local_connection_burst(duration,port=39078):
+    end=time.monotonic()+duration
+    while time.monotonic()<end:
+        try:
+            s=socket.create_connection(("127.0.0.1",port),timeout=.05); s.sendall(b"x"); s.close()
+        except OSError: pass
+WORKLOADS={"B1":idle,"B2":file_processing,"B3":process_churn,"B4":local_client_server,"A1":exec_burst,"A2":abnormal_file_access,"A3":local_connection_burst}
+def main():
+    ap=argparse.ArgumentParser(); ap.add_argument("workload",choices=sorted(WORKLOADS)); ap.add_argument("--duration",type=float,default=10); ap.add_argument("--seed",type=int,default=0)
+    args=ap.parse_args(); fn=WORKLOADS[args.workload]
+    if args.workload=="B2": fn(args.duration,args.seed)
+    else: fn(args.duration)
+    print({"workload_id":args.workload,"duration":args.duration,"seed":args.seed,"pid":os.getpid()})
+if __name__=="__main__": main()
