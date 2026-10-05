@@ -108,3 +108,26 @@ Several papers in the initial user-provided list contain incomplete or garbled n
 ## Workflow principle
 
 The objective is not to create a long chain of disconnected chats. It is to create **one continuous research process with versioned checkpoints**. Each chat owns one phase; each phase leaves behind evidence, files, decisions and a customized continuation prompt for the next phase. This makes the GitHub repository the project's durable memory and prevents context loss between chats.
+
+
+## Review 2 project status — 5 October 2026
+
+- Review 1 established the problem, motivation and literature directions.
+- CHAT 01 full-text verification/screening is **COMPLETE**.
+- The verified primary-study baseline is **40 studies: 36 journal articles + 4 peer-reviewed conference papers = 90% journals**.
+- One originally listed review article, *Extended Berkeley Packet Filter: An Application Perspective*, was removed from the primary set and retained as background/comparison literature.
+- It was replaced by the verified 2026 IEEE Transactions on Cloud Computing primary study *Container-Specific Service Mesh-Based System for Mitigating Lateral Movement Attacks* (DOI: 10.1109/TCC.2026.3657486).
+- CHAT 01 also corrected stale DOI/title metadata where authoritative records differed from the earlier working list.
+- The 40-study primary baseline is now the starting point for paper acquisition; detailed extraction and formal quality assessment remain downstream.
+
+### Current next chat
+
+**CHAT 02A — Paper Acquisition & Archive**
+
+The live prompt is stored in project/CHAT_HANDOFF.md. The mandatory acquisition protocol is stored in research/PAPER_ACQUISITION_AND_ARCHIVE.md.
+
+### Current phase sequence
+
+**01 Verification [COMPLETE] → 02A Paper Acquisition & Archive [NEXT] → 02 Extraction → 03 Quality Assessment → 04 Critical Synthesis/Taxonomy → 05 Evidence-Based Gaps → 06 Experimental Architecture → 07 Testbed/Instrumentation → 08 Prototype → 09 Experiments → 10 Results Analysis → 11 Review 2 PPT → 12 Manuscript → 13 Final Audit**
+
+CHAT 02A must not restart paper selection or begin detailed extraction. Its purpose is to establish a legitimate, auditable full-text corpus and access register for the already verified 40-study baseline.
