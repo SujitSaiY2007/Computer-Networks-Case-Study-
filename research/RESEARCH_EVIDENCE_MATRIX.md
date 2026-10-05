@@ -60,3 +60,26 @@
 ## Planned extraction fields for the final matrix
 
 For every finally included study, extract authors, year, venue/publisher, DOI/persistent identifier, publication status, cloud/container environment, eBPF hook type(s), telemetry granularity, feature representation, ML model, inference placement, dataset/workload, testbed, attack scenario, baselines, CPU overhead, memory overhead, detection metrics, latency, event loss/buffering behavior, enforcement mechanism, reproducibility artifacts, limitations, and reviewer quality notes.
+
+
+## CHAT 01 verification update — 5 October 2026
+
+The 45-study working matrix has now been screened against the frozen scope and bibliographic records. The old provisional 40-study list contained one non-primary review article: **Extended Berkeley Packet Filter: An Application Perspective** (IEEE Access, 2022, DOI 10.1109/ACCESS.2022.3226269). It is retained as background/comparison literature and is no longer counted as primary evidence.
+
+It was replaced by **Container-Specific Service Mesh-Based System for Mitigating Lateral Movement Attacks** (IEEE Transactions on Cloud Computing, 2026, DOI 10.1109/TCC.2026.3657486), a peer-reviewed journal primary study combining eBPF system-call telemetry, lightweight ML anomaly detection, container-specific online learning and isolation in Kubernetes/cloud-native microservices.
+
+### Verified primary baseline after CHAT 01
+
+- 40 retained primary studies.
+- 36 journal articles.
+- 4 peer-reviewed conference papers.
+- 90.0% journals.
+- 14 Core studies.
+- 26 Supporting/Adjacent studies.
+- 0 preprint-only studies retained.
+- 0 duplicate studies removed.
+- 0 retraction flags in the scholarly identifier audit.
+
+The detailed screening table, explicit change log, evidence-strength labels and next-stage boundary are in research/CHAT01_FULLTEXT_VERIFICATION.md.
+
+**Important:** this is a verified screening baseline, not yet the detailed extraction/quality-assessment matrix. Missing technical fields remain **NR** until the authoritative full texts are acquired and extracted.
