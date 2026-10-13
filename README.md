@@ -3,15 +3,16 @@
 ## Topic
 **eBPF-Assisted Machine Learning for Cloud-Native Runtime Security: Telemetry Overhead, Kernel Enforcement, and Detection Trade-offs**
 
-## Live status — 13 October 2026
+## Live status — 13 October 2026 (repository reconciliation)
 - **Review 1: COMPLETE**
 - **Review 2 presentation (Chat 12): COMPLETE**
 - **Chat 07 prototype implementation and native validation: COMPLETE**
-- **Next: Chat 08 — Controlled Experiments Execution**
-- Current working branch: `feat/chat07-native-validation`
+- **Chat 08: execution reported in chat; artifacts/commit not yet verified on `main`**
+- **Next: Chat 09 — repository recovery gate, then empirical analysis**
+- **Canonical working branch: `main` only**
 - Chat 07 validation commit: [`66512d8efdf5e16a8a8e9c3edd65534681b3bbfd`](https://github.com/SujitSaiY2007/Computer-Networks-Case-Study-/commit/66512d8efdf5e16a8a8e9c3edd65534681b3bbfd)
 
-**Read first:** [Active Chat Handoff](project/CHAT_HANDOFF.md) and [Authoritative Status Correction](project/STATUS_CORRECTION_2026-10-13.md). The status correction supersedes conflicting phase/status statements in older roadmap sections and historical records. Do not merge to `main` or modify unrelated branches without explicit authorization.
+**Read first:** [Active Chat Handoff](project/CHAT_HANDOFF.md) and [Authoritative Status Correction](project/STATUS_CORRECTION_2026-10-13.md). The status correction supersedes conflicting phase/status statements in older roadmap sections and historical records. All remaining work must be committed directly to `main`. Preserve historical branches; do not force-push or rewrite history.
 
 ## Frozen evidence counts
 - **Primary-study baseline:** 40 studies = 36 journal articles + 4 peer-reviewed conference papers = 90% journals.
@@ -62,3 +63,10 @@ The defensible contribution is the intersection of **eBPF telemetry, ML runtime 
 - Report experimental repetitions, denominators, variability, event loss, failures, and deviations.
 - Keep raw outputs immutable and derive summaries reproducibly.
 - Store metadata, DOI/official links, acquisition status, and verification notes in the public repository; do not commit unauthorized copyrighted PDFs.
+
+
+## Chat 08 repository verification gate
+
+The supplied Chat 08 summary claims 350 controlled runs and commit abbreviation `5732f2f`, but that commit could not be resolved through GitHub and the claimed report/processed CSVs were not found on `main` during reconciliation. The summary is not a substitute for committed evidence. Follow [the reconciliation protocol](project/CHAT08_REPOSITORY_RECONCILIATION.md) before treating Chat 08 as verified or publishing quantitative conclusions. This does not establish that local work is lost; it establishes that local-to-remote synchronization must be checked. Do not rerun the full matrix before inspecting local Git history and artifacts.
+
+**Single-branch rule:** canonical branch is `main`; all future project changes must be committed and pushed directly to `main`. At each handoff verify full local and remote HEAD SHAs, working-tree status, and the presence of required artifact paths. Keep raw data immutable and preserve historical branches/files.
