@@ -14,13 +14,14 @@ Read this handoff first, then the status correction, master execution plan, and 
 - Review 2 reference corpus: **50 references = 40 primary studies + 10 supporting/background references**
 - Chats 01–06: **COMPLETE**
 - Chat 07 prototype and native validation gates A–G: **COMPLETE**
-- Chat 08 controlled experiments: **REPORTED COMPLETE IN CHAT, NOT YET VERIFIED/SYNCHRONIZED ON MAIN**
+- Chat 08 controlled experiments: **REPORTED IN CHAT; RAW EVIDENCE AND RESULTS NOT YET VERIFIED ON MAIN**
+- Chat 09: **ACTIVE — remote audit recorded; local artifact recovery gate NOT PASSED**
 - Manuscript and final audit/submission package: **PENDING**
 - Canonical working branch: `main` (all future work must be committed here)
 - Chat 07 implementation commit: `66512d8efdf5e16a8a8e9c3edd65534681b3bbfd`
 - Do not use feature branches for future project work. Preserve historical branches; do not delete branches or rewrite history.
 
-## Read before Chat 08
+## Read before Chat 09
 1. `project/STATUS_CORRECTION_2026-10-13.md` — authoritative corrected state, caveats, and experiment integrity gates.
 2. `project/MASTER_EXECUTION_PLAN.md` — durable roadmap and phase background; use the correction document to resolve stale entries.
 3. `project/PROJECT_SCOPE_AND_RQS.md`
@@ -37,50 +38,18 @@ Audit the manifest's `git_sha`: the Chat 07 report indicates it may record pre-C
 
 # Active Continuation Prompt
 
-> **CHAT 08 — CONTROLLED EXPERIMENTS EXECUTION**
+> **CHAT 09 — REPOSITORY RECOVERY, RESULTS VERIFICATION & EMPIRICAL SYNTHESIS**
 >
-> Continue the BACSE203 project from the latest committed branch `feat/chat07-native-validation`. First read `project/CHAT_HANDOFF.md`, `project/STATUS_CORRECTION_2026-10-13.md`, `project/MASTER_EXECUTION_PLAN.md`, `research/CHAT06_EXPERIMENTAL_ARCHITECTURE_AND_TESTBED.md`, and `research/CHAT07_IMPLEMENTATION_AND_VALIDATION.md`. Inspect the actual repository state before modifying anything. Preserve existing work, branches, raw evidence, and the frozen research scope.
+> Work directly on `main` only. First read `project/CHAT_HANDOFF.md`, `project/CHAT08_REPOSITORY_RECONCILIATION.md`, `project/STATUS_CORRECTION_2026-10-13.md`, `project/MASTER_EXECUTION_PLAN.md`, `README.md`, `project/PROJECT_SCOPE_AND_RQS.md`, `research/CHAT06_EXPERIMENTAL_ARCHITECTURE_AND_TESTBED.md`, `research/CHAT07_IMPLEMENTATION_AND_VALIDATION.md`, and `research/CHAT09_REPOSITORY_AND_EVIDENCE_AUDIT.md`.
 >
-> Review 1 and Review 2 are COMPLETE. Chats 01–07 are COMPLETE. Do not schedule Review 2 again, restart completed phases, or change the frozen literature corpus. Preserve both distinct counts: 40 primary studies (36 journals + 4 peer-reviewed conferences) and 50 Review 2 references (40 primary + 10 supporting/background).
+> The remote audit observed `main` at `a8d93943d2a1a7fa01a8ff78e3f4c95a1ed858d3` before the audit record was committed. The Chat 08 report and `experiments/` directory were absent from the inspected remote tree. The claimed short SHA `5732f2f` has not been resolved. This does not prove the work is missing locally.
 >
-> Execute controlled experiments using the frozen Chat 06 architecture and validated Chat 07 prototype:
-> - A — baseline, no instrumentation
-> - B — eBPF telemetry only
-> - C — eBPF + user-space Logistic Regression
-> - D — eBPF + kernel-local fixed-point Logistic Regression
-> - E — eBPF + ML + staged controlled enforcement
+> **Stage A — recovery first:** AG/Antigravity must inspect the existing local checkout, local-only branches/commits, reflog, ignored/untracked files, and its workspace without destructive operations. Return actual outputs for the commands listed in `project/CHAT08_REPOSITORY_RECONCILIATION.md`. Do not reset, clean, rebase, force-push, rewrite history, or immediately rerun the 350-run matrix.
 >
-> Exercise normal workloads B1–B4 and anomaly workloads A1–A3 using the workload definitions in the canonical architecture. Run 10 repetitions per applicable configuration/workload cell unless the frozen specification explicitly says otherwise. Document deviations, failed runs, exclusions, and unsupported paths; never silently discard failures.
+> **Stage B — evidence verification:** if artifacts are found, preserve raw records exactly and audit provenance, schema, IDs, configuration/workload/repetition coverage, seeds, failures/exclusions, metric labels and denominators, timing boundaries, and the ability to regenerate CSVs/plots. Resolve the full SHA if the reported short SHA corresponds to a real commit. If artifacts cannot be recovered, document exact searches and gaps; do not fabricate data.
 >
-> Measure applicable CPU/memory overhead, workload throughput, telemetry throughput, event loss, inference latency, detection latency, mitigation latency, and legitimate-operation impact. Preserve raw outputs, configuration/environment manifests, seeds, commands, and per-run records under `experiments/`. Derive processed tables and plots reproducibly from raw data.
+> **Stage C — empirical synthesis only after the recovery gate passes:** independently recompute all claimed results from verified raw records, report distributions and uncertainty where justified, distinguish measured results from literature findings and interpretation, and state workload-specific limitations. In particular, do not generalize B3 false alarms into proof of concept drift or A3 failure into universal zero-day evasion.
 >
-> Before experiments, audit the Chat 07 manifest's `git_sha` and verify whether it is stale; correct the generation/provenance record or document why the value is intentional. Do not rewrite historical evidence silently.
+> **Stage D — deliverables and closure:** update the Chat 08 report, Chat 09 analysis report, reproducible analysis scripts/tables/figures, manuscript-ready Results and Discussion, limitations/validity threats, README, handoff, status correction, and master plan as supported by evidence. Commit and push directly to `main`; verify exact remote SHA, paths, and clean working tree. Do not declare empirical synthesis complete if the evidence gate fails.
 >
-> Apply strict experimental integrity: no fabricated data; no train/test leakage; comparable baselines; transparent denominators and repetitions; variability and failures reported; no superiority claims unless directly supported by the measured results. Distinguish feasibility from comparative performance and production readiness.
->
-> At completion, validate experiment completeness, update the experiment report and the README, handoff, master plan/status correction, and commit the work on the existing feature/work branch without merging to `main`. Report exact branch and commit SHA, commands/tests run, measured outcomes, deviations, unresolved limitations, and set the next continuation prompt to **Chat 09 — Results Analysis**.
-
-## Chat closure log
-- **Chat 07 — Prototype Implementation & Native Validation:** COMPLETE; evidence report at `research/CHAT07_IMPLEMENTATION_AND_VALIDATION.md`; commit `66512d8efdf5e16a8a8e9c3edd65534681b3bbfd`.
-- **Chat 08:** NEXT — Controlled Experiments Execution.
-
-Historical phase details remain in `project/MASTER_EXECUTION_PLAN.md`; status conflicts are superseded by `project/STATUS_CORRECTION_2026-10-13.md`.
-
-
-## Critical repository reconciliation — read before any Chat 09 work
-
-The Chat 08 summary reported commit abbreviation `5732f2f` and 350 runs, but GitHub could not resolve that SHA and the claimed Chat 08 report/processed data were not found on `main` during reconciliation. This is not proof the work never ran; it is proof that the supplied summary alone is not a repository-verifiable handoff. Read `project/STATUS_CORRECTION_2026-10-13.md` and `project/CHAT08_REPOSITORY_RECONCILIATION.md` first. Do not rerun 350 experiments until local workspace and Git history have been inspected. Do not begin definitive statistical claims until raw artifacts are recovered and independently checked.
-
-## Active continuation prompt — CHAT 09 (recovery gate first)
-
-> Work exclusively on canonical branch `main` in the repository `SujitSaiY2007/Computer-Networks-Case-Study-`. Start by recording local branch, full HEAD SHA, `origin/main` SHA, and working-tree status. Read `project/STATUS_CORRECTION_2026-10-13.md`, `project/CHAT08_REPOSITORY_RECONCILIATION.md`, this handoff, `project/MASTER_EXECUTION_PLAN.md`, Chat 06/07 reports, and the Chat 08 files if present.
->
-> **Stage 1 — AG/Antigravity recovery and synchronization:** inspect local branches, reflog, untracked/ignored files, and AG workspace for the reported Chat 08 commit and outputs. Recover existing work without destructive commands. Resolve the full SHA, compare local and remote history, validate all raw records and derived summaries, then commit/push the recovered Chat 08 artifacts directly to `main`. Do not rerun experiments unless evidence proves a run is absent or invalid and the protocol authorizes a documented rerun. Never fabricate data. Verify the full remote SHA and exact artifact paths on GitHub.
->
-> **Stage 2 — ChatGPT empirical analysis:** only after Stage 1 passes, independently recompute metrics from immutable raw records; audit coverage and denominators across configurations A–E, workloads B1–B4/A1–A3, and repetitions; report mean, dispersion, confidence intervals where justified, effect sizes, and per-cell caveats. Verify latency definitions and claimed ~40x comparison, overhead, telemetry loss, F1/precision/recall/FPR, mitigation/rollback and legitimate-operation impact. Do not treat repeated runs of the same workload as independent new threat classes. Explain the B3 false-alarm limitation and A3 zero-shot miss without overclaiming general concept drift. Connect evidence to frozen RQs and the 40 primary studies, keeping measured results separate from literature synthesis and interpretation.
->
-> **Stage 3 — deliverables:** produce a reproducible results report, publication-ready tables/figures generated from scripts, limitations/validity discussion, and manuscript-ready results/discussion text. Update README, handoff, status correction, and master plan. Preserve the frozen baseline of 40 primary studies (36 journals + 4 peer-reviewed conferences) and 50 Review 2 references (40 primary + 10 supporting/background). Review 1/2 remain complete.
->
-> **Roles:** AG executes shell/Git commands, inspects local files, restores/synchronizes artifacts, runs validation scripts, regenerates derived summaries/plots, and commits/pushes to `main`. ChatGPT directs the audit, checks methodological validity, independently reviews calculations and claims, synthesizes results, and checks final docs/diffs. AG must return command outputs, full SHAs, changed paths, tests and any errors; ChatGPT must not claim execution it did not observe. If an essential artifact is missing, stop and report the exact gap rather than guessing.
->
-> **Single-branch guardrail:** all work on `main`; no feature branches, force-push, reset, rebase, history rewrite, or deletion of historical files/branches. Before closing, verify clean status, local/remote SHA equality, exact GitHub artifact URLs, and provide the next phase prompt for Chat 10 manuscript development only after Chat 09 analysis is complete.
+> **Role split:** AG runs local Git/shell commands, recovers files, executes tests and analysis, regenerates derived artifacts, and commits/pushes to `main`. ChatGPT directs and audits methodology, inspects accessible evidence, checks calculations and claims, and synthesizes only verified results. Neither may claim an execution or artifact it has not actually verified.
