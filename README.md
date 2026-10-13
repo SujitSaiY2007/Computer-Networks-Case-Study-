@@ -26,16 +26,14 @@
 Review 2 is already complete; do not schedule it as a future phase.
 
 ## Chat 09 evidence gate & empirical synthesis
-The Chat 09 recovery gate has **PASSED**. The original Chat 08 commit `5732f2f7f3d65d1eb0abb475895cd27805d18320` and all 350 raw runs (`experiments/raw/run_*.json`), environment manifests, calibration models, processing scripts, summary CSVs, and plots were recovered from local Git and restored directly to `main`. 
+The Chat 09 recovery gate and scientific integrity audit have **PASSED**. The original Chat 08 commit `5732f2f7f3d65d1eb0abb475895cd27805d18320` and all 350 raw runs (`experiments/raw/run_*.json`) were recovered from local Git and restored directly to `main`. 
 
-All 350 runs across the 35-cell matrix were independently audited and recomputed:
-- **Application Slowdown:** $<0.20\%$ across all instrumented configurations.
-- **Memory Footprint:** Peak RSS overhead $\le 0.55$ MB above baseline.
-- **Ring Buffer Drops:** Exactly $0.0000\%$ event loss across $77,598$ security events.
-- **Placement Speedup:** In-kernel fixed-point LR achieved a **39.84x mean speedup** ($4.25\ \mu\text{s}$ vs $169.20\ \mu\text{s}$) and **18.44x detection latency reduction** ($0.085$ ms vs $1.567$ ms, $p < 10^{-11}$).
-- **Enforcement & Safety:** Mitigation latency of $1.17$ ms with $100\%$ rollback success ($16\ \mu\text{s}$).
-- **Detection & Confounding:** Process execution burst $F_1 = 0.824$; benign process churn ($B3$) exhibited a $50\%$–$80\%$ false alarm rate due to linear feature confounding (proving Gap 2); zero recall on held-out connection burst ($A3$).
-- **Deliverables:** Reconstructed `research/CHAT08_CONTROLLED_EXPERIMENTS_EXECUTION.md`, `research/CHAT09_RESULTS_ANALYSIS_AND_EMPIRICAL_SYNTHESIS.md`, `research/CHAT09_MANUSCRIPT_RESULTS_AND_DISCUSSION.md`, and `research/CHAT09_LIMITATIONS_AND_VALIDITY_THREATS.md`.
+Following a comprehensive scientific integrity audit (`research/CHAT09_SCIENTIFIC_INTEGRITY_CORRECTION.md`), all empirical claims are rigorously classified:
+- **Verified Direct Measurements:** Workload execution slowdown $<0.20\%$ (one-way ANOVA $F=0.0264, p=0.9987$, confirming overhead is indistinguishable from baseline noise); peak host RSS overhead $\le 0.55$ MB; ring buffer event loss is strictly **$0.0000\%$** across $16,001$ generated events in 280 instrumented runs; detection performance on Docker bursts ($A1$ F1 = 0.824, Recall = 0.700; $B3$ benign churn FPR = 50%–80% proving feature confounding; $A3$ Recall = 0.000).
+- **Fixed-Point Arithmetic Benchmark:** Config D inference latency ($4.19\ \mu\text{s}$ vs $169.20\ \mu\text{s}$, $40.42$x speedup, Wilcoxon $W=0.0, p < 10^{-12}$) measures Python Q16.16 integer arithmetic vs Python float scikit-learn, serving as the algorithmic feasibility baseline for Gate G in-kernel BPF execution.
+- **Formula-Derived Estimates:** End-to-end detection latencies ($1.57$ ms vs $0.08$ ms) are additive architectural estimates incorporating measured inference/aggregation plus assumed transport queuing constants, not a single hardware clock timer.
+- **Simulated Policy Workflow:** Mitigation latency ($1.17$ ms) and rollback ($15\ \mu\text{s}$) measure in-memory policy state transitions with synthetic verification sleep; kernel-level cgroup v2 freezes remain simulated.
+- **Reproducibility & Verification Deliverables:** `experiments/scripts/validate_matrix.py`, `experiments/scripts/statistical_analysis.py`, `research/CHAT08_CONTROLLED_EXPERIMENTS_EXECUTION.md`, `research/CHAT09_SCIENTIFIC_INTEGRITY_CORRECTION.md`, `research/CHAT09_RESULTS_ANALYSIS_AND_EMPIRICAL_SYNTHESIS.md`, `research/CHAT09_MANUSCRIPT_RESULTS_AND_DISCUSSION.md`, and `research/CHAT09_LIMITATIONS_AND_VALIDITY_THREATS.md`.
 
 ## Chat 07 evidence
 The detailed report is `research/CHAT07_IMPLEMENTATION_AND_VALIDATION.md`. It records gates A–G: native BPF compile/load, ring-buffer transport/accounting, container identity correlation, unit tests, end-to-end telemetry-to-ML smoke pipeline, reproducibility manifest, and fixed-point kernel-local Logistic Regression feasibility.

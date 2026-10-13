@@ -90,14 +90,25 @@ At the beginning and end of every future chat, record: canonical branch (`main`)
 ## Chat 09 recovery outcome and verification — 13 October 2026
 The Chat 09 recovery gate has **PASSED**. The original Chat 08 commit was resolved to `5732f2f7f3d65d1eb0abb475895cd27805d18320` from the local Git reflog/history. All 350 raw runs (`experiments/raw/run_*.json`), environment manifests, calibration models, processing scripts, summary CSVs, and plots were recovered and placed directly onto `main`.
 
-Independent recomputation verified:
-- Application slowdown $<0.20\%$ across all instrumented configurations.
-- Peak host RSS overhead $\le 0.55$ MB above baseline.
-- $0.0000\%$ event loss across $77,598$ security events.
-- In-kernel fixed-point LR achieved a $39.84$x mean speedup ($4.25\ \mu\text{s}$ vs $169.20\ \mu\text{s}$) and $18.44$x detection latency reduction ($0.085$ ms vs $1.567$ ms, $p < 10^{-11}$).
-- Staged mitigation latency of $1.17$ ms with $100\%$ rollback recovery success ($16\ \mu\text{s}$).
-- Process execution burst $F_1 = 0.824$; benign process churn ($B3$) exhibited a $50\%$–$80\%$ false positive rate (confirming feature confounding and literature Gap 2); held-out connection burst ($A3$) recall was $0.000$.
-- All four unit tests passed in the WSL2 testbed (`6.6.87.2-microsoft-standard-WSL2`).
-- Generated deliverables: `research/CHAT08_CONTROLLED_EXPERIMENTS_EXECUTION.md`, `research/CHAT09_RESULTS_ANALYSIS_AND_EMPIRICAL_SYNTHESIS.md`, `research/CHAT09_MANUSCRIPT_RESULTS_AND_DISCUSSION.md`, and `research/CHAT09_LIMITATIONS_AND_VALIDITY_THREATS.md`.
+### Chat 09 Scientific Integrity Audit & Measurement Characterization
+Following a line-by-line inspection of prototype code, runner scripts, and raw JSON records (documented in `research/CHAT09_SCIENTIFIC_INTEGRITY_CORRECTION.md`):
+1. **System Overhead & Event Loss (VERIFIED DIRECT MEASUREMENTS):**
+   - Application slowdown $<0.20\%$ across all instrumented configurations (one-way ANOVA $F = 0.0264, p = 0.9987$, confirming overhead is indistinguishable from background OS noise).
+   - Peak host RSS overhead $\le 0.55$ MB above baseline.
+   - Ring buffer loss rate is strictly **$0.0000\%$** ($0$ drops across $16,001$ generated events in 280 instrumented runs).
+2. **Fixed-Point Arithmetic Benchmark (RELABELLED):**
+   - Config D inference latency ($4.19\ \mu\text{s}$ vs $169.20\ \mu\text{s}$, $40.42$x speedup, Wilcoxon $W = 0.0, p < 10^{-12}$) measures Python Q16.16 integer arithmetic vs Python float scikit-learn. Gate G verified the in-kernel verifier pass of Q16.16 arithmetic, but matrix runs benchmarked the arithmetic speedup in software.
+3. **Detection Latency (RELABELLED AS FORMULA ESTIMATE):**
+   - Detection latencies ($1.57$ ms vs $0.08$ ms) are additive architectural estimates incorporating measured inference/aggregation plus assumed transport queuing constants, not a single hardware clock timer.
+4. **Staged Policy Mitigation & Rollback (RELABELLED AS SIMULATION):**
+   - Mitigation latency ($1.17$ ms) and rollback ($15\ \mu\text{s}$) represent simulated policy engine state transitions with a synthetic 1 ms verification delay; operating-system cgroup v2 freezes remain simulated.
+5. **Detection Performance & Feature Confounding (VERIFIED DEFICIT):**
+   - Process burst $A1$: $F_1 = 0.824$, Recall $= 0.700$.
+   - Benign churn $B3$: $50\%$–$80\%$ false positive rate, empirically proving feature confounding in linear models on developer build workloads (Literature Gap 2).
+   - Held-out connection burst $A3$: Recall $= 0.000$, demonstrating single-modality classifier blindspots.
+6. **Audit Deliverables & Scripts:**
+   - `experiments/scripts/validate_matrix.py` (validates 350-run matrix schema, uniqueness, and event accounting).
+   - `experiments/scripts/statistical_analysis.py` (executes Wilcoxon, paired t-test, Cohen's d, and ANOVA).
+   - `research/CHAT09_SCIENTIFIC_INTEGRITY_CORRECTION.md` (complete claim-to-code audit table and corrected findings).
 
 All new work remains directly on `main`. Frozen literature counts remain 40 primary studies (36 journals + 4 peer-reviewed conference papers) and 50 Review 2 references (40 primary + 10 supporting/background). Review 1 and Review 2 remain complete.

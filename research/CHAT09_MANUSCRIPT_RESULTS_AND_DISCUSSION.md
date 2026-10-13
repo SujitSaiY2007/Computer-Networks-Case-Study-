@@ -17,10 +17,10 @@ To address the five research questions formulated for cloud-native runtime secur
 
 The five evaluated architectural configurations represent distinct operational paradigms along the telemetry-to-enforcement pipeline:
 1. **Configuration A (Uninstrumented Baseline):** Clean container execution without eBPF probes or user-space daemon overhead, providing the reference measurement for application throughput and host resource utilization.
-2. **Configuration B (Telemetry Only):** Kernel-space telemetry extraction via raw tracepoints (`sys_enter_execve`, `sys_enter_connect`, `sys_enter_openat`, `sys_enter_kill`), ring buffer transport, and user-space aggregation daemon, measuring pure observability overhead.
+2. **Configuration B (Telemetry Only):** Kernel-space telemetry extraction via raw tracepoints (`sys_enter_execve`, `sys_enter_connect`, `sys_enter_openat`, `sys_enter_unlinkat`), ring buffer transport, and user-space aggregation daemon, measuring pure observability overhead.
 3. **Configuration C (User-Space Inference):** Telemetry pipeline coupled with user-space floating-point Logistic Regression inference operating over 1-second rolling feature windows.
-4. **Configuration D (Kernel-Local Inference):** Telemetry coupled with kernel-local fixed-point (Q16.16) Logistic Regression evaluated synchronously within the eBPF tracepoint handler via in-kernel feature maps.
-5. **Configuration E (Closed-Loop Enforcement):** Full pipeline integrating detection inference with a three-stage mitigation state machine (`OBSERVE` $\to$ `CONTAIN` via network isolation and SIGSTOP $\to$ `TERMINATE` or `ROLLBACK` via SIGCONT and network restoration).
+4. **Configuration D (Fixed-Point Arithmetic Feasibility Baseline):** Telemetry coupled with fixed-point (Q16.16) integer Logistic Regression evaluating the arithmetic efficiency required for kernel BPF verifier compliance.
+5. **Configuration E (Closed-Loop Policy Enforcement Simulation):** Full pipeline integrating detection inference with a three-stage mitigation policy state machine (`OBSERVE` $\to$ `CONTAIN` $\to$ `ROLLBACK`).
 
 ### 1.2 Evaluation Boundaries and Environmental Grounding
 Experiments were conducted on a pinned Linux x86_64 environment running kernel `6.6.87.2-microsoft-standard-WSL2` with Clang/LLVM 18.1.3, libbpf 1.3.0, bpftool 7.4.0, and Python 3.12.3. All workloads were executed within isolated Docker containers constrained to dedicated CPU cores (`cpuset-cpus="2-3"`) and memory limits (`memory="512m"`).
@@ -80,43 +80,38 @@ Zero event loss was sustained across all burst workloads ($B3, B4, A1, A2, A3$).
 
 ---
 
-## 3. Quantitative Results: Inference Placement and Latency Dynamics (RQ1, RQ4)
+## 3. Quantitative Results: Inference Arithmetic Benchmark and Latency Dynamics (RQ1, RQ4)
 
-### 3.1 Inference Latency: User-Space Floating-Point vs. In-Kernel Fixed-Point
-To resolve the core architectural question concerning ML inference placement (RQ1), we benchmarked the inference execution latency of identical mathematical models implemented in user-space versus the kernel BPF verifier boundary. Both models utilize a four-feature linear logistic regression architecture:
+### 3.1 Inference Latency: Floating-Point vs. Q16.16 Fixed-Point Arithmetic
+To evaluate the mathematical feasibility of in-kernel BPF inference (RQ1), we benchmarked the execution time of identical classification logic implemented in 64-bit floating-point arithmetic (Configuration C, scikit-learn standard) versus 32-bit Q16.16 fixed-point integer arithmetic (Configuration D, representing the verifier-compliant representation validated in Gate G). Both models compute a linear logistic decision boundary:
 
-$$z = w_0 + \sum_{i=1}^4 w_i x_i, \quad \hat{y} = \sigma(z) = \frac{1}{1 + e^{-z}}$$
+$$z = w_0 + \sum_{i=1}^4 w_i x_i, \quad \hat{y} = \mathbb{I}(z \ge 0)$$
 
-In user space (Configuration C), inference is executed via Python 3.12 standard 64-bit IEEE-754 floating-point operations. In kernel space (Configuration D), inference is executed using 32-bit Q16.16 fixed-point arithmetic verified under standard BPF verifier complexity bounds (Gate G proof: maximum relative error $< 0.01\%$).
+In our controlled experimental matrix, both routines were timed in Python under identical thread scheduling conditions. Table 2 details the resulting arithmetic latency distributions across the 70 matched runs per configuration.
 
-Table 2 presents the empirical latency distributions across 70 completed runs per configuration.
+**Table 2: Inference Arithmetic Benchmark and Estimated Detection Latency Profiles**
 
-**Table 2: Inference and Detection Latency Profiles**
+| Metric | Configuration C (Float LR) | Configuration D (Fixed-Point LR) | Unit | Speedup / Ratio | Methodological Basis |
+| :--- | :---: | :---: | :---: | :---: | :--- |
+| **Mean Inference Latency** | $169.20 \pm 488.64$ | $4.19 \pm 3.23$ | $\mu\text{s}$ | **40.42x** | Direct timing (`time.perf_counter_ns`) |
+| **Median Inference Latency** | $76.24$ | $3.63$ | $\mu\text{s}$ | **21.03x** | Direct timing (non-parametric median) |
+| **Interquartile Range (IQR)** | $42.68$ | $1.47$ | $\mu\text{s}$ | — | Non-parametric spread |
+| **Mean Estimated Detection Latency** | $1.567 \pm 1.152$ | $0.083 \pm 0.011$ | ms | **18.88x** | Formula estimate (inference + transport model) |
+| **Median Estimated Detection Latency**| $1.362$ | $0.084$ | ms | **16.21x** | Formula estimate |
 
-| Metric | Configuration C (User-Space) | Configuration D (Kernel-Local) | Unit | Speedup / Ratio |
-| :--- | :---: | :---: | :---: | :---: |
-| **Mean Inference Latency** | $169.20 \pm 154.51$ | $4.25 \pm 1.63$ | $\mu\text{s}$ | **39.84x (~40x)** |
-| **Median Inference Latency** | $76.24$ | $3.63$ | $\mu\text{s}$ | **21.00x** |
-| **Interquartile Range (IQR)** | $42.68$ | $1.48$ | $\mu\text{s}$ | — |
-| **95th Percentile ($p_{95}$)** | $444.79$ | $6.08$ | $\mu\text{s}$ | **73.16x** |
-| **Mean End-to-End Latency ($T_5 - T_0$)** | $1567.0$ ($1.567$ ms) | $85.0$ ($0.085$ ms) | $\mu\text{s}$ | **18.44x** |
-| **Median End-to-End Latency** | $1532.0$ | $82.0$ | $\mu\text{s}$ | **18.68x** |
+As shown in Table 2, fixed-point integer arithmetic provides a **40.42x mean arithmetic speedup** ($4.19\ \mu\text{s}$ vs $169.20\ \mu\text{s}$, Wilcoxon $W = 0.0, p = 3.56 \times 10^{-13}$) and a **21.03x median speedup**. This verifies that fixed-point logic eliminates the computational overhead of floating-point emulation, providing a crucial feasibility baseline for in-kernel execution.
 
-As demonstrated in Table 2, moving the inference decision directly into the eBPF tracepoint handler achieves a **39.84x mean speedup** (reducing mean inference time from $169.20\ \mu\text{s}$ to $4.25\ \mu\text{s}$) and a **21.0x median speedup**. At the tail distribution ($p_{95}$), the kernel-local model provides a **73.16x latency reduction** ($6.08\ \mu\text{s}$ versus $444.79\ \mu\text{s}$), completely eliminating Python user-space garbage collection and operating system scheduling jitter.
+### 3.2 Detection and Enforcement Latency Boundaries
+In cloud-native intrusion defense, the total detection interval encompasses telemetry transport, feature aggregation, and inference. In our experimental harness, detection latency is modeled via additive architectural formulas:
+- **Configuration C Estimated Detection:** Incorporates measured feature aggregation ($146.6\ \mu\text{s}$), inference latency, and an assumed user-space queuing delay ($+1.2$ ms), yielding a mean estimate of **$1.567$ ms**.
+- **Configuration D Estimated Detection:** Models immediate in-kernel evaluation with an assumed tracepoint dispatch delay ($+0.08$ ms), yielding a mean estimate of **$0.083$ ms** ($83\ \mu\text{s}$).
 
-### 3.2 End-to-End Detection and Containment Response Latency
-In cloud-native intrusion defense, the critical operational window is the total elapsed time from the occurrence of an adversarial kernel event ($T_0$) to active workload containment ($T_7$).
+Under Configuration E, upon anomaly trigger, the policy state machine executed simulated mitigation:
+- **Simulated Containment Latency ($T_7 - T_6$):** Mean $= 1.172 \pm 0.077$ ms (Median: $1.155$ ms, $n = 17$ containment events, including simulated verification delay).
+- **Simulated Total Detection-to-Mitigation ($T_7 - T_0$):** Mean $= 2.584 \pm 0.113$ ms (Median: $2.603$ ms).
+- **Policy Rollback Latency:** Mean $= 14.95\ \mu\text{s}$ with **100.0%** state restoration success.
 
-Under Configuration D, the total end-to-end detection latency ($T_5 - T_0$, incorporating tracepoint firing, in-kernel feature extraction, Q16.16 inference, and threshold evaluation) averaged **$85.0\ \mu\text{s}$** ($0.085$ ms), compared to **$1567.0\ \mu\text{s}$** ($1.567$ ms) in user-space Configuration C. This represents an **18.44x reduction** in detection delay.
-
-Under Configuration E, upon anomaly trigger, the staged mitigation state machine executed container containment via cgroup v2 freeze and iptables/tc isolation:
-- **Containment Action Latency ($T_7 - T_6$):** Mean $= 1.172 \pm 0.054$ ms (Median: $1.155$ ms, IQR: $0.096$ ms, $n = 17$ containment events).
-- **Total Detection-to-Mitigation Latency ($T_7 - T_0$):** Mean $= 2.584 \pm 0.071$ ms (Median: $2.603$ ms, IQR: $0.119$ ms).
-
-### 3.3 Safe Rollback Recovery Latency
-When a containment action was identified as a false trigger, or upon administrative policy reversal, the rollback state machine executed container thawing (SIGCONT) and policy restoration:
-- **Rollback Latency ($T_8 - T_7$):** Mean $= 16.0 \pm 0.0\ \mu\text{s}$ ($0.016$ ms).
-- **Rollback Success Rate:** **100.0%** ($17 / 17$ verified rollback executions returned container to functional state with zero unhandled zombie or orphaned processes).
+*Academic Boundary:* While these measurements rigorously benchmark the decision-making latency of the policy state machine, actual operating system cgroup isolation was simulated rather than kernel-enforced.
 
 ---
 
@@ -200,12 +195,13 @@ To maintain absolute academic integrity, Table 4 delineates what this experiment
 
 | Architectural Claim | Status | Empirical Grounding | Boundary / Limitation |
 | :--- | :---: | :--- | :--- |
-| **In-Kernel LR Speedup** | **VERIFIED** | $39.84$x mean speedup ($4.25\ \mu\text{s}$ vs $169.20\ \mu\text{s}$, $p < 10^{-11}$). | Limited to 4-feature fixed-point linear model. |
-| **Telemetry CPU Overhead** | **VERIFIED** | Application slowdown $< 0.20\%$ across 280 runs. | Single-host WSL2/Docker testbed; max 500 req/s. |
-| **Ring Buffer Zero Loss** | **VERIFIED** | $0$ drops across $77,598$ events in 280 runs. | 256 KB ring buffer; burst duration $\le 10$ s. |
-| **Enforcement Latency** | **VERIFIED** | $1.17$ ms containment; $2.58$ ms detection-to-mitigation. | Direct cgroup v2 freeze; single host. |
-| **Rollback Safety** | **VERIFIED** | $16\ \mu\text{s}$ rollback; $100\%$ container recovery. | Evaluated across 17 containment actions. |
-| **Benign Churn Confounding** | **VERIFIED** | $50\%$–$80\%$ false positive rate on workload $B3$. | Linear rate features fail to separate compilation from attack. |
+| **Fixed-Point Arithmetic Speedup** | **VERIFIED BENCHMARK** | $40.42$x mean speedup ($4.19\ \mu\text{s}$ vs $169.20\ \mu\text{s}$, $p < 10^{-12}$). | Measured in Python; serves as in-kernel feasibility baseline. Gate G verified verifier pass. |
+| **Telemetry CPU Overhead** | **VERIFIED MEASUREMENT** | Application slowdown $< 0.20\%$ across 280 runs (ANOVA $F=0.0264, p=0.9987$). | Single-host WSL2/Docker testbed; max 500 req/s. |
+| **Ring Buffer Zero Loss** | **VERIFIED MEASUREMENT** | $0$ drops across $16,001$ events in 280 runs. | 1 MB ring buffer; burst duration $\le 10$ s. |
+| **Detection Latency (1.57 vs 0.08 ms)**| **FORMULA ESTIMATE** | Additive formula: measured components + assumed transport constants. | Not a single contiguous hardware clock timer. |
+| **Policy Containment Latency** | **SIMULATED POLICY** | $1.17$ ms state transition latency ($n=17$ actions). | Simulated in Python with 1 ms sleep; not kernel cgroup freeze. |
+| **Policy Rollback Safety** | **SIMULATED POLICY** | $14.95\ \mu\text{s}$ rollback; $100\%$ policy state reset. | In-memory enum transition; process unfreeze unexecuted. |
+| **Benign Churn Confounding** | **VERIFIED DEFICIT** | $50\%$–$80\%$ false positive rate on workload $B3$. | Linear rate features fail to separate compilation from attack (Literature Gap 2). |
 | **Production Generalization** | *UNPROVEN* | Evaluated in synthetic microservice benchmark. | Requires multi-node Kubernetes cluster evaluation. |
 | **Complex Threat Defense** | *UNPROVEN* | Evaluated on process, file, and network bursts. | Advanced multi-stage APTs and kernel-space rootkits unverified. |
 | **Universal Superiority** | *REFUTED* | In-kernel inference is faster but severely capacity-limited. | Trade-off between speed and classification capacity is fundamental. |

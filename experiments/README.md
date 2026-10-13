@@ -36,7 +36,9 @@ experiments/
     ├── compute_stats.py                   # Statistical distribution extractor (mean, median, IQR, p95)
     ├── generate_plots.py                  # Publication figure renderer (Matplotlib)
     ├── process_results.py                 # Raw JSON parser & summary CSV generator
-    └── run_experiments.py                 # Automated 350-run matrix execution harness
+    ├── run_experiments.py                 # Automated 350-run matrix execution harness
+    ├── statistical_analysis.py            # Reproducible hypothesis testing (Wilcoxon, t-test, Cohen's d, ANOVA)
+    └── validate_matrix.py                 # Comprehensive 350-run matrix validation & integrity auditor
 ```
 
 ---
@@ -82,4 +84,20 @@ python3 experiments/scripts/generate_plots.py
 
 # 4. Run unit and equivalence tests
 ./prototype/tests/run_unit_tests.sh
+
+# 5. Run scientific integrity matrix validation
+python3 experiments/scripts/validate_matrix.py
+
+# 6. Run formal statistical hypothesis testing
+python3 experiments/scripts/statistical_analysis.py
 ```
+
+---
+
+## 5. Scientific Integrity & Measurement Characterization
+
+In accordance with `research/CHAT09_SCIENTIFIC_INTEGRITY_CORRECTION.md`:
+- **Direct Measurements:** System overhead (<0.20% slowdown, $F=0.0264, p=0.9987$), peak host RSS (~0.35–0.55 MB overhead), zero event loss across 280 runs ($16,001$ events), and classification metrics ($A1$ F1=0.824, $B3$ FPR=50%–80%, $A3$ Recall=0%).
+- **Fixed-Point Arithmetic Benchmark:** Inference latency in Config D measures a Python Q16.16 integer arithmetic benchmark (40.42x speedup over Python float LR), serving as the algorithmic baseline for Gate G BPF-verifiable in-kernel inference.
+- **Formula-Derived Estimates:** End-to-end detection latencies ($1.57$ ms vs $0.08$ ms) are additive architectural estimates incorporating measured inference/aggregation plus standard transport queuing models.
+- **Simulated Policy Workflow:** Mitigation latency ($1.17$ ms) and rollback ($15\ \mu\text{s}$) measure in-memory policy state transitions with synthetic verification sleep; kernel-level cgroup v2 freezes remain simulated.

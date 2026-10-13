@@ -28,10 +28,11 @@ Read this handoff first, then the status correction, master execution plan, and 
 4. `research/CHAT06_EXPERIMENTAL_ARCHITECTURE_AND_TESTBED.md`
 5. `research/CHAT07_IMPLEMENTATION_AND_VALIDATION.md`
 6. `research/CHAT08_CONTROLLED_EXPERIMENTS_EXECUTION.md`
-7. `research/CHAT09_RESULTS_ANALYSIS_AND_EMPIRICAL_SYNTHESIS.md`
-8. `research/CHAT09_MANUSCRIPT_RESULTS_AND_DISCUSSION.md`
-9. `research/CHAT09_LIMITATIONS_AND_VALIDITY_THREATS.md`
-10. The current analysis scripts, raw evidence, figures, tables, and literature evidence files under `experiments/` and `research/`.
+7. `research/CHAT09_SCIENTIFIC_INTEGRITY_CORRECTION.md` — **MANDATORY**: Claim-to-code audit and authoritative empirical baseline.
+8. `research/CHAT09_RESULTS_ANALYSIS_AND_EMPIRICAL_SYNTHESIS.md`
+9. `research/CHAT09_MANUSCRIPT_RESULTS_AND_DISCUSSION.md`
+10. `research/CHAT09_LIMITATIONS_AND_VALIDITY_THREATS.md`
+11. The current analysis scripts (`validate_matrix.py`, `statistical_analysis.py`), raw evidence, figures, tables, and literature evidence files under `experiments/` and `research/`.
 
 ---
 

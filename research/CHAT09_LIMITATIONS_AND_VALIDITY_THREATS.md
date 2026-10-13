@@ -114,7 +114,9 @@ Threats to validity are classified across four formal dimensions:
 | **Internal** | Virtualization scheduling noise | Cgroup isolation, CPU core pinning, 10 deterministic seed repetitions | Modest tail latency ($p_{95}$) variance preserved; median trends robust |
 | **Internal** | Python runtime & GC warm-up | Separation of daemon boot from active timing loop | User-space latency exhibits higher standard deviation than kernel |
 | **Internal** | Timestamp cross-domain drift | Unified reference to `CLOCK_MONOTONIC` | Component intervals calculated strictly within consistent domains |
-| **Construct** | Linear model representational capacity | Deliberate choice reflecting in-kernel BPF verifier boundary | 40x speedup is specific to linear models; does not represent DNNs |
+| **Construct** | In-Kernel LR in matrix runs | Q16.16 arithmetic benchmarked in Python harness | In-kernel feasibility proven via Gate G; matrix measured arithmetic speedup |
+| **Construct** | Detection latency computation | Sum of components plus assumed transport constants | Explicitly reported as formula-derived estimate, not hardware clock |
+| **Construct** | Staged mitigation & rollback | Policy engine state transitions with simulated sleep | Measures decision-engine latency; active kernel cgroup freeze unexecuted |
 | **Construct** | Tracepoint entry error approximation | Transparently documented as operational frequency indicator | Does not capture post-syscall exit return codes (`-EACCES`) |
 | **Construct** | Synthetic burst workload realism | Standardized process, file, and socket burst generators | Captures short burst archetypes; does not model stealthy slow APTs |
 | **Statistical** | Modest cell repetitions ($n = 10$) | Pinned deterministic environment; pooled comparisons ($n = 70$) | Micro-level distributions not inferred; percentiles reported |
