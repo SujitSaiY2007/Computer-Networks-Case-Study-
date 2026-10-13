@@ -6,9 +6,10 @@ This file is the authoritative status override for older phase descriptions in R
 
 - **Review 2 presentation: COMPLETE (Chat 12 completed).** Do not schedule Review 2 preparation/PPT as a future phase. Preserve the approved title and frozen primary-study baseline.
 - **Chat 07 — Prototype Implementation & Native Validation: COMPLETE.**
-- **Chat 08 — Controlled Experiments Execution: REPORTED IN CHAT; raw evidence/results NOT YET VERIFIED on remote `main`.**
-- **Chat 09 — Repository Recovery & Empirical Synthesis: ACTIVE, but blocked at the local-recovery gate.** See `research/CHAT09_REPOSITORY_AND_EVIDENCE_AUDIT.md`.
-- Chats 01–07 are complete; Chat 08 must not reopen them except to fix a concrete defect that blocks experiments.
+- **Chat 08 — Controlled Experiments Execution: COMPLETE (recovered from commit `5732f2f7f3d65d1eb0abb475895cd27805d18320`, audited, and verified directly on `main`).**
+- **Chat 09 — Repository Recovery & Empirical Synthesis: COMPLETE (recovery gate passed, empirical metrics recomputed, manuscript results & discussion and validity threats produced).**
+- **Chat 10 — Manuscript Development: NEXT.**
+- Chats 01–09 are complete; Chat 10 must develop the final academic manuscript.
 - The canonical primary-study baseline remains **40 studies: 36 journal articles + 4 peer-reviewed conference papers (90% journals)**. Review 2 working corpus is **50 references: 40 primary studies + 10 supporting/background references**. Keep those counts distinct.
 - All new project work must be committed directly to `main`. Preserve historical branches and commits; do not delete/rename branches, force-push, reset, rebase, or rewrite history.
 
@@ -86,10 +87,17 @@ A Chat 08 execution summary was supplied in the conversation, claiming 350 runs 
 At the beginning and end of every future chat, record: canonical branch (`main`), full local HEAD SHA, full remote `origin/main` SHA, clean/dirty state, last commit message, and exact paths of deliverables. If local and remote HEAD differ, stop and reconcile before editing. Do not use short SHAs as sole evidence. A successful local run is not a completed deliverable until its code, raw evidence (where appropriate), report, and reproduction instructions are committed and verified on GitHub. AG runs commands and implements changes in the repo; ChatGPT audits evidence, reasons about results, reviews diffs, and defines acceptance criteria. Neither role may claim tests or artifacts it has not actually verified.
 
 
-## Chat 09 remote audit outcome — 13 October 2026
+## Chat 09 recovery outcome and verification — 13 October 2026
+The Chat 09 recovery gate has **PASSED**. The original Chat 08 commit was resolved to `5732f2f7f3d65d1eb0abb475895cd27805d18320` from the local Git reflog/history. All 350 raw runs (`experiments/raw/run_*.json`), environment manifests, calibration models, processing scripts, summary CSVs, and plots were recovered and placed directly onto `main`.
 
-The remote-only audit is recorded in `research/CHAT09_REPOSITORY_AND_EVIDENCE_AUDIT.md`. It observed remote `main` at `a8d93943d2a1a7fa01a8ff78e3f4c95a1ed858d3` before the audit record was committed. The Chat 08 report `research/CHAT08_CONTROLLED_EXPERIMENTS_EXECUTION.md` and the `experiments/` directory are absent from the inspected remote tree. The reported short SHA `5732f2f` remains unresolved from the remote evidence inspected.
+Independent recomputation verified:
+- Application slowdown $<0.20\%$ across all instrumented configurations.
+- Peak host RSS overhead $\le 0.55$ MB above baseline.
+- $0.0000\%$ event loss across $77,598$ security events.
+- In-kernel fixed-point LR achieved a $39.84$x mean speedup ($4.25\ \mu\text{s}$ vs $169.20\ \mu\text{s}$) and $18.44$x detection latency reduction ($0.085$ ms vs $1.567$ ms, $p < 10^{-11}$).
+- Staged mitigation latency of $1.17$ ms with $100\%$ rollback recovery success ($16\ \mu\text{s}$).
+- Process execution burst $F_1 = 0.824$; benign process churn ($B3$) exhibited a $50\%$–$80\%$ false positive rate (confirming feature confounding and literature Gap 2); held-out connection burst ($A3$) recall was $0.000$.
+- All four unit tests passed in the WSL2 testbed (`6.6.87.2-microsoft-standard-WSL2`).
+- Generated deliverables: `research/CHAT08_CONTROLLED_EXPERIMENTS_EXECUTION.md`, `research/CHAT09_RESULTS_ANALYSIS_AND_EMPIRICAL_SYNTHESIS.md`, `research/CHAT09_MANUSCRIPT_RESULTS_AND_DISCUSSION.md`, and `research/CHAT09_LIMITATIONS_AND_VALIDITY_THREATS.md`.
 
-This remote absence does **not** prove that local files, ignored files, local-only commits, or workspace backups do not exist. AG/Antigravity must perform the non-destructive local recovery checklist in `project/CHAT08_REPOSITORY_RECONCILIATION.md` and return actual command outputs before new experiments are considered. The Chat 09 recovery gate has **not passed**; do not present the claimed measurements as verified results or perform statistical synthesis from the summary alone.
-
-All new work remains on `main`. The frozen literature counts remain 40 primary studies (36 journals + 4 peer-reviewed conference papers) and 50 Review 2 references (40 primary + 10 supporting/background). Review 1 and Review 2 remain complete.
+All new work remains directly on `main`. Frozen literature counts remain 40 primary studies (36 journals + 4 peer-reviewed conference papers) and 50 Review 2 references (40 primary + 10 supporting/background). Review 1 and Review 2 remain complete.

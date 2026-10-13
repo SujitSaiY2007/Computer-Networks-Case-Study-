@@ -1,0 +1,48 @@
+{
+  "run_id": "run_E_B3_rep7",
+  "config_id": "E",
+  "workload_id": "B3",
+  "rep_idx": 7,
+  "timestamp_utc": "2026-10-13T16:21:27.573449+00:00",
+  "ground_truth": 0,
+  "prediction": 1,
+  "score": 0.51269434386718,
+  "classification": {
+    "tp": 0,
+    "fp": 1,
+    "tn": 0,
+    "fn": 0
+  },
+  "resources": {
+    "elapsed_seconds": 1.0060431790000166,
+    "workload_duration_seconds": 0.8001371450000079,
+    "cpu_user_seconds": 0.34792600000000107,
+    "cpu_sys_seconds": 0.15747899999999504,
+    "cpu_utilization_pct": 50.236909364303514,
+    "rss_peak_mb": 93.78515625
+  },
+  "telemetry": {
+    "generated_events": 69,
+    "submitted_events": 69,
+    "consumed_events": 69,
+    "reservation_failures": 0,
+    "sequence_gaps": 0,
+    "loss_rate": 0.0,
+    "telemetry_throughput_eps": 86.23521658902527,
+    "telemetry_transfer_latency_us": 4.5
+  },
+  "latency": {
+    "feature_aggregation_us": 217.344,
+    "inference_latency_us": 90.002,
+    "decision_latency_us": 8.435,
+    "detection_latency_ms": 1.507346,
+    "mitigation_latency_ms": 1.1611710000352105,
+    "detection_to_mitigation_ms": 2.6685170000352105,
+    "rollback_time_ms": 0.010687999974834383
+  },
+  "enforcement": {
+    "mitigation_triggered": true,
+    "rollback_success": true,
+    "legitimate_operations_impacted": 1
+  }
+}

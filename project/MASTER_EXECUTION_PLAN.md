@@ -18,14 +18,15 @@ For current phase/status, follow `project/STATUS_CORRECTION_2026-10-13.md` and `
 
 Frozen counts: 40 primary studies (36 journals + 4 peer-reviewed conference papers) and 50 Review 2 references (40 primary + 10 supporting/background). These counts are distinct and must not be conflated.
 
-## Live status override — 13 October 2026 (Chat 09 recovery gate)
+## Live status override — 13 October 2026 (Chat 09 Complete / Chat 10 Handoff)
 
 - Canonical branch: `main` only for all new work. Preserve all historical branches and commits; never force-push, reset, rebase, delete branches, or rewrite history.
-- Review 1 and Review 2 are complete. Do not reopen either without a documented evidence defect.
-- Chat 07 implementation/validation is complete, with the WSL2 kernel deviation and limited 87-event zero-loss observation disclosed.
-- Chat 08 was reported complete in a prior chat, but the raw evidence and report are not present in the inspected remote `main` tree. A remote-only audit is recorded in `research/CHAT09_REPOSITORY_AND_EVIDENCE_AUDIT.md`.
-- Chat 09 must recover local work first. Its recovery gate has not passed; no reported Chat 08 metric is verified until raw records and reproducible processing are audited.
-- Frozen literature counts remain 40 primary studies (36 journal articles + 4 peer-reviewed conference papers) and 50 Review 2 references (40 primary + 10 supporting/background).
+- Review 1 and Review 2 are COMPLETE. Do not reopen either without a documented evidence defect.
+- Chat 07 implementation/validation is COMPLETE, with the WSL2 kernel deviation and limited 87-event zero-loss observation disclosed.
+- Chat 08 controlled experiments execution is COMPLETE. The full 40-character commit `5732f2f7f3d65d1eb0abb475895cd27805d18320` was recovered from local Git and restored directly to `main`.
+- Chat 09 results verification, empirical synthesis, manuscript results & discussion, and limitations analysis are COMPLETE. All 350 runs across 35 cells audited and verified.
+- Chat 10 Manuscript Development is the NEXT active phase.
+- Frozen literature counts remain 40 primary studies (36 journal articles + 4 peer-reviewed conference papers = 90% journals) and 50 Review 2 references (40 primary + 10 supporting/background).
 
 This live status overrides older phase prompts below. Treat older Chat 08/09/10 wording as historical where it conflicts with the current gate and phase sequence.
 

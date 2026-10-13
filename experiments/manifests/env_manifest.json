@@ -1,0 +1,39 @@
+{
+  "timestamp_utc": "2026-10-13T16:15:00Z",
+  "experiment_milestone": "CHAT_08_CONTROLLED_EXPERIMENTS_EXECUTION",
+  "git_sha": "66512d8efdf5e16a8a8e9c3edd65534681b3bbfd",
+  "branch": "feat/chat07-native-validation",
+  "host": {
+    "os": "Ubuntu 24.04.3 LTS (Noble Numbat)",
+    "kernel": "6.6.87.2-microsoft-standard-WSL2",
+    "kernel_full": "Linux YSS 6.6.87.2-microsoft-standard-WSL2 #1 SMP PREEMPT_DYNAMIC Thu Jun 5 18:30:46 UTC 2025 x86_64",
+    "architecture": "x86_64",
+    "cpu_count": 20,
+    "memory_kb": 7982260,
+    "privilege": "root (UID 0, CAP_BPF, CAP_SYS_ADMIN, CAP_PERFMON)"
+  },
+  "toolchain": {
+    "clang": "Ubuntu clang version 18.1.3 (1ubuntu1)",
+    "bpftool": "bpftool v7.4.0 (using libbpf v1.4)",
+    "libbpf": "libbpf.so.1 (package libbpf-dev 1:1.3.0-2build2)",
+    "docker": "Docker version 29.1.3, build 29.1.3-0ubuntu3~24.04.2",
+    "python": "3.12.3",
+    "python_packages": {
+      "numpy": "1.26.4",
+      "scikit-learn": "1.4.1.post1",
+      "matplotlib": "3.6.3"
+    }
+  },
+  "kernel_capabilities": {
+    "btf_vmlinux": true,
+    "cgroup_v2": true,
+    "tracefs": true,
+    "ring_buffer_support": true,
+    "unprivileged_bpf_disabled": 2
+  },
+  "audit_notes": {
+    "chat07_manifest_git_sha": "85f526a2708868b3b697fcbc509b99eb8ee97b32",
+    "chat07_manifest_status": "VALID_AND_INTENTIONAL",
+    "chat07_manifest_rationale": "Runtime manifest generated during Gate E execution captured working tree parent HEAD 85f526a immediately prior to committing feat 66512d8. Provenance is continuous and auditable."
+  }
+}

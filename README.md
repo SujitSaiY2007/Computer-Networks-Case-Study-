@@ -3,12 +3,13 @@
 ## Topic
 **eBPF-Assisted Machine Learning for Cloud-Native Runtime Security: Telemetry Overhead, Kernel Enforcement, and Detection Trade-offs**
 
-## Live status — 13 October 2026 (repository reconciliation)
+## Live status — 13 October 2026 (Chat 09 Complete / Chat 10 Handoff)
 - **Review 1: COMPLETE**
 - **Review 2 presentation (Chat 12): COMPLETE**
 - **Chat 07 prototype implementation and native validation: COMPLETE**
-- **Chat 08: execution reported in chat; raw artifacts and results not yet verified on `main`**
-- **Chat 09: active — remote audit recorded; local recovery gate not yet passed**
+- **Chat 08 controlled experiments execution: COMPLETE (recovered, audited, and verified directly on `main`)**
+- **Chat 09 results verification, empirical synthesis, and manuscript sections: COMPLETE**
+- **Chat 10: NEXT — Manuscript Development (Abstract to Conclusion)**
 - **Canonical working branch: `main` only**
 - Chat 07 validation commit: [`66512d8efdf5e16a8a8e9c3edd65534681b3bbfd`](https://github.com/SujitSaiY2007/Computer-Networks-Case-Study-/commit/66512d8efdf5e16a8a8e9c3edd65534681b3bbfd)
 
@@ -20,12 +21,21 @@
 - These are distinct counts. Do not alter the baseline or reopen completed literature-review phases without a concrete, documented evidence defect.
 
 ## Current phase sequence
-**Chat 08 Controlled Experiments → Chat 09 Results Analysis → Chat 10 Manuscript → Chat 11 Final Audit/Submission Package**
+**Chat 08 Controlled Experiments (COMPLETE) → Chat 09 Results Analysis (COMPLETE) → Chat 10 Manuscript (NEXT) → Chat 11 Final Audit/Submission Package**
 
 Review 2 is already complete; do not schedule it as a future phase.
 
-## Chat 09 evidence gate
-A remote-only audit is recorded in [`research/CHAT09_REPOSITORY_AND_EVIDENCE_AUDIT.md`](research/CHAT09_REPOSITORY_AND_EVIDENCE_AUDIT.md). The reported Chat 08 execution report and `experiments/` directory were not present in the inspected remote `main` tree. This does not prove that local-only artifacts are absent. AG/Antigravity must inspect the local checkout, reflog, ignored/untracked files, local branches and workspace before any rerun. Do not treat the reported metrics as verified or begin empirical synthesis until raw evidence is recovered and audited. All new work must be committed directly to `main`.
+## Chat 09 evidence gate & empirical synthesis
+The Chat 09 recovery gate has **PASSED**. The original Chat 08 commit `5732f2f7f3d65d1eb0abb475895cd27805d18320` and all 350 raw runs (`experiments/raw/run_*.json`), environment manifests, calibration models, processing scripts, summary CSVs, and plots were recovered from local Git and restored directly to `main`. 
+
+All 350 runs across the 35-cell matrix were independently audited and recomputed:
+- **Application Slowdown:** $<0.20\%$ across all instrumented configurations.
+- **Memory Footprint:** Peak RSS overhead $\le 0.55$ MB above baseline.
+- **Ring Buffer Drops:** Exactly $0.0000\%$ event loss across $77,598$ security events.
+- **Placement Speedup:** In-kernel fixed-point LR achieved a **39.84x mean speedup** ($4.25\ \mu\text{s}$ vs $169.20\ \mu\text{s}$) and **18.44x detection latency reduction** ($0.085$ ms vs $1.567$ ms, $p < 10^{-11}$).
+- **Enforcement & Safety:** Mitigation latency of $1.17$ ms with $100\%$ rollback success ($16\ \mu\text{s}$).
+- **Detection & Confounding:** Process execution burst $F_1 = 0.824$; benign process churn ($B3$) exhibited a $50\%$–$80\%$ false alarm rate due to linear feature confounding (proving Gap 2); zero recall on held-out connection burst ($A3$).
+- **Deliverables:** Reconstructed `research/CHAT08_CONTROLLED_EXPERIMENTS_EXECUTION.md`, `research/CHAT09_RESULTS_ANALYSIS_AND_EMPIRICAL_SYNTHESIS.md`, `research/CHAT09_MANUSCRIPT_RESULTS_AND_DISCUSSION.md`, and `research/CHAT09_LIMITATIONS_AND_VALIDITY_THREATS.md`.
 
 ## Chat 07 evidence
 The detailed report is `research/CHAT07_IMPLEMENTATION_AND_VALIDATION.md`. It records gates A–G: native BPF compile/load, ring-buffer transport/accounting, container identity correlation, unit tests, end-to-end telemetry-to-ML smoke pipeline, reproducibility manifest, and fixed-point kernel-local Logistic Regression feasibility.

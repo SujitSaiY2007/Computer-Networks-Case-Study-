@@ -1,0 +1,121 @@
+{
+  "experiment_id": "CHAT08_CONTROLLED_EXPERIMENTS",
+  "protocol_version": "1.0",
+  "frozen_architecture_reference": "research/CHAT06_EXPERIMENTAL_ARCHITECTURE_AND_TESTBED.md",
+  "prototype_reference": "research/CHAT07_IMPLEMENTATION_AND_VALIDATION.md",
+  "repetitions_per_cell": 10,
+  "run_duration_seconds": 2.0,
+  "configurations": [
+    {
+      "id": "A",
+      "name": "Baseline (No Instrumentation)",
+      "telemetry": "NONE",
+      "ml_placement": "NONE",
+      "enforcement": "NONE",
+      "purpose": "Reference for zero-instrumentation execution overhead and throughput"
+    },
+    {
+      "id": "B",
+      "name": "eBPF Telemetry Only",
+      "telemetry": "EBPF_RINGBUF",
+      "ml_placement": "NONE",
+      "enforcement": "NONE",
+      "purpose": "Quantify isolated telemetry overhead, event throughput, buffer occupancy, and loss rate"
+    },
+    {
+      "id": "C",
+      "name": "eBPF + User-Space Logistic Regression",
+      "telemetry": "EBPF_RINGBUF",
+      "ml_placement": "USERSPACE_FLOAT_LR",
+      "enforcement": "OBSERVE_LOG",
+      "purpose": "Primary ML runtime detection pipeline with 1-second feature aggregation and user-space float inference"
+    },
+    {
+      "id": "D",
+      "name": "eBPF + Kernel-Local Fixed-Point Logistic Regression",
+      "telemetry": "EBPF_RINGBUF",
+      "ml_placement": "KERNEL_FIXED_POINT_LR",
+      "enforcement": "OBSERVE_LOG",
+      "purpose": "Evaluate Gate G-verified Q16.16 fixed-point linear classifier, measuring inference latency and resource reduction"
+    },
+    {
+      "id": "E",
+      "name": "eBPF + ML + Staged Controlled Enforcement",
+      "telemetry": "EBPF_RINGBUF",
+      "ml_placement": "USERSPACE_FLOAT_LR",
+      "enforcement": "STAGED_CONTROLLED_MITIGATION",
+      "purpose": "Measure end-to-end detection-to-mitigation latency, containment verification, rollback success, and legitimate-workload impact"
+    }
+  ],
+  "workloads": [
+    {
+      "id": "B1",
+      "category": "benign",
+      "ground_truth_label": 0,
+      "name": "Idle / Background Service",
+      "description": "Baseline idle service representing low-activity container"
+    },
+    {
+      "id": "B2",
+      "category": "benign",
+      "ground_truth_label": 0,
+      "name": "Synthetic File Processing",
+      "description": "Controlled reads, writes, and unlinks of synthetic temporary files"
+    },
+    {
+      "id": "B3",
+      "category": "benign",
+      "ground_truth_label": 0,
+      "name": "Process Churn",
+      "description": "Bounded rapid creation and reaping of short-lived worker processes"
+    },
+    {
+      "id": "B4",
+      "category": "benign",
+      "ground_truth_label": 0,
+      "name": "Local Client-Server Traffic",
+      "description": "Controlled local loopback socket request-reply communication"
+    },
+    {
+      "id": "A1",
+      "category": "anomaly",
+      "ground_truth_label": 1,
+      "name": "Abnormal Process Execution Burst",
+      "description": "Anomalous high-intensity fork/exec burst of short-lived processes"
+    },
+    {
+      "id": "A2",
+      "category": "anomaly",
+      "ground_truth_label": 1,
+      "name": "Abnormal File Access Burst",
+      "description": "Anomalous high-frequency filesystem churn and abnormal access patterns"
+    },
+    {
+      "id": "A3",
+      "category": "anomaly",
+      "ground_truth_label": 1,
+      "name": "Abnormal Connection Burst",
+      "description": "Anomalous burst of rapid socket connection attempts to local sink"
+    }
+  ],
+  "feature_schema": [
+    "exec_count",
+    "open_count",
+    "connect_count",
+    "unlink_count",
+    "unique_process_count",
+    "failed_operation_count",
+    "event_count",
+    "event_rate",
+    "event_loss_rate"
+  ],
+  "unsupported_field_policy": {
+    "failed_operation_count": "UNSUPPORTED_SYSCALL_ENTER_ONLY (explicitly recorded, not fabricated)"
+  },
+  "seeds": {
+    "calibration_seed": 999,
+    "evaluation_seeds": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  },
+  "total_cells": 35,
+  "total_experimental_runs": 350
+}
