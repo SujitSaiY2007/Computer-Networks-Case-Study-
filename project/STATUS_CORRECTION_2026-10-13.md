@@ -6,10 +6,11 @@ This file is the authoritative status override for older phase descriptions in R
 
 - **Review 2 presentation: COMPLETE (Chat 12 completed).** Do not schedule Review 2 preparation/PPT as a future phase. Preserve the approved title and frozen primary-study baseline.
 - **Chat 07 — Prototype Implementation & Native Validation: COMPLETE.**
-- **Chat 08 — Controlled Experiments Execution: NEXT / ACTIVE HANDOFF.**
+- **Chat 08 — Controlled Experiments Execution: REPORTED IN CHAT; raw evidence/results NOT YET VERIFIED on remote `main`.**
+- **Chat 09 — Repository Recovery & Empirical Synthesis: ACTIVE, but blocked at the local-recovery gate.** See `research/CHAT09_REPOSITORY_AND_EVIDENCE_AUDIT.md`.
 - Chats 01–07 are complete; Chat 08 must not reopen them except to fix a concrete defect that blocks experiments.
 - The canonical primary-study baseline remains **40 studies: 36 journal articles + 4 peer-reviewed conference papers (90% journals)**. Review 2 working corpus is **50 references: 40 primary studies + 10 supporting/background references**. Keep those counts distinct.
-- Do not merge this feature branch into `main`, alter unrelated branches, delete/rename branches, force-push, or rewrite history without explicit authorization.
+- All new project work must be committed directly to `main`. Preserve historical branches and commits; do not delete/rename branches, force-push, reset, rebase, or rewrite history.
 
 ## Chat 07 closure evidence
 
@@ -23,7 +24,7 @@ This file is the authoritative status override for older phase descriptions in R
 - Kernel-local fixed-point LR validation demonstrates feasibility; it does not by itself establish comparative performance or superiority.
 - **Audit item for Chat 08:** the native manifest reportedly records the pre-Chat-07 commit `85f526a2708868b3b697fcbc509b99eb8ee97b32` as `git_sha`. Inspect the manifest-generation semantics and correct or explicitly document this provenance if it is stale. Do not silently rewrite prior evidence.
 
-## Chat 08 experimental objective
+## Frozen Chat 08 experimental design (execution evidence not yet verified)
 
 Execute the frozen Chat 06 design and use the validated Chat 07 implementation. Compare:
 
@@ -83,3 +84,12 @@ A Chat 08 execution summary was supplied in the conversation, claiming 350 runs 
 
 ### Durable single-branch protocol
 At the beginning and end of every future chat, record: canonical branch (`main`), full local HEAD SHA, full remote `origin/main` SHA, clean/dirty state, last commit message, and exact paths of deliverables. If local and remote HEAD differ, stop and reconcile before editing. Do not use short SHAs as sole evidence. A successful local run is not a completed deliverable until its code, raw evidence (where appropriate), report, and reproduction instructions are committed and verified on GitHub. AG runs commands and implements changes in the repo; ChatGPT audits evidence, reasons about results, reviews diffs, and defines acceptance criteria. Neither role may claim tests or artifacts it has not actually verified.
+
+
+## Chat 09 remote audit outcome — 13 October 2026
+
+The remote-only audit is recorded in `research/CHAT09_REPOSITORY_AND_EVIDENCE_AUDIT.md`. It observed remote `main` at `a8d93943d2a1a7fa01a8ff78e3f4c95a1ed858d3` before the audit record was committed. The Chat 08 report `research/CHAT08_CONTROLLED_EXPERIMENTS_EXECUTION.md` and the `experiments/` directory are absent from the inspected remote tree. The reported short SHA `5732f2f` remains unresolved from the remote evidence inspected.
+
+This remote absence does **not** prove that local files, ignored files, local-only commits, or workspace backups do not exist. AG/Antigravity must perform the non-destructive local recovery checklist in `project/CHAT08_REPOSITORY_RECONCILIATION.md` and return actual command outputs before new experiments are considered. The Chat 09 recovery gate has **not passed**; do not present the claimed measurements as verified results or perform statistical synthesis from the summary alone.
+
+All new work remains on `main`. The frozen literature counts remain 40 primary studies (36 journals + 4 peer-reviewed conference papers) and 50 Review 2 references (40 primary + 10 supporting/background). Review 1 and Review 2 remain complete.
