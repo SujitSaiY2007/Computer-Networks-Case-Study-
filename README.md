@@ -1,209 +1,64 @@
 # BACSE203 Computer Networks Case Study — Canonical Source of Truth
 
 ## Topic
-
 **eBPF-Assisted Machine Learning for Cloud-Native Runtime Security: Telemetry Overhead, Kernel Enforcement, and Detection Trade-offs**
 
-## Review 2 project status — 13 October 2026
+## Live status — 13 October 2026
+- **Review 1: COMPLETE**
+- **Review 2 presentation (Chat 12): COMPLETE**
+- **Chat 07 prototype implementation and native validation: COMPLETE**
+- **Next: Chat 08 — Controlled Experiments Execution**
+- Current working branch: `feat/chat07-native-validation`
+- Chat 07 validation commit: [`66512d8efdf5e16a8a8e9c3edd65534681b3bbfd`](https://github.com/SujitSaiY2007/Computer-Networks-Case-Study-/commit/66512d8efdf5e16a8a8e9c3edd65534681b3bbfd)
 
-- **CHAT 07 COMPLETE:** Prototype implementation and experimental infrastructure fully validated on native Linux (Ubuntu 24.04 LTS x86_64, Linux 6.6.87.2). All validation gates (A: native BPF compile/load, B: ring buffer transport/accounting, C: container identity correlation, D: unit tests, E: end-to-end smoke pipeline, F: reproducibility manifest, G: fixed-point kernel-local LR feasibility) are verified with recorded empirical evidence in `research/CHAT07_IMPLEMENTATION_AND_VALIDATION.md`.
-- **Selected architecture:** single-host Linux + native containers + eBPF syscall/process telemetry + ring buffer + common feature pipeline + user-space Logistic Regression, with a feasibility-validated fixed-point kernel-local LR variant and staged controlled enforcement.
+**Read first:** [Active Chat Handoff](project/CHAT_HANDOFF.md) and [Authoritative Status Correction](project/STATUS_CORRECTION_2026-10-13.md). The status correction supersedes conflicting phase/status statements in older roadmap sections and historical records. Do not merge to `main` or modify unrelated branches without explicit authorization.
 
-- Review 1 established the problem, motivation and literature directions.
-- The verified primary-study baseline is **40 studies: 36 journal articles + 4 peer-reviewed conference papers = 90% journal references**.
-- CHAT 01 through CHAT 07 are COMPLETE.
-- Next phase: **CHAT 08 — Controlled Experiments Execution**.
+## Frozen evidence counts
+- **Primary-study baseline:** 40 studies = 36 journal articles + 4 peer-reviewed conference papers = 90% journals.
+- **Review 2 reference corpus:** 50 references = 40 primary studies + 10 supporting/background references.
+- These are distinct counts. Do not alter the baseline or reopen completed literature-review phases without a concrete, documented evidence defect.
 
-## 🚦 Multi-chat execution system
+## Current phase sequence
+**Chat 08 Controlled Experiments → Chat 09 Results Analysis → Chat 10 Manuscript → Chat 11 Final Audit/Submission Package**
 
-This project is now being executed through a **controlled multi-chat workflow** so that each future chat has complete context, performs one defined phase, and hands the project cleanly to the next chat.
+Review 2 is already complete; do not schedule it as a future phase.
 
-### Start here for every new project chat
+## Chat 07 evidence
+The detailed report is `research/CHAT07_IMPLEMENTATION_AND_VALIDATION.md`. It records gates A–G: native BPF compile/load, ring-buffer transport/accounting, container identity correlation, unit tests, end-to-end telemetry-to-ML smoke pipeline, reproducibility manifest, and fixed-point kernel-local Logistic Regression feasibility.
 
-1. Read [`project/CHAT_HANDOFF.md`](project/CHAT_HANDOFF.md) first.
-2. Read [`project/MASTER_EXECUTION_PLAN.md`](project/MASTER_EXECUTION_PLAN.md).
-3. Read the canonical project/research files named by the active continuation prompt.
-4. Execute the **Active Continuation Prompt** only; do not restart completed phases.
-5. Before ending, update `project/CHAT_HANDOFF.md` with the completed work and replace its active continuation prompt with the next unfinished task.
-6. Commit the updated handoff and relevant artifacts to GitHub.
+Recorded environment: Ubuntu 24.04.3 under WSL2, kernel `6.6.87.2-microsoft-standard-WSL2`, which differs from the originally pinned 6.8-series kernel. Preserve this deviation in any report. The observed zero loss applies to the recorded 87-event validation run only; fixed-point feasibility does not establish comparative superiority. Chat 08 must audit the manifest's `git_sha` because the Chat 07 report indicates it may contain the pre-Chat-07 SHA.
 
-### Current next chat
+## Start here for every new project chat
+1. Read `project/CHAT_HANDOFF.md`.
+2. Read `project/STATUS_CORRECTION_2026-10-13.md`.
+3. Read `project/MASTER_EXECUTION_PLAN.md` and the phase-specific evidence files.
+4. Execute only the active continuation prompt.
+5. Preserve existing work, raw evidence, branch history, and frozen scope.
+6. Before closing, update the handoff, status documents, artifacts, and exact next prompt; commit and verify the resulting branch/commit.
 
-**CHAT 08 — Controlled Experiments Execution**
-
-The live prompt is stored in `project/CHAT_HANDOFF.md`.
-
-### Planned phase sequence
-
-**01 Verification [COMPLETE] → 02A Acquisition [COMPLETE] → 02 Extraction [COMPLETE] → 03 Quality Assessment [COMPLETE] → 04 Critical Synthesis/Taxonomy [COMPLETE] → 05 Evidence-Based Gaps [COMPLETE] → 06 Experimental Architecture [COMPLETE] → 07 Prototype Implementation & Validation [COMPLETE] → 08 Experiments [NEXT] → 09 Results Analysis → 10 Review 2 PPT → 11 Manuscript → 12 Final Audit**
-
-**Important:** Chat 02A is a mandatory checkpoint. We verify the retained studies first, then obtain/record legitimate full-text access, then perform detailed evidence extraction.
-
-The handoff file is the live checkpoint; the master execution plan is the durable roadmap.
-
-## Core research questions
-
-1. What architectural patterns couple eBPF telemetry hooks with ML inference?
-2. How is telemetry granularity traded against CPU, memory, buffering/event-loss, and scalability overhead?
-3. Which ML methods are used, and how do they behave under container churn, concept drift, and adversarial evasion?
-4. What kernel-level enforcement mechanisms exist, and what is the detection-to-mitigation latency?
-5. How reproducible are datasets, testbeds, attack scenarios, metrics, and reported performance gains?
-
-## Review design
-
-**Systematic mapping study / scoping-style evidence map with critical technical synthesis.** The review is designed to classify the literature, compare evaluation practices and evidence, assess research quality, identify supported gaps and produce a defensible future research agenda.
-
-## Evidence policy
-
-The course guidance requires a transparent search, screening, quality assessment, extraction matrix, and critical synthesis rather than a sequence of paper summaries. It also requires Scopus or Web of Science, IEEE Xplore, and ACM Digital Library as the minimum databases, with specialist sources such as USENIX, SpringerLink, ScienceDirect and relevant repositories added as appropriate.
-
-**Important:** a paper is not included merely because it contains the word eBPF. Direct relevance is judged against the technology + runtime-security problem + cloud/container environment + evidence requirements. Existing surveys/reviews are used for discovery and comparison, not automatically counted as primary studies.
-
-## Review 2 working files
-
-- `project/MASTER_EXECUTION_PLAN.md` — complete multi-chat execution roadmap, phase dependencies, deliverables and continuation prompts.
-- `project/CHAT_HANDOFF.md` — live cross-chat checkpoint; always read this first and update it before ending a project chat.
-- `project/PROJECT_SCOPE_AND_RQS.md` — frozen topic boundary, RQs, contribution logic.
-- `research/REVIEW2_PAPER_SELECTION_AND_AUDIT.md` — selected 40-paper candidate primary evidence set, 90% journal ratio, per-paper methodology/merits/demerits/field and quality-assessment framework.
-- `research/PAPER_ACQUISITION_AND_ARCHIVE.md` — mandatory full-text acquisition, legitimate-access and private/local PDF archive protocol.
-- `research/RESEARCH_GAPS_AND_FUTURE_AGENDA.md` — evidence-based gaps, existing technologies, proposed solution direction and evaluation framework.
-- `review2/REVIEW_2_SLIDE_PLAN.md` — Review 2 presentation plan aligned with the course manuscript guidelines and Review 1.
-
-## Repository structure
-
-- `project/PROJECT_SCOPE_AND_RQS.md` — frozen topic boundary, RQs, contribution logic.
-- `project/MASTER_EXECUTION_PLAN.md` — master execution roadmap and all chat-specific continuation prompts.
-- `project/CHAT_HANDOFF.md` — live state, decisions, unresolved issues and the next exact prompt.
-- `research/RESEARCH_EVIDENCE_MATRIX.md` — study-set/provenance control matrix.
-- `research/CHAT02_EVIDENCE_EXTRACTION.md` — canonical CHAT 02 field-level extraction for all 40 active studies.
-- `research/RELEVANCY_AUDIT.md` — audit of the initial 18-paper list and screening decisions.
-- `research/SEARCH_LOG.md` — search sources, query families, and verification status.
-- `research/REVIEW2_PAPER_SELECTION_AND_AUDIT.md` — Review 2 candidate paper set and verification framework.
-- `research/PAPER_ACQUISITION_AND_ARCHIVE.md` — paper download/access/archive workflow and register requirements.
+## Key project files
+- `project/CHAT_HANDOFF.md` — current state and exact next continuation prompt.
+- `project/STATUS_CORRECTION_2026-10-13.md` — authoritative correction of stale phase/status references, Chat 07 caveats, and Chat 08 integrity gates.
+- `project/MASTER_EXECUTION_PLAN.md` — durable roadmap and historical phase instructions; use the status correction to resolve stale entries.
+- `project/PROJECT_SCOPE_AND_RQS.md` — frozen topic boundary, research questions, and contribution logic.
+- `research/REVIEW2_PAPER_SELECTION_AND_AUDIT.md` — primary-study baseline and screening rationale.
+- `research/PAPER_ACQUISITION_AND_ARCHIVE.md` — legitimate-access and private/local PDF archive register.
+- `research/CHAT02_EVIDENCE_EXTRACTION.md` — field-level extraction matrix.
+- `research/CHAT03_QUALITY_ASSESSMENT.md` — quality assessment.
+- `research/CHAT04_CRITICAL_SYNTHESIS.md` — critical synthesis and taxonomy.
 - `research/RESEARCH_GAPS_AND_FUTURE_AGENDA.md` — evidence-based gaps and future agenda.
-- `review1/REVIEW_1_SLIDE_PLAN.md` — Review 1 presentation structure and selected papers.
-- `review1/Review_1_eBPF_Runtime_Security.pptx` — Review 1 presentation artifact.
-- `review2/REVIEW_2_SLIDE_PLAN.md` — Review 2 presentation structure.
+- `research/CHAT06_EXPERIMENTAL_ARCHITECTURE_AND_TESTBED.md` — frozen experimental architecture/testbed.
+- `research/CHAT07_IMPLEMENTATION_AND_VALIDATION.md` — Chat 07 implementation and native validation evidence.
+- `review2/REVIEW_2_SLIDE_PLAN.md` — Review 2 presentation plan.
+- `experiments/` — Chat 08 raw outputs, manifests, processed metrics, and summaries (to be populated).
 
-## Intended synthesis framework
+## Research framing
+The defensible contribution is the intersection of **eBPF telemetry, ML runtime detection, and kernel-level enforcement in cloud/container environments**, emphasizing telemetry overhead, ML placement, detection-to-mitigation latency, enforcement safety, and evaluation practice. Do not claim to be the first review of eBPF cybersecurity.
 
-The review will synthesize evidence across:
-
-**Telemetry extraction → feature representation → ML placement → detection decision → kernel enforcement**
-
-and compare studies using:
-
-**detection quality ↔ latency ↔ CPU/memory/event-processing overhead ↔ safety ↔ reproducibility.**
-
-## Paper PDF policy
-
-Full-text PDFs are treated as research working materials. The public repository stores metadata, DOI/official links, acquisition status and verification notes—not unauthorized copyrighted publisher PDFs. Legitimately obtainable PDFs should be retained in the user's private/local research archive and linked to the study IDs used in the evidence matrix.
-
-## Canonical-source rule
-
-If later chats produce a conflicting paper count, relevance decision, scope statement, or project structure, **the latest committed repository state and especially `project/CHAT_HANDOFF.md` are the reference point**. New papers must be added through the same extraction fields and must not silently replace earlier records.
-
-## Quality warning
-
-Several papers in the initial user-provided list contain incomplete or garbled numeric fields. Those values are not reconstructed by guesswork. Publisher/DOI metadata is preferred where verified; otherwise the record remains marked for full-text verification.
-
-## Workflow principle
-
-The objective is not to create a long chain of disconnected chats. It is to create **one continuous research process with versioned checkpoints**. Each chat owns one phase; each phase leaves behind evidence, files, decisions and a customized continuation prompt for the next phase. This makes the GitHub repository the project's durable memory and prevents context loss between chats.
-
-
-## Review 2 project status — 5 October 2026
-
-- Review 1 established the problem, motivation and literature directions.
-- CHAT 01 full-text verification/screening is **COMPLETE**.
-- The verified primary-study baseline is **40 studies: 36 journal articles + 4 peer-reviewed conference papers = 90% journals**.
-- One originally listed review article, *Extended Berkeley Packet Filter: An Application Perspective*, was removed from the primary set and retained as background/comparison literature.
-- It was replaced by the verified 2026 IEEE Transactions on Cloud Computing primary study *Container-Specific Service Mesh-Based System for Mitigating Lateral Movement Attacks* (DOI: 10.1109/TCC.2026.3657486).
-- CHAT 01 also corrected stale DOI/title metadata where authoritative records differed from the earlier working list.
-- The 40-study primary baseline is now the starting point for paper acquisition; detailed extraction and formal quality assessment remain downstream.
-
-### Current next chat
-
-**CHAT 02A — Paper Acquisition & Archive**
-
-The live prompt is stored in project/CHAT_HANDOFF.md. The mandatory acquisition protocol is stored in research/PAPER_ACQUISITION_AND_ARCHIVE.md.
-
-### Current phase sequence
-
-**01 Verification [COMPLETE] → 02A Paper Acquisition & Archive [NEXT] → 02 Extraction → 03 Quality Assessment → 04 Critical Synthesis/Taxonomy → 05 Evidence-Based Gaps → 06 Experimental Architecture → 07 Testbed/Instrumentation → 08 Prototype → 09 Experiments → 10 Results Analysis → 11 Review 2 PPT → 12 Manuscript → 13 Final Audit**
-
-CHAT 02A must not restart paper selection or begin detailed extraction. Its purpose is to establish a legitimate, auditable full-text corpus and access register for the already verified 40-study baseline.
-
-
----
-
-## CHAT 02A status — 5 October 2026
-
-CHAT 02A paper acquisition/archive is **PARTIAL/BLOCKED**.
-
-- Frozen primary baseline: **40 studies**
-- Composition: **36 journals + 4 peer-reviewed conferences = 90% journals**
-- Legitimate full-text copies/routes located: **26**
-- Institutional/library access required: **14**
-- Legitimately unavailable: **0**
-- New DOI/title mismatches requiring correction: **0**
-- Unauthorized PDFs committed: **0**
-- Local/private PDF corpus: **not yet materialized**
-
-The complete row-level access register is in research/PAPER_ACQUISITION_AND_ARCHIVE.md. CHAT 02 evidence extraction must begin only after the local/private corpus is stable or legitimate institutional/library access has been obtained for the remaining records.
-
-**Important:** “OBTAINED” in the register means a legitimate full-text copy was located/accessed; it does not claim that a local PDF file was successfully materialized in the current execution environment.
-
-
-## Live status override — 5 October 2026
-
-**Current phase:** CHAT 02 — Evidence Extraction Matrix, **BLOCKED at the full-text corpus gate**.
-
-The 40-study baseline remains frozen at **36 journals + 4 peer-reviewed conferences = 90% journals**. A direct check of the connected Library and mounted local workspace found **no retained P001–P040 study PDFs**. The acquisition register still records 26 legitimate full-text routes and 14 institutional/library-access requirements, but those routes do not establish local corpus availability. Evidence extraction therefore has **not** begun and no inaccessible field is being labelled “Not reported.”
-
-The next action is to materialize the private/local corpus legitimately or provide legitimate institutional/library access for the unresolved studies, then resume CHAT 02.
-
-## CHAT 02 completion — 5 October 2026
-
-CHAT 02 Evidence Extraction is COMPLETE. The canonical field-level matrix is research/CHAT02_EVIDENCE_EXTRACTION.md. Missing fields are explicitly marked NR/NA rather than inferred. The next phase is CHAT 03 — Quality Assessment.
-
-
-## CHAT 03 completion checkpoint — 5 October 2026
-
-**CHAT 03 — COMPLETE.** Formal qualitative quality assessment was completed for all 40 retained primary studies in `research/CHAT03_QUALITY_ASSESSMENT.md`. No numerical quality score was assigned and the baseline was not changed.
-
-## CHAT 04 completion checkpoint — 5 October 2026
-
-**CHAT 04 — COMPLETE.** The evidence-grounded critical synthesis and technology taxonomy are recorded in `research/CHAT04_CRITICAL_SYNTHESIS.md`. The frozen baseline remains **40 studies: 36 journals + 4 peer-reviewed conferences = 90% journals**. No study was added, removed or replaced. Preliminary gap observations remain explicitly non-final. The next phase is **CHAT 05 — Research Gap Consolidation / Evidence-to-Design Bridge**.
-
-## CHAT 05 completion checkpoint — 5 October 2026
-
-**CHAT 05 — COMPLETE.** The authoritative gap framework is in `research/CHAT05_RESEARCH_GAP_CONSOLIDATION.md` and `research/RESEARCH_GAPS_AND_FUTURE_AGENDA.md`. Five validated gaps were retained: end-to-end latency/telemetry completeness, distribution-shift robustness, common-protocol ML placement comparison, safe enforcement evaluation, and reproducible environment/artifact specification. The frozen baseline remains **40 primary studies: 36 journals + 4 peer-reviewed conferences**. Next phase: **CHAT 06 — Experimental Architecture + Testbed Specification**.## CHAT 07 implementation checkpoint — 5 October 2026
-
-**CHAT 07 is INCOMPLETE / BLOCKED, not COMPLETE.** The minimum prototype structure has been created under `prototype/`, including BPF telemetry source/loader, ring-buffer accounting, deterministic feature aggregation, user-space Logistic Regression, staged policy logic, reproducibility capture, tests and CI configuration.
-
-Native BPF/container validation is blocked in the current execution environment because it lacks `bpftool`, Docker, libbpf development headers and a Clang installation with the BPF target. The exact evidence and remaining gates are recorded in `research/CHAT07_IMPLEMENTATION_AND_VALIDATION.md`.
-
-No final experiment, performance result, superiority claim, novelty claim, or kernel-local ML result is claimed.
-
-
-
-
-## Review 2 literature-corpus completion — 5 October 2026
-
-The faculty Review 2 instruction requires a **minimum of 50 references and a literature-survey table covering all 50 papers**.
-
-This requirement is now satisfied without altering the canonical evidence baseline:
-
-- **40 canonical primary studies:** unchanged; 36 journals + 4 peer-reviewed conferences = 90% journals.
-- **10 supporting/background references:** R041–R050, selected to strengthen eBPF meta-security/verifier safety, cloud-native telemetry/latency, service-mesh performance and runtime-security context.
-- **Total Review 2 presentation corpus: 50 references.**
-
-The complete faculty-format table is at:
-review2/REVIEW2_50_PAPER_LITERATURE_TABLE.md
-
-The ten additions are explicitly labelled as supporting/background references. Secondary reviews are not counted as primary evidence and do not change CHAT 01–06 conclusions.
-
-### Review 2 status
-
-The literature corpus is now ready for Review 2 PPT preparation at the literature level. The next technical project milestone remains CHAT 07 prototype validation; no implementation result is implied by this literature update.
+## Evidence and reporting rules
+- Separate paper-reported results, cross-paper synthesis, inference, and project interpretation.
+- Mark unreported fields as “Not reported”; do not reconstruct missing facts by guesswork.
+- Do not fabricate measurements or claim superiority without direct empirical support.
+- Report experimental repetitions, denominators, variability, event loss, failures, and deviations.
+- Keep raw outputs immutable and derive summaries reproducibly.
+- Store metadata, DOI/official links, acquisition status, and verification notes in the public repository; do not commit unauthorized copyrighted PDFs.

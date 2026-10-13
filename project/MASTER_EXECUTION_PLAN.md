@@ -8,9 +8,15 @@ Project:
 
 **eBPF-Assisted Machine Learning for Cloud-Native Runtime Security: Telemetry Overhead, Kernel Enforcement, and Detection Trade-offs**
 
-The project is in Review 2 downstream execution. CHAT 01–06 are complete; CHAT 06 has frozen the experimental architecture and testbed. CHAT 07 prototype implementation / experimental infrastructure is next.
+Review 1 and Review 2 (Chat 12) are COMPLETE. Chats 01–07 are COMPLETE, including Chat 07 native prototype validation. CHAT 08 — Controlled Experiments Execution is NEXT. The current status, Chat 07 caveats, and corrected remaining phase sequence are authoritative in `project/STATUS_CORRECTION_2026-10-13.md`; older phase prompts below are retained as historical planning material and must not override the live handoff.
 
 ---
+
+## Live status override — 13 October 2026
+
+For current phase/status, follow `project/STATUS_CORRECTION_2026-10-13.md` and `project/CHAT_HANDOFF.md`. Review 2 is already complete; do not run it again as a future phase. Chat 07 is complete; Chat 08 controlled experiments is next. Historical continuation prompts below document the original plan and must be treated as historical where they conflict with the live status correction.
+
+Frozen counts: 40 primary studies (36 journals + 4 peer-reviewed conference papers) and 50 Review 2 references (40 primary + 10 supporting/background). These counts are distinct and must not be conflated.
 
 ## 1. Non-Negotiable Context Rule
 
