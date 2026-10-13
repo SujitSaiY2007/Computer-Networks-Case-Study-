@@ -727,3 +727,16 @@ This file contains the required Review 2 fields for the 50-reference presentatio
 ### Next phase
 
 Resume **CHAT 07 — Prototype Implementation / Experimental Infrastructure** on the required Linux validation host. The Review 2 literature requirement does not require CHAT 07 to be scientifically complete before PPT preparation.
+
+
+---
+
+## Live branch and Chat 08 synchronization protocol — 13 October 2026
+
+This section supersedes any older instruction in this historical plan that suggests feature-branch-first work or says Chat 08 is certainly present on GitHub. **Use `main` as the sole canonical working branch for all remaining work.** Preserve old branches as historical references, but do not create/switch to feature branches for future chats, delete branches, force-push, or rewrite history.
+
+The Chat 08 execution summary reports 350 runs and commit abbreviation `5732f2f`; GitHub did not resolve that commit and the Chat 08 report/processed CSVs were not found on `main` during reconciliation. Treat this as an unresolved local-to-remote synchronization/provenance discrepancy, not proof that the work was never done. The exact recovery gate and ChatGPT/AG division of responsibility are documented in `project/CHAT08_REPOSITORY_RECONCILIATION.md` and `project/CHAT_HANDOFF.md`.
+
+**Required before Chat 09 analysis:** inspect local Git state, all branches/reflog and AG workspace; recover existing artifacts without destructive operations; identify the full SHA; validate raw-run completeness and regenerate summaries from raw JSON; commit/push all legitimate Chat 08 deliverables to `main`; verify GitHub file paths and local/remote SHA equality. Do not rerun the matrix unless a documented evidence audit proves runs are missing/invalid. Do not invent results or silently replace raw data.
+
+**Mandatory handoff record:** at start and closure, document canonical branch, full local HEAD SHA, full `origin/main` SHA, clean/dirty status, last commit message, exact deliverable paths, validation commands/results, and the next chat prompt. A task is not complete merely because AG reports that commands ran; code, raw evidence, report, and reproduction instructions must be committed and remotely verifiable. Preserve frozen literature counts: 40 primary studies (36 journals + 4 peer-reviewed conferences) and 50 Review 2 references (40 primary + 10 supporting/background). Review 1 and Review 2 remain complete.
