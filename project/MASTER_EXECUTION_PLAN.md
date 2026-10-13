@@ -8,7 +8,7 @@ Project:
 
 **eBPF-Assisted Machine Learning for Cloud-Native Runtime Security: Telemetry Overhead, Kernel Enforcement, and Detection Trade-offs**
 
-Review 1 and Review 2 (Chat 12) are COMPLETE. Chats 01–07 are COMPLETE, including Chat 07 native prototype validation. CHAT 08 — Controlled Experiments Execution is NEXT. The current status, Chat 07 caveats, and corrected remaining phase sequence are authoritative in `project/STATUS_CORRECTION_2026-10-13.md`; older phase prompts below are retained as historical planning material and must not override the live handoff.
+Review 1 and Review 2 (Chat 12) are COMPLETE. Chats 01–07 are COMPLETE, including Chat 07 native prototype validation. Chat 08 execution is reported in chat but is not yet verified on remote `main`. Chat 09 recovery and evidence verification is the active phase. The current status, Chat 07 caveats, and corrected remaining phase sequence are authoritative in `project/STATUS_CORRECTION_2026-10-13.md`; older phase prompts below are retained as historical planning material and must not override the live handoff.
 
 ---
 
@@ -17,6 +17,17 @@ Review 1 and Review 2 (Chat 12) are COMPLETE. Chats 01–07 are COMPLETE, includ
 For current phase/status, follow `project/STATUS_CORRECTION_2026-10-13.md` and `project/CHAT_HANDOFF.md`. Review 2 is already complete; do not run it again as a future phase. Chat 07 is complete; Chat 08 controlled experiments is next. Historical continuation prompts below document the original plan and must be treated as historical where they conflict with the live status correction.
 
 Frozen counts: 40 primary studies (36 journals + 4 peer-reviewed conference papers) and 50 Review 2 references (40 primary + 10 supporting/background). These counts are distinct and must not be conflated.
+
+## Live status override — 13 October 2026 (Chat 09 recovery gate)
+
+- Canonical branch: `main` only for all new work. Preserve all historical branches and commits; never force-push, reset, rebase, delete branches, or rewrite history.
+- Review 1 and Review 2 are complete. Do not reopen either without a documented evidence defect.
+- Chat 07 implementation/validation is complete, with the WSL2 kernel deviation and limited 87-event zero-loss observation disclosed.
+- Chat 08 was reported complete in a prior chat, but the raw evidence and report are not present in the inspected remote `main` tree. A remote-only audit is recorded in `research/CHAT09_REPOSITORY_AND_EVIDENCE_AUDIT.md`.
+- Chat 09 must recover local work first. Its recovery gate has not passed; no reported Chat 08 metric is verified until raw records and reproducible processing are audited.
+- Frozen literature counts remain 40 primary studies (36 journal articles + 4 peer-reviewed conference papers) and 50 Review 2 references (40 primary + 10 supporting/background).
+
+This live status overrides older phase prompts below. Treat older Chat 08/09/10 wording as historical where it conflicts with the current gate and phase sequence.
 
 ## 1. Non-Negotiable Context Rule
 
@@ -384,44 +395,48 @@ Execute the frozen experiment matrix and collect empirical measurements across a
 
 ---
 
-## CHAT 09 — Experimental Evaluation
+## CHAT 09 — Repository Recovery, Results Verification & Empirical Synthesis
 
 ### Objective
-Run the agreed experiments and preserve auditable results.
+Recover the reported Chat 08 work non-destructively, synchronize verified artifacts directly to `main`, independently audit the raw evidence, and only then synthesize results.
 
-### Deliverables
-- Raw result files.
-- Processed metrics.
-- Run metadata.
-- Failed-run/anomaly log.
-- Reproducibility record.
+### Mandatory recovery gate
+- Inspect local branch, HEAD, `origin/main`, working-tree status, recent history, reflog, local-only branches, ignored/untracked files, and the Antigravity workspace.
+- Resolve the reported short SHA `5732f2f` to a full SHA only if it genuinely exists.
+- Recover existing run records and scripts before considering any rerun.
+- Preserve raw records exactly. Do not fabricate runs, clean/reset the checkout, rewrite history, or rerun merely because the remote artifacts are absent.
+- If the local search fails, document exact paths and records searched and the missing artifacts. Stop short of unsupported empirical conclusions.
+
+### Evidence and analysis deliverables (only after recovery gate passes)
+- Verified raw records and provenance manifest.
+- Reproducible processing/analysis scripts.
+- Run-coverage, duplicate, missing-run, exclusion and seed audit.
+- Recomputed system overhead, telemetry loss, detection, inference, enforcement, mitigation, rollback and benign-impact metrics.
+- Comparative tables, figures, uncertainty/dispersion where justified, limitations and validity threats.
+- Manuscript-ready Results and Discussion.
+- Updated Chat 08 report, README, handoff, status correction, and this plan.
+- Full commit SHA, remote `main` verification, exact artifact paths and validation outputs.
 
 ### Next continuation prompt
-> Continue from the completed experiment runs and raw results. Read `project/CHAT_HANDOFF.md` first and inspect the raw data before drawing conclusions. Now perform the **statistical and comparative analysis**. Compare configurations fairly, quantify trade-offs, report uncertainty where appropriate, identify performance/detection conflicts, and distinguish observed results from interpretation. Produce publication-quality evidence tables and figures for the manuscript and Review 2. Do not claim general superiority unless the data supports it.
->
-> Update the handoff with finalized findings, limitations, figure/table inventory, and the exact continuation prompt for Review 2 presentation preparation.
+> Continue from the verified Chat 09 evidence package. Read `project/CHAT_HANDOFF.md`, `project/PROJECT_SCOPE_AND_RQS.md`, the Chat 06 architecture, Chat 07 validation report, Chat 08 execution report, and the Chat 09 empirical synthesis. Draft the manuscript for Chat 10 using only verified experimental results and traceable literature evidence. Preserve the frozen title, scope, research questions and literature counts. Clearly distinguish direct measurements, findings reported by studies, synthesis, and interpretation. Include methodology, results, discussion, limitations, validity threats, and a claim-to-evidence audit. Do not claim significance, production readiness, or universal superiority unless the evidence supports the exact claim. Commit all manuscript changes directly to `main`, verify the remote SHA, and update the handoff with the final audit/submission continuation prompt.
 
 ---
 
-## CHAT 10 — Results Analysis and Evidence Figures
+## CHAT 10 — Manuscript Development
 
 ### Objective
-Turn experimental outputs into defensible findings.
+Turn the completed literature synthesis and verified empirical results into a coherent, defensible manuscript.
 
 ### Deliverables
-- Comparative results tables.
-- Detection-quality analysis.
-- Overhead analysis.
-- Latency analysis.
-- Enforcement/safety analysis.
-- Statistical/uncertainty treatment.
-- Figures.
-- Final findings linked back to RQs and literature gaps.
+- Structured manuscript with abstract, introduction, scope/methodology, literature synthesis, system/testbed and experimental methodology, results, discussion, limitations/validity threats, conclusion, and references as appropriate to the course requirements.
+- Traceable claim-to-evidence map connecting research questions, primary studies, raw experimental evidence, tables and figures.
+- Clear separation of measured project results, claims from literature, cross-study synthesis, and interpretation.
+- Consistent Harvard author–date citations and the frozen literature counts.
+- Reproducibility and environment-deviation disclosures.
+- Updated README and handoff, with all changes committed directly to `main` and remote synchronization verified.
 
 ### Next continuation prompt
-> Continue from the finalized literature synthesis and experimental findings. Read `project/CHAT_HANDOFF.md`, `review2/REVIEW_2_SLIDE_PLAN.md`, and the latest research files. Now create the **Review 2 presentation**. Preserve continuity with Review 1, but make Review 2 evidence-focused: verified paper set, methodology/quality, technology taxonomy, evidence-based gaps, proposed/frozen research direction, and evaluation framework/results as appropriate. Do not turn Review 2 into an implementation demo. Every important claim should be traceable to a paper, dataset/result, or explicitly labelled project inference.
->
-> Update the handoff with the completed presentation status, files, feedback issues, and the exact continuation prompt for manuscript drafting.
+> Continue from the reviewed manuscript on `main`. Read the current handoff, project scope/RQs, manuscript, evidence matrix, experiment report, and all validation/limitations records. Perform Chat 11 — final technical, citation, reproducibility, scope, and submission audit. Verify that every result traces to raw data and a reproducible script, every literature claim traces to a valid source, all limitations and environment deviations are disclosed, and no unsupported novelty or superiority claim remains. Check repository state and remote synchronization; do not rewrite history or delete branches. Produce a precise defect list, fix substantiated defects directly on `main`, run available validation, and provide the final submission inventory and verified commit SHA.
 
 ---
 
