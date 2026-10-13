@@ -65,3 +65,21 @@ Review 2 is already complete. The remaining project sequence is:
 **Chat 08 Controlled Experiments → Chat 09 Results Analysis → Chat 10 Manuscript → Chat 11 Final Audit/Submission Package**
 
 Use the latest committed handoff and this correction document as the live state. Legacy references that schedule Review 2 PPT after Chat 08 are stale.
+
+
+## Authoritative branch and Chat 08 reconciliation — 13 October 2026
+
+**Canonical working branch is `main`.** All project implementation, experiment artifacts, reports, and documentation for this project must be committed and pushed directly to `main`. Do not create or switch to a feature branch for the remaining project chats. The historical branch `feat/chat07-native-validation` is retained as historical evidence and must not be deleted or rewritten.
+
+A Chat 08 execution summary was supplied in the conversation, claiming 350 runs and commit abbreviation `5732f2f`. However, GitHub's repository commit search did not resolve that SHA, and the claimed `research/CHAT08_CONTROLLED_EXPERIMENTS_EXECUTION.md` and processed CSVs were not retrievable from `main` at reconciliation time. This is a **repository synchronization/provenance discrepancy**, not proof that experiments did not run. Until the native artifacts are recovered, committed to `main`, and independently validated, treat the reported measurements as *reported but not yet repository-verified*. Do not repeat the experiment matrix blindly and do not recreate, fabricate, or overwrite raw data to make the counts match.
+
+### Required recovery gate before Chat 09 analysis
+1. On the user's actual development machine, inspect the current working tree, local branches, reflog, ignored/untracked files, and any AG/Antigravity workspace for the claimed Chat 08 scripts, 350 `run_*.json` records, manifests, processed CSVs, plots, and report.
+2. Identify the exact commit and parent from local Git; resolve the full 40-character SHA. A short SHA alone is not sufficient provenance.
+3. Compare every claimed artifact against the local source and reproduce summaries from the immutable raw records. Confirm expected record count, configuration/workload/repetition coverage, failures/exclusions, seeds, labels, timing definitions, and denominators. Validate claimed latency arithmetic and event-loss counts; report any mismatches without silently editing source data.
+4. Preserve raw records exactly as found. If artifacts exist only locally, add them to `main` in a normal, non-destructive commit. Do not force-push, reset, rebase, delete branches, or overwrite history. Do not commit bulky generated dependencies or unrelated user files.
+5. If local evidence cannot be found, record exactly what is missing and recover from a valid backup/source; do not claim Chat 08 complete or begin inferential claims from the summary alone.
+6. After synchronization, verify `git branch --show-current` is `main`, `git status` is clean after commit, the full HEAD SHA, `git ls-remote origin refs/heads/main`, and that the key report/data files are visible on GitHub at that SHA.
+
+### Durable single-branch protocol
+At the beginning and end of every future chat, record: canonical branch (`main`), full local HEAD SHA, full remote `origin/main` SHA, clean/dirty state, last commit message, and exact paths of deliverables. If local and remote HEAD differ, stop and reconcile before editing. Do not use short SHAs as sole evidence. A successful local run is not a completed deliverable until its code, raw evidence (where appropriate), report, and reproduction instructions are committed and verified on GitHub. AG runs commands and implements changes in the repo; ChatGPT audits evidence, reasons about results, reviews diffs, and defines acceptance criteria. Neither role may claim tests or artifacts it has not actually verified.
