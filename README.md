@@ -7,8 +7,8 @@
 - **Review 1: COMPLETE**
 - **Review 2 presentation (Chat 12): COMPLETE**
 - **Chat 07 prototype implementation and native validation: COMPLETE**
-- **Chat 08: execution reported in chat; artifacts/commit not yet verified on `main`**
-- **Next: Chat 09 — repository recovery gate, then empirical analysis**
+- **Chat 08: execution reported in chat; raw artifacts and results not yet verified on `main`**
+- **Chat 09: active — remote audit recorded; local recovery gate not yet passed**
 - **Canonical working branch: `main` only**
 - Chat 07 validation commit: [`66512d8efdf5e16a8a8e9c3edd65534681b3bbfd`](https://github.com/SujitSaiY2007/Computer-Networks-Case-Study-/commit/66512d8efdf5e16a8a8e9c3edd65534681b3bbfd)
 
@@ -23,6 +23,9 @@
 **Chat 08 Controlled Experiments → Chat 09 Results Analysis → Chat 10 Manuscript → Chat 11 Final Audit/Submission Package**
 
 Review 2 is already complete; do not schedule it as a future phase.
+
+## Chat 09 evidence gate
+A remote-only audit is recorded in [`research/CHAT09_REPOSITORY_AND_EVIDENCE_AUDIT.md`](research/CHAT09_REPOSITORY_AND_EVIDENCE_AUDIT.md). The reported Chat 08 execution report and `experiments/` directory were not present in the inspected remote `main` tree. This does not prove that local-only artifacts are absent. AG/Antigravity must inspect the local checkout, reflog, ignored/untracked files, local branches and workspace before any rerun. Do not treat the reported metrics as verified or begin empirical synthesis until raw evidence is recovered and audited. All new work must be committed directly to `main`.
 
 ## Chat 07 evidence
 The detailed report is `research/CHAT07_IMPLEMENTATION_AND_VALIDATION.md`. It records gates A–G: native BPF compile/load, ring-buffer transport/accounting, container identity correlation, unit tests, end-to-end telemetry-to-ML smoke pipeline, reproducibility manifest, and fixed-point kernel-local Logistic Regression feasibility.
