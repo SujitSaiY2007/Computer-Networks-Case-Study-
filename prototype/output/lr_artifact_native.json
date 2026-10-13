@@ -1,0 +1,51 @@
+{
+  "coefficients": [
+    0.32669889116862866,
+    0.32669889116862866,
+    0.0,
+    0.0,
+    0.32669889116862866,
+    0.0,
+    0.32669889116862866,
+    0.32669889116862866,
+    0.0
+  ],
+  "feature_names": [
+    "exec_count",
+    "open_count",
+    "connect_count",
+    "unlink_count",
+    "unique_process_count",
+    "failed_operation_count",
+    "event_count",
+    "event_rate",
+    "event_loss_rate"
+  ],
+  "intercept": 0.0,
+  "mean": [
+    1.0,
+    42.5,
+    0.0,
+    0.0,
+    1.5,
+    0.0,
+    43.5,
+    43.5,
+    0.0
+  ],
+  "model_family": "logistic_regression",
+  "model_hash": "d02c17c8a253ccd4a033a53fd9d36ee9ba0b7a1d9d6e5ca705240930631c767d",
+  "scale": [
+    1.0,
+    40.5,
+    1.0,
+    1.0,
+    0.5,
+    1.0,
+    41.5,
+    41.5,
+    1.0
+  ],
+  "schema_version": 1,
+  "threshold": 0.5
+}

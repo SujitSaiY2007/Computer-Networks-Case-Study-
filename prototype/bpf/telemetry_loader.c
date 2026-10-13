@@ -93,6 +93,7 @@ int main(int argc, char **argv)
 
     signal(SIGINT, on_signal);
     signal(SIGTERM, on_signal);
+    setlinebuf(stdout);
 
     struct bpf_object *obj = bpf_object__open_file(obj_path, NULL);
     long err = libbpf_get_error(obj);
@@ -135,7 +136,15 @@ int main(int argc, char **argv)
         }
     }
 
-    printf("{\"record_type\":\"stats\",\"consumed_events\":%" PRIu64 ",\"sequence_gaps\":%" PRIu64 "}\n", consumed, sequence_gaps);
+    struct telemetry_counters c = {0};
+    struct bpf_map *cmap = bpf_object__find_map_by_name(obj, "counters");
+    if (cmap) {
+        int cfd = bpf_map__fd(cmap);
+        map_lookup(cfd, 0, &c);
+    }
+
+    printf("{\"record_type\":\"stats\",\"generated_events\":%" PRIu64 ",\"submitted_events\":%" PRIu64 ",\"reservation_failures\":%" PRIu64 ",\"consumed_events\":%" PRIu64 ",\"sequence_gaps\":%" PRIu64 "}\n",
+           c.generated, c.submitted, c.reservation_failures, consumed, sequence_gaps);
     ring_buffer__free(rb);
     for (int i = 0; i < 4; ++i) if (links[i]) bpf_link__destroy(links[i]);
     bpf_object__close(obj);

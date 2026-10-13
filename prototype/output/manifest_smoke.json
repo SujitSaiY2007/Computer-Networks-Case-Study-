@@ -1,0 +1,44 @@
+{
+  "configuration": {
+    "configuration_id": "baseline-user-space-lr",
+    "event_count": 18,
+    "event_source": "SIMULATED_FIXTURE",
+    "experiment_id": "CHAT07_SMOKE_TEST",
+    "feature_window_ns": 1000000000,
+    "mitigation_mode": "disabled_by_default",
+    "model": "logistic_regression",
+    "policy_history_count": 5,
+    "ring_buffer_bytes": 1048576,
+    "run_id": "windows-smoke-2026-10-13",
+    "seed": 0,
+    "telemetry_hooks": [
+      "sys_enter_execve",
+      "sys_enter_openat",
+      "sys_enter_connect",
+      "sys_enter_unlinkat"
+    ],
+    "threshold": 0.5,
+    "timestamp_utc": "2026-10-13T15:10:05Z",
+    "windows_produced": 2
+  },
+  "configuration_id": "baseline-user-space-lr",
+  "environment": {
+    "architecture": "AMD64",
+    "bpftool": "UNAVAILABLE",
+    "clang": "UNAVAILABLE",
+    "cpu_count": 20,
+    "docker": "UNAVAILABLE",
+    "kernel": "11",
+    "libbpf": "bash: line 1: ldconfig: command not found",
+    "os": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.4",
+    "python_dependencies": {
+      "numpy": "2.2.6",
+      "sklearn": "1.9.1"
+    }
+  },
+  "experiment_id": "CHAT07_SMOKE_TEST",
+  "git_sha": "85f526a2708868b3b697fcbc509b99eb8ee97b32",
+  "run_id": "windows-smoke-2026-10-13",
+  "timestamp_utc": "2026-10-13T15:10:05Z"
+}

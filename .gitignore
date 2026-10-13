@@ -1,0 +1,11 @@
+# Build artifacts
+prototype/bpf/*.o
+prototype/bpf/telemetry_loader
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Temporary outputs
+.cache/

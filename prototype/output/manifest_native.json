@@ -1,0 +1,51 @@
+{
+  "configuration": {
+    "configuration_id": "Option_C_ebpf_userspace_lr",
+    "events_count": 87,
+    "experiment_id": "CHAT07_NATIVE_SMOKE_TEST",
+    "failed_operation_count_status": "UNSUPPORTED_SYSCALL_ENTER_ONLY",
+    "mitigation_mode": "disabled_by_default",
+    "model": "logistic_regression",
+    "policy_history_count": 4,
+    "ring_buffer_bytes": 1048576,
+    "ring_buffer_stats": {
+      "consumed_events": 87,
+      "generated_events": 87,
+      "record_type": "stats",
+      "reservation_failures": 0,
+      "sequence_gaps": 0,
+      "submitted_events": 87
+    },
+    "run_id": "native-linux-20261013-153927",
+    "telemetry_hooks": [
+      "sys_enter_execve",
+      "sys_enter_openat",
+      "sys_enter_connect",
+      "sys_enter_unlinkat"
+    ],
+    "telemetry_source": "NATIVE_EBPF_RINGBUF",
+    "threshold": 0.5,
+    "timestamp_utc": "2026-10-13T15:39:27Z",
+    "windows_count": 2
+  },
+  "configuration_id": "Option_C_ebpf_userspace_lr",
+  "environment": {
+    "architecture": "x86_64",
+    "bpftool": "bpftool v7.4.0\nusing libbpf v1.4\nfeatures:",
+    "clang": "Ubuntu clang version 18.1.3 (1ubuntu1)\nTarget: x86_64-pc-linux-gnu\nThread model: posix\nInstalledDir: /usr/bin",
+    "cpu_count": 20,
+    "docker": "Docker version 29.1.3, build 29.1.3-0ubuntu3~24.04.2",
+    "kernel": "6.6.87.2-microsoft-standard-WSL2",
+    "libbpf": "libbpf.so.1 (libc6,x86-64) => /lib/x86_64-linux-gnu/libbpf.so.1",
+    "os": "Linux-6.6.87.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+    "python": "3.12.3",
+    "python_dependencies": {
+      "numpy": "1.26.4",
+      "sklearn": "1.4.1.post1"
+    }
+  },
+  "experiment_id": "CHAT07_NATIVE_SMOKE_TEST",
+  "git_sha": "85f526a2708868b3b697fcbc509b99eb8ee97b32",
+  "run_id": "native-linux-20261013-153927",
+  "timestamp_utc": "2026-10-13T15:39:27Z"
+}

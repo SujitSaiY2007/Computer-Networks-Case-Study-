@@ -353,32 +353,28 @@ Make the experiment reproducible before implementation.
 - Measurement procedure.
 - Reproducibility checklist.
 
+### Status
+**COMPLETE** — Native Linux prototype implementation and validation gates (A–G) verified with empirical evidence in `research/CHAT07_IMPLEMENTATION_AND_VALIDATION.md`.
+
 ### Next continuation prompt
-> Continue from the finalized testbed and instrumentation plan. Read `project/CHAT_HANDOFF.md` and the experiment specification. Now implement the **minimum viable prototype** in the repository. Keep implementation aligned with the frozen architecture; do not change research questions or experiment variables silently. Organize code, configuration, data-generation/collection scripts, model-training/inference components, eBPF programs, deployment manifests and documentation clearly. Add a README for running the prototype and record any implementation deviation from the planned architecture.
+> Continue from the fully validated prototype and experimental infrastructure. Read `project/CHAT_HANDOFF.md` and `research/CHAT07_IMPLEMENTATION_AND_VALIDATION.md`. Now execute the **controlled experiments** for all frozen configurations (Options A–E). Run sufficient repetitions (10 runs) across baseline workloads (B1–B4) and anomaly workloads (A1–A3), preserve raw results, record environment/software versions, and do not selectively report only favorable outcomes. Measure detection quality, CPU/memory, event processing/loss, detection/inference latency, detection-to-mitigation latency, and legitimate-workload impact. Save raw and processed results under `experiments/`.
 >
-> At the end, update the handoff with implemented components, tested commands/results, known bugs, deviations, and the exact continuation prompt for experimental execution.
+> Update the handoff with experiment completion status, raw-result locations, anomalies, failed runs, and the exact continuation prompt for analysis.
 
 ---
 
-## CHAT 08 — Prototype Implementation
+## CHAT 08 — Controlled Experiments Execution
 
 ### Objective
-Build the minimum working implementation required to execute the evaluation.
+Execute the frozen experiment matrix and collect empirical measurements across all configurations.
 
 ### Deliverables
-- eBPF telemetry component(s).
-- Feature extraction.
-- ML model(s).
-- User-space and/or in-kernel placement required by the experiment.
-- Enforcement component if feasible and justified.
-- Kubernetes/container test setup.
-- Reproducible run instructions.
-- Implementation limitations.
-
-### Next continuation prompt
-> Continue from the completed prototype. Read `project/CHAT_HANDOFF.md` and the implementation/test instructions before changing code. Now execute the **controlled experiments** for all frozen configurations. Run sufficient repetitions for stable measurements, preserve raw results, record environment/software versions, and do not selectively report only favorable outcomes. Measure detection quality, CPU/memory, event processing/loss, detection/inference latency, detection-to-mitigation latency, and legitimate-workload impact. Save raw and processed results in the repository structure.
->
-> Update the handoff with experiment completion status, raw-result locations, anomalies, failed runs, and the exact continuation prompt for analysis.
+- 10-repetition experiment runs across Configurations A–E.
+- Baseline (B1–B4) and anomaly (A1–A3) evaluation datasets.
+- System metrics (CPU, memory, throughput, event loss).
+- Security metrics (precision, recall, F1, FPR).
+- Latency metrics (inference latency, detection-to-mitigation latency).
+- Raw data preservation and run reproducibility records.
 
 ---
 

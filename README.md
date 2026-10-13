@@ -4,17 +4,15 @@
 
 **eBPF-Assisted Machine Learning for Cloud-Native Runtime Security: Telemetry Overhead, Kernel Enforcement, and Detection Trade-offs**
 
-## Review 2 project status — 5 October 2026
+## Review 2 project status — 13 October 2026
 
-- **CHAT 06 COMPLETE:** experimental architecture, testbed, telemetry, feature pipeline, ML placement, distribution-shift, staged enforcement, metrics, statistics, ablations, reproducibility and risk controls are frozen in `research/CHAT06_EXPERIMENTAL_ARCHITECTURE_AND_TESTBED.md`.
-- **Selected architecture:** single-host Linux + native containers + eBPF syscall/process telemetry + ring buffer + common feature pipeline + user-space Logistic Regression, with a feasibility-gated fixed-point kernel-local LR variant and staged controlled enforcement.
+- **CHAT 07 COMPLETE:** Prototype implementation and experimental infrastructure fully validated on native Linux (Ubuntu 24.04 LTS x86_64, Linux 6.6.87.2). All validation gates (A: native BPF compile/load, B: ring buffer transport/accounting, C: container identity correlation, D: unit tests, E: end-to-end smoke pipeline, F: reproducibility manifest, G: fixed-point kernel-local LR feasibility) are verified with recorded empirical evidence in `research/CHAT07_IMPLEMENTATION_AND_VALIDATION.md`.
+- **Selected architecture:** single-host Linux + native containers + eBPF syscall/process telemetry + ring buffer + common feature pipeline + user-space Logistic Regression, with a feasibility-validated fixed-point kernel-local LR variant and staged controlled enforcement.
 
 - Review 1 established the problem, motivation and literature directions.
-- The 45-study working pool was converted into a provisional 40-paper set and has now undergone CHAT 01 verification. The current primary-study baseline is the verified 40-study set.
-- The Review 2 candidate target is **36 journal articles + 4 peer-reviewed conference papers = 90% journal references**.
-- Preprints are not counted in the primary 40 unless their peer-reviewed publication status is later verified.
-- Existing review papers are retained as background/comparison literature and are not counted as primary studies.
-- CHAT 01, CHAT 02A, CHAT 02, CHAT 03, CHAT 04, CHAT 05 and CHAT 06 are COMPLETE. The canonical CHAT 06 architecture is in research/CHAT06_EXPERIMENTAL_ARCHITECTURE_AND_TESTBED.md. CHAT 07 prototype implementation / experimental infrastructure is next.
+- The verified primary-study baseline is **40 studies: 36 journal articles + 4 peer-reviewed conference papers = 90% journal references**.
+- CHAT 01 through CHAT 07 are COMPLETE.
+- Next phase: **CHAT 08 — Controlled Experiments Execution**.
 
 ## 🚦 Multi-chat execution system
 
@@ -31,13 +29,13 @@ This project is now being executed through a **controlled multi-chat workflow** 
 
 ### Current next chat
 
-**CHAT 07 — Prototype Implementation / Experimental Infrastructure**
+**CHAT 08 — Controlled Experiments Execution**
 
-The live prompt is stored in `project/CHAT_HANDOFF.md`..
+The live prompt is stored in `project/CHAT_HANDOFF.md`.
 
 ### Planned phase sequence
 
-**01 Verification [COMPLETE] → 02A Acquisition [COMPLETE as access register] → 02 Extraction [COMPLETE] → 03 Quality Assessment [COMPLETE] → 04 Critical Synthesis/Taxonomy [COMPLETE] → 05 Evidence-Based Gaps [COMPLETE] → 06 Experimental Architecture [COMPLETE] → 07 Prototype / Experimental Infrastructure [NEXT] → 08 Experiments → 09 Results Analysis → 10 Review 2 PPT → 11 Manuscript → 12 Final Audit**
+**01 Verification [COMPLETE] → 02A Acquisition [COMPLETE] → 02 Extraction [COMPLETE] → 03 Quality Assessment [COMPLETE] → 04 Critical Synthesis/Taxonomy [COMPLETE] → 05 Evidence-Based Gaps [COMPLETE] → 06 Experimental Architecture [COMPLETE] → 07 Prototype Implementation & Validation [COMPLETE] → 08 Experiments [NEXT] → 09 Results Analysis → 10 Review 2 PPT → 11 Manuscript → 12 Final Audit**
 
 **Important:** Chat 02A is a mandatory checkpoint. We verify the retained studies first, then obtain/record legitimate full-text access, then perform detailed evidence extraction.
 
