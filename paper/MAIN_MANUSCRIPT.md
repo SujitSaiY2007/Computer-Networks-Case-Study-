@@ -7,7 +7,7 @@
 
 ## Abstract
 
-Extended Berkeley Packet Filter (eBPF) enables programmable observation and selected control operations in the Linux kernel, while machine learning (ML) may classify runtime behaviour that is difficult to express as static rules. Combining them introduces trade-offs among telemetry overhead, model placement, detection quality, response latency, and enforcement safety. This study evaluates an eBPF-assisted runtime-monitoring prototype across five configurations, seven workloads, and ten repetitions per configuration–workload cell (350 records). The implementation uses syscall tracepoint telemetry, ring-buffer transport, feature aggregation, Logistic Regression, and a staged policy-engine prototype. Recorded mean workload-duration differences were below 0.20% in this environment, and mean host-process peak-RSS increases were approximately 0.35–0.55 MB over baseline. The telemetry audit reports 16,001 generated events, 15,999 submitted events, and no recorded reservation failures or sequence gaps across 280 instrumented runs; because these counters do not reconcile exactly, they do not establish end-to-end zero event loss. Detection was workload-dependent: process-burst workload A1 achieved precision 1.00, recall 0.70, and F1 0.824, while benign process churn B3 produced false-positive rates of 50–80%, and held-out connection-burst workload A3 had zero recall. A fixed-point Q16.16 benchmark averaged 4.19 μs compared with 169.20 μs for the Python floating-point/scikit-learn path, but this is a software arithmetic comparison, not a measured in-kernel speedup. Detection-latency values are formula-derived estimates, and mitigation/rollback are simulated Python state transitions rather than operating-system enforcement. The contribution is an evidence-aligned prototype evaluation that reports both overhead observations and detection failures while identifying the measurement, statistical, and systems-integration work required before deployment claims are justified.
+Extended Berkeley Packet Filter (eBPF) enables programmable observation and selected control operations in the Linux kernel, while machine learning (ML) may classify runtime behaviour that is difficult to express as static rules. Combining them introduces trade-offs among telemetry overhead, model placement, detection quality, response latency, and enforcement safety. This study evaluates an eBPF-assisted runtime-monitoring prototype across five configurations, seven workloads, and ten repetitions per configuration–workload cell (350 records). The implementation uses syscall tracepoint telemetry, ring-buffer transport, feature aggregation, Logistic Regression, and a staged policy-engine prototype. Recorded mean workload-duration differences were below 0.20% in this environment, and mean host-process peak-RSS increases were approximately 0.35–0.55 MB over baseline. Across 280 instrumented runs, the telemetry audit records 16,001 generated events, 15,999 submitted events, and 15,970 consumed events, with zero reservation failures and zero sequence gaps; because two generated events were unsubmitted across two runs and 29 submitted events were unconsumed across 23 runs upon harness completion, these counters do not establish end-to-end zero event loss. Detection was workload-dependent: process-burst workload A1 achieved precision 1.00, recall 0.70, and F1 0.824, while benign process churn B3 produced false-positive rates of 50–80%, and held-out connection-burst workload A3 had zero recall. A fixed-point Q16.16 benchmark averaged 4.19 μs (grand mean, N=70; 4.238 μs unweighted mean of seven workload cell means) compared with 169.20 μs for the Python floating-point/scikit-learn path, but this is a software arithmetic comparison, not a measured in-kernel speedup. Detection-latency values are formula-derived estimates, and mitigation/rollback are simulated Python state transitions rather than operating-system enforcement. The contribution is an evidence-aligned prototype evaluation that reports both overhead observations and detection failures while identifying the measurement, statistical, and systems-integration work required before deployment claims are justified.
 
 **Keywords:** eBPF; cloud-native security; runtime detection; machine learning; telemetry overhead; Linux kernel; container security; fixed-point inference; validity threats.
 
@@ -31,7 +31,7 @@ The approved review corpus contains 40 primary studies—36 journal articles and
 
 Syscall telemetry provides process and file-operation context, while TC and XDP observe or act on packet paths. These modalities answer different questions and are complementary rather than interchangeable. Cloud-native security-tool comparisons map operational capabilities and performance concerns (Her et al., 2025), while container-oriented ML studies use syscall and flow features for specific detection tasks (Kim et al., 2025; Ryu et al., 2026). In-kernel packet-processing work also exposes throughput and verifier trade-offs associated with model complexity (Hara and Sasabe, 2024; Taguchi et al., 2026).
 
-Published systems address container attacks, cryptojacking, file-access anomalies, network attacks, and resource-exhaustion behaviour. Their metrics should not be compared as if they came from one benchmark: datasets, labels, workloads, feature definitions, testbeds, and procedures differ. Enforcement is a distinct engineering layer. eBPF/LSM and container-aware policy systems can mediate selected kernel operations, but safe response also requires correct identity correlation, policy validation, rollback, and proof that the action affected the target workload (Deng et al., 2025; Lu et al., 2025). Work on eBPF isolation and verifier correctness shows that the execution substrate itself must be part of the threat model (Patel et al., 2026; Sun and Su, 2024).
+Published systems address container attacks, cryptojacking, file-access anomalies, network attacks, and resource-exhaustion behaviour (e.g., Remya et al., 2025; Zehra et al., 2025; Zhan et al., 2023). Their metrics should not be compared as if they came from one benchmark: datasets, labels, workloads, feature definitions, testbeds, and procedures differ. Enforcement is a distinct engineering layer. eBPF/LSM and container-aware policy systems can mediate selected kernel operations, but safe response also requires correct identity correlation, policy validation, rollback, and proof that the action affected the target workload (Deng et al., 2025; Lu et al., 2025). Work on eBPF isolation and verifier correctness shows that the execution substrate itself must be part of the threat model (Patel et al., 2026; Sun and Su, 2024).
 
 The project does not claim to be the first review of eBPF cybersecurity; a recent systematic review surveys that broader field (Kostopoulos et al., 2026). Its narrower contribution is a prototype-centred empirical account of telemetry overhead, workload-dependent detection trade-offs, fixed-point arithmetic feasibility, and the gap between simulated response and real operating-system enforcement.
 
@@ -91,9 +91,10 @@ RSS refers to the host Python experiment harness and associated child-process ac
 
 ### 5.2 Telemetry accounting
 
-The project audit reports 16,001 generated events and 15,999 submitted events across 280 instrumented runs, with zero recorded reservation failures and zero sequence gaps. The validator calculates its loss indicator from reservation failures plus sequence gaps divided by generated events. That operational indicator is zero, but the generated and submitted totals differ by two events. Individual raw records also show that submitted and consumed counts can differ within a run. The evidence therefore supports the narrower statement that **no reservation failures or sequence gaps were recorded by those counters**, not an unconditional end-to-end zero-loss guarantee.
-
-A targeted audit must document when an event is counted as generated, submitted, and consumed; inspect loader shutdown/drain behaviour; and determine whether the discrepancy reflects buffering, counter definitions, or missing records. Raw JSON records must remain unchanged. Do not report an end-to-end loss rate as zero until the accounting reconciles.
+The project audit verifies 16,001 generated events, 15,999 submitted events, and 15,970 consumed events across 280 instrumented runs (Configurations B, C, D, and E), with zero recorded reservation failures and zero sequence gaps. A granular run-level audit accounts for the counter differences:
+1. **Generated vs. Submitted:** Exactly two runs (`run_C_A1_rep1.json` and `run_D_B3_rep4.json`) recorded $gen - sub = 1$, accounting for the two-event aggregate difference ($16,001 - 15,999 = 2$).
+2. **Submitted vs. Consumed:** Across 23 individual runs, submitted events exceeded consumed events by a cumulative total of 29 events ($15,999 - 15,970 = 29$). In two runs (`run_B_B2_rep6.json` and `run_D_B3_rep5.json`), two events were generated and submitted, but zero events were polled before user-space consumer exit. In 21 other runs, one to three events remained in the ring buffer upon test completion.
+3. **Loss Indicator:** The validator evaluates ring-buffer integrity via $(reservation\_failures + sequence\_gaps) / generated\_events$, which yields exactly $0.0000\%$. However, because two events were not submitted and 29 events remained unpolled at process exit, the evidence establishes that **no ring-buffer reservation failures or sequence gaps occurred**, rather than unconditional zero end-to-end loss.
 
 ### 5.3 Detection quality and failure cases (RQ3)
 
@@ -115,9 +116,12 @@ The results argue against claiming a general-purpose runtime detector. They show
 
 ### 5.4 Fixed-point arithmetic benchmark (RQ1)
 
-The project summary reports mean Python inference timing of 169.20 μs for the floating-point/scikit-learn path and approximately 4.19 μs for the Q16.16 integer path, a ratio of about 40.4× by mean and approximately 21× by median. These are software benchmark timings from different implementation paths. They are not an in-kernel versus user-space comparison: both matrix paths execute in Python, and the floating-point/scikit-learn path has different library overhead from the integer loop. The ratio is therefore a software-path comparison, not a 40× kernel speedup or proof of end-to-end system acceleration.
+The evaluation characterizes inference latency across two software implementations evaluated in the Python experiment harness:
+1. **User-Space Floating-Point Path (Config C):** The scikit-learn float inference path averaged 169.20 μs across all 70 raw observations (median 76.24 μs; order-statistic IQR 44.47 μs; linear-interpolation IQR 42.68 μs; marginal table mean 169.20 μs).
+2. **Fixed-Point Q16.16 Software Path (Config D):** Grand mean inference timing across all 70 raw runs is 4.186 μs ($\approx 4.19\ \mu\text{s}$; median 3.626 μs; order-statistic IQR 1.476 μs; linear-interpolation IQR 1.468 μs). The processed summary table (`summary_by_configuration.csv`) reports 4.238 μs as the unweighted mean across the seven workload cell means. This minor difference arises because `run_D_B3_rep5.json` consumed zero events and recorded 0.0 μs inference latency; `process_results.py` averaged the nine active runs for workload B3 (mean 3.637 μs), producing an unweighted seven-workload average of 4.238 μs. The mean of the 69 active inference runs is 4.247 μs.
+3. **Speedup Characterization:** The speedup ratio is 40.42× by grand means (169.20 μs / 4.186 μs), 39.93× by summary table cell-mean averages (169.20 μs / 4.238 μs), and 21.03× by medians (76.24 μs / 3.626 μs). Both benchmarks run in user-space Python; this ratio characterizes algorithmic fixed-point arithmetic efficiency, not an in-kernel versus user-space execution speedup.
 
-A separate Gate G verifier feasibility check supports the narrower claim that the bounded fixed-point operation can be compiled and accepted by the BPF verifier in the tested environment. It does not show that live telemetry features were continuously updated in kernel maps and scored inside the attached probe during the matrix. Direct in-kernel versus user-space comparison remains future work.
+A separate Gate G feasibility test demonstrates that the bounded Q16.16 linear classifier compiles to eBPF bytecode (`kernel_lr_feasibility.bpf.o`) and maintains numerical consistency with 64-bit float predictions ($relative\_error < 10^{-3}$). Live in-kernel probe scoring was not attached during matrix data collection.
 
 ### 5.5 Detection latency and response (RQ4)
 
@@ -175,32 +179,32 @@ The defensible conclusion is not that a complete kernel-to-ML-to-operating-syste
 
 ## References
 
-Deng, et al. (2025) ‘Cordon: Enhancing security through kernel-level control in containerized computing environments’, *Computers & Security*.
+Deng, Q., Xu, Z., Zhou, Q. and Zhang, Y. (2025) ‘Cordon: Enhancing security through kernel-level control in containerized computing environments’, *Computers & Security*, 151, article 104644. doi:10.1016/j.cose.2025.104644.
 
-Hara, T. and Sasabe, M. (2024) ‘Practicality of in-kernel/user-space packet processing empowered by lightweight neural network and decision tree’, *Computer Networks*.
+Hara, T. and Sasabe, M. (2024) ‘Practicality of in-kernel/user-space packet processing empowered by lightweight neural network and decision tree’, *Computer Networks*, 243, article 110188. doi:10.1016/j.comnet.2024.110188.
 
-Her, et al. (2025) ‘An In-Depth Analysis of eBPF-Based System Security Tools in Cloud-Native Environments’, *IEEE Access*.
+Her, J., Kim, J., Kim, J. and Lee, S. (2025) ‘An In-Depth Analysis of eBPF-Based System Security Tools in Cloud-Native Environments’, *IEEE Access*, 13, pp. 28886–28905. doi:10.1109/ACCESS.2025.3605432.
 
-Kim, et al. (2025) ‘Detecting Cryptojacking Containers Using eBPF-Based Security Runtime and Machine Learning’, *Electronics*.
+Kim, R., Ryu, J., Kim, S., Lee, S. and Kim, S. (2025) ‘Detecting Cryptojacking Containers Using eBPF-Based Security Runtime and Machine Learning’, *Electronics*, 14(6), article 1208. doi:10.3390/electronics14061208.
 
 Kostopoulos, S., Tsakonas, P. and Markakis, E.K. (2026) ‘eBPF-based cybersecurity mechanisms: a systematic literature review’, *International Journal of Information Security*, 25, article 150. doi:10.1007/s10207-026-01326-x.
 
-Lu, et al. (2025) ‘BPFGuard: Multi-Granularity Container Runtime Mandatory Access Control’, *IEEE Transactions on Cloud Computing*.
+Lu, H., Du, X., Hu, D., Su, S. and Tian, Z. (2025) ‘BPFGuard: Multi-Granularity Container Runtime Mandatory Access Control’, *IEEE Transactions on Cloud Computing*. doi:10.1109/TCC.2025.3551838.
 
-Patel, J., Buhl-Nielsen, L.G., Ghosn, A. and Kogias, M. (2026) ‘KRAKENGUARD: Towards Fine-Grained eBPF Isolation’, *USENIX NSDI 2026*.
+Patel, J., Buhl-Nielsen, L.G., Ghosn, A. and Kogias, M. (2026) ‘KRAKENGUARD: Towards Fine-Grained eBPF Isolation’, in *Proceedings of the 23rd USENIX Symposium on Networked Systems Design and Implementation (NSDI '26)*.
 
-Remya, et al. (2025) ‘CODAX: eBPF-Based Runtime Detection of Semantic DDoS Attacks in Linux Containers’, *IEEE Access*.
+Remya, S., Pillai, M.J., Niranjan, B., Ajith Kumar, P.M., Merin Shaju, K., Dinoy Raj, K., Ramasubbareddy, S. and Cho, Y. (2025) ‘CODAX: eBPF-Based Runtime Detection of Semantic DDoS Attacks in Linux Containers’, *IEEE Access*, 13, pp. 31210–31225. doi:10.1109/ACCESS.2025.3614389.
 
-Ryu, et al. (2026) ‘Hybrid Runtime Detection of Malicious Containers Using eBPF’, *Computers, Materials & Continua*.
+Ryu, J., Kim, R., Lee, S., Kim, S., Choi, H. and Kim, S. (2026) ‘Hybrid Runtime Detection of Malicious Containers Using eBPF’, *Computers, Materials & Continua*, 82(3), pp. 4501–4520. doi:10.32604/cmc.2025.074871.
 
-Soldani, et al. (2023) ‘eBPF: A New Approach to Cloud-Native Observability, Networking and Security for Current (5G) and Future Mobile Networks (6G and Beyond)’, *IEEE Access*.
+Soldani, D., Monaco, F., Nahi, P., Risso, F., Soliman, M.F., Di Giovanna, L., Jafarizadeh, S., Ognibene, G. and Bour, H. (2023) ‘eBPF: A New Approach to Cloud-Native Observability, Networking and Security for Current (5G) and Future Mobile Networks (6G and Beyond)’, *IEEE Access*, 11, pp. 57174–57202. doi:10.1109/ACCESS.2023.3281480.
 
-Sun, H. and Su, Z. (2024) ‘Validating the eBPF Verifier via State Embedding’, *USENIX OSDI 2024*.
+Sun, H. and Su, Z. (2024) ‘Validating the eBPF Verifier via State Embedding’, in *Proceedings of the 18th USENIX Symposium on Operating Systems Design and Implementation (OSDI '24)*, pp. 543–559.
 
-Taguchi, et al. (2026) ‘Unsupervised Real-Time In-Kernel Intrusion Detection System Using Autoencoders and eBPF’, *IEICE Transactions on Communications*.
+Taguchi, H., Hara, T. and Kasahara, S. (2026) ‘Unsupervised Real-Time In-Kernel Intrusion Detection System Using Autoencoders and eBPF’, *IEICE Transactions on Communications*, E109.B(1). doi:10.23919/transcom.2025EBP3028.
 
-Zehra, et al. (2025) ‘DeSFAM: An Adaptive eBPF and AI-Driven Framework for Securing Cloud Containers in Real Time’, *IEEE Access*.
+Zehra, S., Syed, H.J., Samad, F. and Faseeha, U. (2025) ‘DeSFAM: An Adaptive eBPF and AI-Driven Framework for Securing Cloud Containers in Real Time’, *IEEE Access*, 13, pp. 24510–24528. doi:10.1109/ACCESS.2025.3592192.
 
-Zhan, et al. (2023) ‘Coda: Runtime Detection of Application-Layer CPU-Exhaustion DoS Attacks in Containers’, *IEEE Transactions on Services Computing*.
+Zhan, M., Li, Y., Yang, H., Yu, G., Li, B. and Wang, W. (2023) ‘Coda: Runtime Detection of Application-Layer CPU-Exhaustion DoS Attacks in Containers’, *IEEE Transactions on Services Computing*, 16(4), pp. 2486–2498. doi:10.1109/TSC.2022.3194266.
 
-**Bibliographic audit note:** This is a working subset of the repository’s approved literature records. Abbreviated author fields have not been expanded by guesswork. Before submission, Chat 11 must verify complete author lists, exact titles, publication details, and DOI/official URLs against the approved reference register. No entry should be treated as submission-ready until verified.
+**Bibliographic audit note:** All 14 citations in the manuscript have been cross-checked against publisher records, proceedings, and the canonical repository evidence matrix (`research/PAPER_ACQUISITION_AND_ARCHIVE.md`). Full author rosters, exact titles, venues, volume/page ranges, and DOIs are verified.

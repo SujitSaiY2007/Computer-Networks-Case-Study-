@@ -24,6 +24,9 @@ def median(xs):
     return statistics.median(xs) if xs else float("nan")
 
 def iqr(xs):
+    """Calculates spread using order-statistic index convention:
+    sorted[3N // 4] - sorted[N // 4]. For N=70, this corresponds to index 52 minus index 17.
+    """
     if not xs:
         return float("nan")
     ordered = sorted(xs)

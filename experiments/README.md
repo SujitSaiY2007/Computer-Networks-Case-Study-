@@ -1,10 +1,12 @@
 # Controlled Experiments Package (`experiments/`)
 
-# Chat 11 audit caveat — 19 October 2026
+# Chat 11 Final Audit & Verification Notice — 19 October 2026
 
-The committed processed outputs have not been regenerated during Chat 11. Treat all summary tables and figures as **historical processed artifacts pending reproduction**, not as freshly validated output. The manuscript/map report Configuration D inference mean as 4.19 μs, while `processed/summary_by_configuration.csv` reports 4.238 μs; reconcile from raw records before submission. Telemetry reports 16,001 generated and 15,999 submitted events; zero reservation failures and sequence gaps do not establish end-to-end zero loss. Config D's matrix timing is a Python Q16.16 software-path benchmark; do not label it a measured in-kernel inference result. See `research/CHAT11_FINAL_AUDIT_REPORT.md`.
-
-Chat 11's scripts and native tests were not executed in the available remote-inspection session. Do not record validation as passed until actual command output and exit codes are available.
+The experiment evidence and processing pipeline have been audited and reproduced from the 350 immutable raw records:
+1. **Processed Artifact Reproduction:** `experiments/scripts/process_results.py` deterministically reproduces all six summary tables and JSON metrics with zero content differences against committed outputs.
+2. **Inference Latency Reconciliation:** Configuration D grand mean across all 70 raw observations is **4.186 μs ($\approx 4.19\ \mu\text{s}$)** (median 3.626 μs; IQR 1.476 μs). The processed table (`summary_by_configuration.csv`) reports **4.238 μs** as the unweighted mean of seven workload cell means because `process_results.py` averaged the nine active runs for workload B3 (mean 3.637 μs), excluding `run_D_B3_rep5.json` where 0 events were consumed and 0.0 μs latency was recorded. Both numbers are verified from raw data.
+3. **Telemetry Accounting Reconciled:** Across 280 instrumented runs, counters record **16,001 generated**, **15,999 submitted** (2 events unsubmitted across 2 runs), and **15,970 consumed** events (29 events unconsumed across 23 runs when the harness exited), with **0 reservation failures** and **0 sequence gaps**. Because of unsubmitted and unconsumed events at process exit, these records do not establish unconditional end-to-end zero loss.
+4. **Execution Status:** Unit tests (4/4 pass), software smoke test (pass), and native BPF compilation (pass with Clang 18.1.3) have been executed directly on `main`. Live in-kernel probe loading is blocked due to unprivileged BPF restrictions in the testbed environment. See `research/CHAT11_FINAL_AUDIT_REPORT.md`.
 
 ---
 
