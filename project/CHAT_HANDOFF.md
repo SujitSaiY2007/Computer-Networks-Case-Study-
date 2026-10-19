@@ -36,6 +36,16 @@ Read this handoff first, then the status correction, master execution plan, and 
 
 ---
 
+# Chat 11 interim audit status — 19 October 2026
+
+**Status: PARTIAL; submission readiness is NOT established.** The remote starting `main` HEAD was verified as `8576f5bb12515c28868e7e8cbdbc8b104efe0e1e`. The audit report is `research/CHAT11_FINAL_AUDIT_REPORT.md`.
+
+Remote inspection covered the manuscript, claim-to-evidence map, matrix validator, descriptive analysis, experiment/environment manifests, processed summaries, representative raw records, and literature-selection register. The available session does not provide a checked-out repository/shell, so the validator, analysis, processing, plot generation, and native tests were **not executed**. An empty GitHub commit-status response is not a CI pass.
+
+Static inspection identified an unresolved mismatch between the manuscript/map's Config D inference mean (4.19 μs) and `experiments/processed/summary_by_configuration.csv` (4.238 μs). The reported 16,001 generated versus 15,999 submitted event totals remain unreconciled; do not claim end-to-end zero loss. The manuscript bibliography still has abbreviated author lists and incomplete metadata requiring verification against official records.
+
+No raw JSON was modified. Do not mark Chat 11 complete or proceed with submission-readiness claims until execution, counter reconciliation, derived-output comparison, and bibliography verification are completed. The next environment must provide a repository checkout or CI execution path and must continue on `main` only.
+
 # Chat 10 completion status — 19 October 2026
 
 Chat 10 prepared paper/MAIN_MANUSCRIPT.md, research/CHAT10_CLAIM_TO_EVIDENCE_MAP.md, and a descriptive replacement for experiments/scripts/statistical_analysis.py. The manuscript does not claim a production-ready system, measured in-kernel speedup, formula-derived latency as direct measurement, or live OS enforcement. It records the unresolved telemetry accounting discrepancy (16,001 generated vs 15,999 submitted, with zero reservation failures and sequence gaps). Raw records have not been modified.
