@@ -1,5 +1,16 @@
 # Authoritative Project Status Correction — 13 October 2026
 
+## Chat 11 interim audit override — 19 October 2026
+
+Chat 11 has performed remote source inspection and committed `research/CHAT11_FINAL_AUDIT_REPORT.md`. Audit status is **PARTIAL**, and the project is **not yet ready for submission review**. The starting remote `main` HEAD was `8576f5bb12515c28868e7e8cbdbc8b104efe0e1e`.
+
+This session could inspect GitHub files but could not execute project scripts against a checked-out repository/raw dataset. The matrix validator, descriptive analysis, processing, plot regeneration, and native tests were not run. Do not treat the empty combined-status response as a CI pass. Static review found Config D mean inference timing differs between the manuscript/map (4.19 μs) and committed configuration summary (4.238 μs). The generated/submitted telemetry discrepancy (16,001 vs 15,999) remains unresolved, and abbreviated bibliography metadata remains unverified.
+
+Do not claim submission readiness, end-to-end zero event loss, or that all Chat 11 criteria passed. The next audit environment must provide an actual checkout or execution-capable CI path. Continue on `main` only, preserve raw JSON and history, regenerate derived outputs before correcting numerical values, and verify bibliography entries against official sources. See the audit report and active handoff for acceptance statuses and the precise next steps.
+
+---
+
+
 This file is the authoritative status override for older phase descriptions in README.md, project/MASTER_EXECUTION_PLAN.md, and historical chat logs. Historical entries are retained as an audit trail; they are not the current state when they conflict with this document.
 
 ## Current project state
