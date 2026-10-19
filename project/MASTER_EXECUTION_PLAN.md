@@ -1,5 +1,9 @@
 # Master Execution Plan — Multi-Chat Project Workflow
 
+## Current status override — 19 October 2026
+
+This section supersedes older live-status bullets and continuation prompts below where they conflict with the current phase. Chat 10 has prepared the full manuscript draft at paper/MAIN_MANUSCRIPT.md, the claim-to-evidence map at research/CHAT10_CLAIM_TO_EVIDENCE_MAP.md, and a descriptive analysis script revision at experiments/scripts/statistical_analysis.py. These artifacts are committed on main. Chat 10 is **draft prepared; final audit pending**. Chat 11 must run validation, regenerate and compare derived summaries, reconcile telemetry counters, complete and verify bibliography metadata, and audit all claims/citations. Do not claim submission, production readiness, measured in-kernel speedup, end-to-end zero loss, or live OS enforcement. Raw records and historical Git history remain unchanged. See project/CHAT_HANDOFF.md for the exact continuation prompt.
+
 ## Purpose
 
 This file is the **master roadmap** for executing the BACSE203 literature-review case study across multiple future chats without losing context, repeating completed work, or silently changing project decisions.
