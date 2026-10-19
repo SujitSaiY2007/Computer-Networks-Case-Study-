@@ -112,3 +112,13 @@ Following a line-by-line inspection of prototype code, runner scripts, and raw J
    - `research/CHAT09_SCIENTIFIC_INTEGRITY_CORRECTION.md` (complete claim-to-code audit table and corrected findings).
 
 All new work remains directly on `main`. Frozen literature counts remain 40 primary studies (36 journals + 4 peer-reviewed conference papers) and 50 Review 2 references (40 primary + 10 supporting/background). Review 1 and Review 2 remain complete.
+
+
+## Chat 10 manuscript draft status — 19 October 2026
+
+- paper/MAIN_MANUSCRIPT.md is the current full-manuscript draft.
+- research/CHAT10_CLAIM_TO_EVIDENCE_MAP.md records source paths, measurement boundaries, unresolved issues, and the Chat 11 acceptance checklist.
+- experiments/scripts/statistical_analysis.py has been revised to provide workload-stratified descriptive summaries and telemetry counter reconciliation; the revised script still requires execution in the repository environment.
+- Raw records remain unchanged. The reported 16,001 generated vs 15,999 submitted totals are not reconciled by zero reservation-failure and sequence-gap counters alone. Do not describe this as proven end-to-end zero loss until generated/submitted/consumed semantics reconcile.
+- Manuscript reports the C/D fixed-point comparison as Python software-path timing, detection latency as formula-derived estimate, and mitigation/rollback as simulated policy transitions. It does not claim the full model ran in the live kernel telemetry path or that OS-level enforcement was demonstrated.
+- Chat 10 is draft prepared, final audit pending. Chat 11 must execute validations, regenerate and compare derived outputs, complete the bibliography from the approved register, and verify the final main-branch commit. No submission or production-readiness claim is authorized.

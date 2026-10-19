@@ -3,7 +3,7 @@
 ## Topic
 **eBPF-Assisted Machine Learning for Cloud-Native Runtime Security: Telemetry Overhead, Kernel Enforcement, and Detection Trade-offs**
 
-## Live status — 13 October 2026 (Chat 09 Complete / Chat 10 Handoff)
+## Live status — 19 October 2026 (Chat 10 manuscript draft prepared; Chat 11 audit pending)
 - **Review 1: COMPLETE**
 - **Review 2 presentation (Chat 12): COMPLETE**
 - **Chat 07 prototype implementation and native validation: COMPLETE**
@@ -75,6 +75,16 @@ The defensible contribution is the intersection of **eBPF telemetry, ML runtime 
 - Keep raw outputs immutable and derive summaries reproducibly.
 - Store metadata, DOI/official links, acquisition status, and verification notes in the public repository; do not commit unauthorized copyrighted PDFs.
 
+
+## Chat 10 manuscript status — 19 October 2026
+
+- Draft manuscript: paper/MAIN_MANUSCRIPT.md.
+- Claim-to-evidence map and mandatory Chat 11 audit queue: research/CHAT10_CLAIM_TO_EVIDENCE_MAP.md.
+- The manuscript separates direct observations, counter-derived telemetry accounting, Python arithmetic benchmarks, formula-derived latency estimates, simulated policy transitions, and literature findings.
+- The analysis script is revised to provide workload-stratified descriptive summaries and counter reconciliation rather than unsupported paired tests or an equivalence-like interpretation of a non-significant ANOVA. It has not yet been executed in this authoring pass; Chat 11 must run it and record actual output.
+- A critical counter discrepancy remains: project records report 16,001 generated and 15,999 submitted events, while reservation-failure and sequence-gap counters are zero. This is not sufficient to claim reconciled end-to-end zero loss. Raw records remain unchanged.
+- No live kernel-local inference loop or OS-level cgroup/firewall enforcement is claimed for the 350-run matrix. No UI/dashboard is claimed.
+- Chat 11 must verify reference metadata, regenerate derived outputs, reconcile event counters, run validation, and verify the final main-branch commit.
 
 ## Chat 08 repository verification gate
 

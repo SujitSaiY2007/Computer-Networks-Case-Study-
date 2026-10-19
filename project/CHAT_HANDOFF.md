@@ -16,7 +16,7 @@ Read this handoff first, then the status correction, master execution plan, and 
 - Chat 07 prototype and native validation gates A–G: **COMPLETE**
 - Chat 08 controlled experiments: **COMPLETE (recovered from commit `5732f2f7f3d65d1eb0abb475895cd27805d18320`, audited, and verified directly on `main`)**
 - Chat 09 results verification, empirical synthesis, and manuscript sections: **COMPLETE**
-- Chat 10 manuscript development: **ACTIVE NEXT**
+- Chat 10 manuscript development: **DRAFT PREPARED; final audit pending**
 - Canonical working branch: `main` (all work committed here)
 - Chat 07 implementation commit: `66512d8efdf5e16a8a8e9c3edd65534681b3bbfd`
 - Do not use feature branches for future project work. Preserve historical branches; do not delete branches or rewrite history.
@@ -36,7 +36,17 @@ Read this handoff first, then the status correction, master execution plan, and 
 
 ---
 
-# Active Continuation Prompt
+# Chat 10 completion status — 19 October 2026
+
+Chat 10 prepared paper/MAIN_MANUSCRIPT.md, research/CHAT10_CLAIM_TO_EVIDENCE_MAP.md, and a descriptive replacement for experiments/scripts/statistical_analysis.py. The manuscript does not claim a production-ready system, measured in-kernel speedup, formula-derived latency as direct measurement, or live OS enforcement. It records the unresolved telemetry accounting discrepancy (16,001 generated vs 15,999 submitted, with zero reservation failures and sequence gaps). Raw records have not been modified.
+
+Not yet verified in this authoring pass: script execution, regenerated summaries/figures, complete bibliography metadata, final remote HEAD after commit, and full claim/citation consistency. Do not mark Chat 10 or the project fully complete until Chat 11 completes the final audit.
+
+## Exact Chat 11 continuation prompt
+
+> Continue on main only. Read the updated handoff, paper/MAIN_MANUSCRIPT.md, research/CHAT10_CLAIM_TO_EVIDENCE_MAP.md, the Chat 09 integrity correction, and the experiment scripts/raw records. Run python experiments/scripts/validate_matrix.py, run the revised experiments/scripts/statistical_analysis.py, regenerate summaries using the documented processing command, and compare outputs without changing raw JSON. Resolve the generated/submitted/consumed event-counter discrepancy, or leave it explicitly unresolved. Complete all abbreviated manuscript reference entries from the approved literature register and verify every citation. Audit every quantitative claim and ensure no unsupported zero-loss, in-kernel-speedup, direct end-to-end-latency, or live-enforcement claim remains. Inspect the complete diff, validate file paths, confirm branch main, and report actual validation outcomes and the full remote commit SHA. Preserve all history and do not claim submission or production readiness.
+
+# Historical active continuation prompt (retained for audit trail)
 
 > **CHAT 10 — Manuscript Development**
 >
