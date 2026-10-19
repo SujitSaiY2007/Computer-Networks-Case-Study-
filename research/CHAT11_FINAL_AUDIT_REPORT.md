@@ -5,6 +5,7 @@
 **Repository:** https://github.com/SujitSaiY2007/Computer-Networks-Case-Study-  
 **Branch:** `main` (strictly maintained; no feature branch created or switched)  
 **Starting Commit SHA:** `5e2bbd76485e1fb777f245712b1575d783f64655`  
+**Closure Commit SHA:** `edbf702795421314349ba914c528627bad3a27cd` (verified locally and on `origin/main`)
 **Execution Environment:** Windows 11 host (PowerShell 7 / Python 3.12.4) and Ubuntu 24.04.3 LTS on WSL2 (Linux kernel `6.6.87.2-microsoft-standard-WSL2`, Clang 18.1.3, GCC 13.3.0, bpftool 7.4.0, Python 3.12.3).  
 **Primary Auditor:** Antigravity Pair Programmer (Autonomous Audit Session)  
 
@@ -13,10 +14,10 @@
 ## 1. Executive Summary
 
 This report concludes the final validation, reproducibility audit, and manuscript closure phase (Chat 11). Operating directly on local clone `Computer-Networks-Case-Study` on authorized branch `main`, the audit has:
-1. Verified existing safety backups and generated an additional timestamped safety backup outside the repository (`Computer-Networks-Case-Study-safety-backup-phase1-20261019-215628.tar.gz`).
+1. Verified existing safety backups and generated two timestamped safety backups outside the repository (`Computer-Networks-Case-Study-safety-backup-phase1-20261019-215628.tar.gz` and `Computer-Networks-Case-Study-safety-backup-verify-20261019-222415.tar.gz`).
 2. Catalogued all 350 raw experiment JSON records and confirmed 100% byte-for-byte SHA-256 integrity before and after all audit operations.
 3. Executed matrix validation (`validate_matrix.py`) and statistical analysis (`statistical_analysis.py`) against the raw dataset, both exiting with status 0.
-4. Resolved the known numerical discrepancy regarding Configuration D inference latency: 4.186 μs ($\approx 4.19\ \mu\text{s}$) is the grand mean across all 70 raw runs, whereas 4.238 μs in `summary_by_configuration.csv` is the unweighted average of seven workload cell means resulting from `process_results.py` filtering out the single 0.0 μs observation in `run_D_B3_rep5.json` (where 0 events were consumed).
+4. Resolved the known numerical discrepancy regarding Configuration D inference latency: in `run_D_B3_rep5.json`, zero events were consumed (`consumed_events = 0`), so no inference took place and 0.0 μs was recorded; this record is excluded from valid inference measurements. Across the 69 valid inference runs, the run-weighted mean is 4.247 μs (median 3.634 μs; IQR 1.475 μs). The processed summary table (`summary_by_configuration.csv`) reports 4.238 μs as the unweighted average of seven workload cell means resulting from `process_results.py` filtering out the non-inference run. The older 4.19 μs (4.186 μs) figure resulted from diluting the sum by all 70 entries including the non-inference zero observation, which is mathematically invalid as a summary of inference latency. Speedup of Config C over valid Config D is 39.84× by run-weighted means, 39.92× by cell-means, and 20.98× by medians.
 5. Fully reconciled telemetry event accounting across all 280 instrumented runs: 16,001 generated, 15,999 submitted (2 unsubmitted events across 2 runs), 15,970 consumed (29 unconsumed events across 23 runs), with 0 reservation failures and 0 sequence gaps.
 6. Replicated summary table and metric generation in an isolated test environment, demonstrating zero content differences against committed processed CSV and JSON artifacts.
 7. Executed all supported prototype tests: Python unit tests (4/4 PASS), software smoke pipeline (PASS), and native BPF compilation (PASS with Clang 18.1.3 and GCC 13.3.0). Live kernel probe loading was verified as BLOCKED due to standard unprivileged BPF restrictions (`unprivileged_bpf_disabled=2` requiring `CAP_BPF`/root).
@@ -31,9 +32,10 @@ This report concludes the final validation, reproducibility audit, and manuscrip
 
 Before executing any script or output-generating step, backup integrity was confirmed:
 - **Pre-existing Safety Backup:** `Computer-Networks-Case-Study-safety-backup-20261019-161557.tar.gz` (Length: 63,284,735 bytes, tar header verified readable).
-- **Additional Timestamped Backup Created:** `Computer-Networks-Case-Study-safety-backup-phase1-20261019-215628.tar.gz` (Length: 31,970,608 bytes, tar gzip archive excluding `.git`).
+- **Phase 1 Timestamped Backup:** `Computer-Networks-Case-Study-safety-backup-phase1-20261019-215628.tar.gz` (Length: 31,970,608 bytes).
+- **Verification Timestamped Backup:** `Computer-Networks-Case-Study-safety-backup-verify-20261019-222415.tar.gz` (Length: 64,181,139 bytes).
 - **Outside Evidence Directory:** `C:\Users\sujit\.gemini\antigravity-ide\scratch\chat11_audit_evidence` created to store execution logs, checksum files, and diff comparisons without modifying repository tracking.
-- **Raw Data Immutability:** Preflight SHA-256 checksums of all 350 raw JSON files were recorded in `raw_data_checksums.sha256`. Post-validation verification confirmed that 350/350 raw files remain byte-for-byte identical.
+- **Raw Data Immutability:** Preflight SHA-256 checksums of all 350 raw JSON files were recorded in `raw_data_checksums.sha256` and re-verified in `chat11_verify_raw_checksums.sha256`. All 350/350 raw files remain 100% byte-for-byte identical.
 
 ---
 
@@ -63,12 +65,12 @@ The following explicit reconciliation table resolves all reported metrics, popul
 
 | Metric | Existing Reported Value | Recomputed Value | Source / Population | Difference | Audit Decision | Manuscript Action |
 |---|---|---|---|---|---|---|
-| **Config D Inference Latency (Grand Mean)** | 4.19 μs | 4.1862 μs | All 70 raw runs of Config D (`run_D_*.json`) | -0.0038 μs (<0.1%) | Retain 4.19 μs as grand mean across all 70 evaluation runs. | Document as grand mean ($N=70$) in Abstract and Section 5.4. |
-| **Config D Inference Latency (Summary Table)** | 4.238 μs | 4.2382 μs | Unweighted average of 7 workload cell means in `process_results.py` | +0.0002 μs (exact) | Explain mechanism: `run_D_B3_rep5.json` had 0 events consumed (0.0 μs latency); `process_results.py` averaged the 9 active runs for B3 (3.637 μs). | Disclose both 4.19 μs (grand mean) and 4.238 μs (cell-mean average) in Section 5.4. |
-| **Config D Active Runs Mean** | Not previously reported | 4.2469 μs | 69 runs of Config D with non-zero inference ($x > 0$) | +0.0607 μs | Additional distribution detail for completeness. | Disclosed in Section 5.4. |
-| **Config D Median & IQR** | Median ~3.63 μs; IQR ~1.48 μs | Median = 3.6255 μs; Order-stat IQR = 1.4760 μs; Linear-interp IQR = 1.4678 μs | 70 raw runs of Config D | Exact match | Confirmed. Document order-statistic quartile convention (index 52 minus index 17). | Added IQR convention docstring to `statistical_analysis.py`; noted in manuscript. |
-| **Config C Inference Latency** | 169.20 μs | Grand mean = 169.2017 μs; Median = 76.2410 μs; IQR = 44.4680 μs | 70 raw runs of Config C | <0.002 μs | Verified exact. | Retain 169.20 μs; note median (76.24 μs). |
-| **Inference Timing Ratio (C / D)** | ~40.4× mean ratio; ~21× median ratio | Grand mean ratio = 40.42×; Cell-mean ratio = 39.93×; Median ratio = 21.03× | Config C vs Config D inference distributions | Exact match | Retain 40.4× (grand means) and 39.9× (table means). Strictly qualify as Python software benchmark, not in-kernel speedup. | Reaffirmed qualification in Abstract and Section 5.4. |
+| **Config D Inference Latency (Valid-Run Mean)** | 4.247 μs | 4.2469 μs | 69 valid runs of Config D (excludes non-inference run `run_D_B3_rep5.json`) | N/A (valid definition) | Exclude non-inference run; report 4.247 μs as run-weighted mean of valid runs. | Reported in Abstract and Section 5.4. |
+| **Config D Inference Latency (Summary Table)** | 4.238 μs | 4.2382 μs | Unweighted average of 7 workload cell means in `process_results.py` | +0.0002 μs (exact) | Explain mechanism: `run_D_B3_rep5.json` had 0 events consumed (0.0 μs latency); `process_results.py` averaged the 9 active runs for B3 (3.637 μs). | Reported as unweighted cell-mean average in Abstract, Section 5.4, and Table. |
+| **Config D Historical Grand Mean (All 70)** | 4.19 μs | 4.1862 μs | All 70 raw entries of Config D (including 0.0 μs non-inference run) | -0.0038 μs | Mathematically invalid as an inference mean due to zero-event non-inference run. | Explicitly disclosed and superseded by valid-run statistics. |
+| **Config D Median & IQR (Valid Runs)** | Median ~3.63 μs; IQR ~1.48 μs | Median = 3.6340 μs; Order-stat IQR = 1.4750 μs; Linear-interp IQR = 1.4750 μs | 69 valid runs of Config D | Exact match | Confirmed for valid runs. Document order-statistic quartile convention (index 51 minus index 17). | Documented in Section 5.4 and `statistical_analysis.py`. |
+| **Config C Inference Latency** | 169.20 μs | Grand mean = 169.2017 μs; Median = 76.2410 μs; IQR = 44.4680 μs | 70 raw runs of Config C | <0.002 μs | Verified exact across all 70 valid runs. | Retain 169.20 μs; note median (76.24 μs). |
+| **Inference Timing Ratio (C / Valid D)** | ~40.4× (historical) | Run-weighted mean ratio = 39.84×; Cell-mean ratio = 39.92×; Median ratio = 20.98× | Config C vs Valid Config D inference distributions | N/A | Report valid speedup ratios: 39.84× (run-weighted), 39.92× (cell-means), and 20.98× (medians). Strictly qualify as Python software benchmark. | Updated in Abstract and Section 5.4. |
 | **Telemetry Events Generated** | 16,001 | 16,001 | 280 instrumented runs (Configs B, C, D, E) | 0 | Verified exact across all 280 runs. | Retained. |
 | **Telemetry Events Submitted** | 15,999 | 15,999 | 280 instrumented runs | 0 | Verified exact. Exactly 2 runs recorded $gen - sub = 1$ (`run_C_A1_rep1` and `run_D_B3_rep4`). | Reconciled in Section 5.2. |
 | **Telemetry Events Consumed** | Previously unverified | 15,970 | 280 instrumented runs | 29 events unconsumed at harness exit | Reconciled: 23 runs had submitted events exceeding consumed events by 1–3 events due to loop exit prior to buffer drain. | Reconciled in Section 5.2 and Abstract; confirms no claim of zero end-to-end loss. |

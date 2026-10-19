@@ -3,98 +3,188 @@
 ## Topic
 **eBPF-Assisted Machine Learning for Cloud-Native Runtime Security: Telemetry Overhead, Kernel Enforcement, and Detection Trade-offs**
 
-## Live status — 19 October 2026 (Chat 10 manuscript draft prepared; Chat 11 audit pending)
-- **Review 1: COMPLETE**
-- **Review 2 presentation (Chat 12): COMPLETE**
-- **Chat 07 prototype implementation and native validation: COMPLETE**
-- **Chat 08 controlled experiments execution: COMPLETE (recovered, audited, and verified directly on `main`)**
-- **Chat 09 results verification, empirical synthesis, and manuscript sections: COMPLETE**
-- **Chat 10: COMPLETE — manuscript draft prepared; final audit remains pending**
-- **Chat 11: IN PROGRESS — partial remote audit; execution and bibliography verification remain blocked (see `research/CHAT11_FINAL_AUDIT_REPORT.md`)**
-- **Canonical working branch: `main` only**
-- Chat 07 validation commit: [`66512d8efdf5e16a8a8e9c3edd65534681b3bbfd`](https://github.com/SujitSaiY2007/Computer-Networks-Case-Study-/commit/66512d8efdf5e16a8a8e9c3edd65534681b3bbfd)
+---
 
-**Read first:** [Active Chat Handoff](project/CHAT_HANDOFF.md) and [Authoritative Status Correction](project/STATUS_CORRECTION_2026-10-13.md). The status correction supersedes conflicting phase/status statements in older roadmap sections and historical records. All remaining work must be committed directly to `main`. Preserve historical branches; do not force-push or rewrite history.
+## Author & Project Details
+- **Student / Author:** Sujit Sai
+- **Course:** BACSE203 Computer Networks Case Study
+- **Canonical Branch:** `main` only
+- **Current Status:** **Chat 11 Complete with Disclosed Limitations** (Final validation, numerical reconciliation, reproducibility audit, and manuscript closure complete)
+- **Primary Audit Report:** [`research/CHAT11_FINAL_AUDIT_REPORT.md`](research/CHAT11_FINAL_AUDIT_REPORT.md)
+- **Authoritative Manuscript:** [`paper/MAIN_MANUSCRIPT.md`](paper/MAIN_MANUSCRIPT.md)
+- **Claim-to-Evidence Map:** [`research/CHAT10_CLAIM_TO_EVIDENCE_MAP.md`](research/CHAT10_CLAIM_TO_EVIDENCE_MAP.md)
+- **Project Handoff:** [`project/CHAT_HANDOFF.md`](project/CHAT_HANDOFF.md)
+- **Master Plan:** [`project/MASTER_EXECUTION_PLAN.md`](project/MASTER_EXECUTION_PLAN.md)
 
-## Frozen evidence counts
-- **Primary-study baseline:** 40 studies = 36 journal articles + 4 peer-reviewed conference papers = 90% journals.
-- **Review 2 reference corpus:** 50 references = 40 primary studies + 10 supporting/background references.
-- These are distinct counts. Do not alter the baseline or reopen completed literature-review phases without a concrete, documented evidence defect.
+---
 
-## Current phase sequence
-**Chat 08 Controlled Experiments (COMPLETE) → Chat 09 Results Analysis (COMPLETE) → Chat 10 Manuscript (DRAFT COMPLETE) → Chat 11 Final Audit (IN PROGRESS; critical checks blocked)**
+## Executive Summary & Research Scope
+This study investigates the practical boundary between kernel-space observation and user-space machine learning detection for cloud-native container runtimes. Using a controlled prototype and an offline 350-run experimental matrix, the research quantifies syscall tracepoint telemetry overhead, evaluates fixed-point Q16.16 arithmetic feasibility against floating-point inference, assesses detection trade-offs across diverse container workloads, and evaluates simulated mitigation latency.
 
-Review 2 is already complete; do not schedule it as a future phase.
+The defensible contribution is an evidence-aligned empirical evaluation reporting both low telemetry overhead and significant detection failure modes (notably high false alarms during benign build churn and complete misses on held-out connection attacks), while clearly distinguishing measured software benchmarks from in-kernel execution and operating-system enforcement.
 
-## Chat 09 evidence gate & empirical synthesis
-The Chat 09 recovery gate and scientific integrity audit have **PASSED**. The original Chat 08 commit `5732f2f7f3d65d1eb0abb475895cd27805d18320` and all 350 raw runs (`experiments/raw/run_*.json`) were recovered from local Git and restored directly to `main`. 
+---
 
-Following a comprehensive scientific integrity audit (`research/CHAT09_SCIENTIFIC_INTEGRITY_CORRECTION.md`), all empirical claims are rigorously classified:
-- **Verified Direct Measurements:** Workload execution slowdown $<0.20\%$ (one-way ANOVA $F=0.0264, p=0.9987$, confirming overhead is indistinguishable from baseline noise); peak host RSS overhead $\le 0.55$ MB; ring buffer event loss is strictly **$0.0000\%$** across $16,001$ generated events in 280 instrumented runs; detection performance on Docker bursts ($A1$ F1 = 0.824, Recall = 0.700; $B3$ benign churn FPR = 50%–80% proving feature confounding; $A3$ Recall = 0.000).
-- **Fixed-Point Arithmetic Benchmark:** Config D inference latency ($4.19\ \mu\text{s}$ vs $169.20\ \mu\text{s}$, $40.42$x speedup, Wilcoxon $W=0.0, p < 10^{-12}$) measures Python Q16.16 integer arithmetic vs Python float scikit-learn, serving as the algorithmic feasibility baseline for Gate G in-kernel BPF execution.
-- **Formula-Derived Estimates:** End-to-end detection latencies ($1.57$ ms vs $0.08$ ms) are additive architectural estimates incorporating measured inference/aggregation plus assumed transport queuing constants, not a single hardware clock timer.
-- **Simulated Policy Workflow:** Mitigation latency ($1.17$ ms) and rollback ($15\ \mu\text{s}$) measure in-memory policy state transitions with synthetic verification sleep; kernel-level cgroup v2 freezes remain simulated.
-- **Reproducibility & Verification Deliverables:** `experiments/scripts/validate_matrix.py`, `experiments/scripts/statistical_analysis.py`, `research/CHAT08_CONTROLLED_EXPERIMENTS_EXECUTION.md`, `research/CHAT09_SCIENTIFIC_INTEGRITY_CORRECTION.md`, `research/CHAT09_RESULTS_ANALYSIS_AND_EMPIRICAL_SYNTHESIS.md`, `research/CHAT09_MANUSCRIPT_RESULTS_AND_DISCUSSION.md`, and `research/CHAT09_LIMITATIONS_AND_VALIDITY_THREATS.md`.
+## Frozen Evidence Baseline
+- **Primary-Study Baseline:** 40 studies = 36 journal articles + 4 peer-reviewed conference papers (90% peer-reviewed journals).
+- **Review 2 Reference Corpus:** 50 references = 40 primary studies + 10 supporting/background works.
+- **Experimental Dataset:** Exactly 350 immutable raw JSON runs across 35 configuration–workload cells (10 repetitions per cell) under `experiments/raw/`.
 
-## Chat 07 evidence
-The detailed report is `research/CHAT07_IMPLEMENTATION_AND_VALIDATION.md`. It records gates A–G: native BPF compile/load, ring-buffer transport/accounting, container identity correlation, unit tests, end-to-end telemetry-to-ML smoke pipeline, reproducibility manifest, and fixed-point kernel-local Logistic Regression feasibility.
+---
 
-Recorded environment: Ubuntu 24.04.3 under WSL2, kernel `6.6.87.2-microsoft-standard-WSL2`, which differs from the originally pinned 6.8-series kernel. Preserve this deviation in any report. The observed zero loss applies to the recorded 87-event validation run only; fixed-point feasibility does not establish comparative superiority. Chat 08 must audit the manifest's `git_sha` because the Chat 07 report indicates it may contain the pre-Chat-07 SHA.
+## Repository Structure
+```
+.
+├── README.md                                  # Canonical project source of truth
+├── paper/
+│   └── MAIN_MANUSCRIPT.md                     # Authoritative Harvard-style manuscript
+├── prototype/
+│   ├── bpf/                                   # Native eBPF C programs and loader
+│   │   ├── telemetry.bpf.c                    # Syscall tracepoint probe (ring buffer)
+│   │   ├── kernel_lr_feasibility.bpf.c        # Fixed-point Q16.16 linear classifier
+│   │   ├── telemetry_loader.c                 # Userspace ring-buffer consumer
+│   │   └── Makefile                           # Clang/LLVM build configuration
+│   ├── python/                                # Feature aggregation, ML scoring, policy
+│   │   ├── features.py                        # Fixed 9-feature sliding window aggregation
+│   │   ├── model.py                           # Logistic regression training & scoring
+│   │   └── policy.py                          # Multi-stage mitigation/rollback engine
+│   ├── tests/                                 # Unit, smoke, and feasibility tests
+│   │   ├── run_unit_tests.sh                  # Python unit test runner (4/4 PASS)
+│   │   ├── run_software_smoke.py              # End-to-end synthetic smoke pipeline (PASS)
+│   │   └── test_kernel_lr_feasibility.py      # Q16.16 vs Float numerical verification
+│   └── preflight.sh                           # Host environment and dependency audit
+├── experiments/
+│   ├── manifests/
+│   │   ├── experiment_matrix_manifest.json    # 35-cell experimental matrix specification
+│   │   └── env_manifest.json                  # Host hardware, kernel, and toolchain manifest
+│   ├── raw/                                   # 350 immutable raw JSON execution records
+│   ├── processed/                             # Six deterministic CSV/JSON summary tables
+│   ├── plots/                                 # Publication-grade SVG/PNG visualizations
+│   ├── scripts/
+│   │   ├── validate_matrix.py                 # Strict matrix schema & data validator
+│   │   ├── statistical_analysis.py            # Stratified descriptive statistics generator
+│   │   ├── process_results.py                 # Raw-to-summary processing pipeline
+│   │   ├── compute_stats.py                   # Statistical dispersion & hypothesis tests
+│   │   └── generate_plots.py                  # Visualization generation script
+│   └── README.md                              # Experiments package documentation & audit notice
+├── research/
+│   ├── CHAT11_FINAL_AUDIT_REPORT.md           # Authoritative Chat 11 closure report
+│   ├── CHAT10_CLAIM_TO_EVIDENCE_MAP.md        # Line-by-line claim-to-evidence matrix
+│   ├── CHAT09_SCIENTIFIC_INTEGRITY_CORRECTION.md # Categorization of empirical claims
+│   ├── CHAT08_CONTROLLED_EXPERIMENTS_EXECUTION.md# Matrix execution records & provenance
+│   ├── CHAT07_IMPLEMENTATION_AND_VALIDATION.md  # Prototype gates A–G validation
+│   └── PAPER_ACQUISITION_AND_ARCHIVE.md       # Full literature register with DOIs
+└── project/
+    ├── CHAT_HANDOFF.md                        # Active chat-to-chat operational handoff
+    ├── MASTER_EXECUTION_PLAN.md               # Multi-chat master execution roadmap
+    └── STATUS_CORRECTION_2026-10-13.md        # Authoritative status and scope corrections
+```
 
-## Start here for every new project chat
-1. Read `project/CHAT_HANDOFF.md`.
-2. Read `project/STATUS_CORRECTION_2026-10-13.md`.
-3. Read `project/MASTER_EXECUTION_PLAN.md` and the phase-specific evidence files.
-4. Execute only the active continuation prompt.
-5. Preserve existing work, raw evidence, branch history, and frozen scope.
-6. Before closing, update the handoff, status documents, artifacts, and exact next prompt; commit and verify the resulting branch/commit.
+---
 
-## Key project files
-- `project/CHAT_HANDOFF.md` — current state and exact next continuation prompt.
-- `project/STATUS_CORRECTION_2026-10-13.md` — authoritative correction of stale phase/status references, Chat 07 caveats, and Chat 08 integrity gates.
-- `project/MASTER_EXECUTION_PLAN.md` — durable roadmap and historical phase instructions; use the status correction to resolve stale entries.
-- `project/PROJECT_SCOPE_AND_RQS.md` — frozen topic boundary, research questions, and contribution logic.
-- `research/REVIEW2_PAPER_SELECTION_AND_AUDIT.md` — primary-study baseline and screening rationale.
-- `research/PAPER_ACQUISITION_AND_ARCHIVE.md` — legitimate-access and private/local PDF archive register.
-- `research/CHAT02_EVIDENCE_EXTRACTION.md` — field-level extraction matrix.
-- `research/CHAT03_QUALITY_ASSESSMENT.md` — quality assessment.
-- `research/CHAT04_CRITICAL_SYNTHESIS.md` — critical synthesis and taxonomy.
-- `research/RESEARCH_GAPS_AND_FUTURE_AGENDA.md` — evidence-based gaps and future agenda.
-- `research/CHAT06_EXPERIMENTAL_ARCHITECTURE_AND_TESTBED.md` — frozen experimental architecture/testbed.
-- `research/CHAT07_IMPLEMENTATION_AND_VALIDATION.md` — Chat 07 implementation and native validation evidence.
-- `review2/REVIEW_2_SLIDE_PLAN.md` — Review 2 presentation plan.
-- `experiments/` — Chat 08 raw outputs, manifests, processed metrics, and summaries (to be populated).
+## Experimental Matrix Design
+Confirmed by [`experiments/manifests/experiment_matrix_manifest.json`](experiments/manifests/experiment_matrix_manifest.json):
+- **Total Experimental Runs:** Exactly 350 records (`run_{Config}_{Workload}_rep{0-9}.json`).
+- **Matrix Cells:** 35 cells (5 Configurations $\times$ 7 Workloads $\times$ 10 Repetitions).
+- **Configurations:**
+  - `A`: Baseline (uninstrumented container workload).
+  - `B`: Telemetry Overhead (eBPF syscall tracing + ring-buffer consumer).
+  - `C`: Userspace Float Inference (telemetry + scikit-learn Logistic Regression).
+  - `D`: Fixed-Point Feasibility (telemetry + Python Q16.16 integer scoring).
+  - `E`: Detection + Mitigation Workflow (telemetry + scoring + simulated rollback).
+- **Workloads:**
+  - Benign: `B1` (Idle), `B2` (HTTP API), `B3` (Build / Process Churn), `B4` (Mixed I/O).
+  - Anomaly: `A1` (Process Burst), `A2` (Suspicious File Access), `A3` (Outbound Connection Burst).
 
-## Research framing
-The defensible contribution is the intersection of **eBPF telemetry, ML runtime detection, and kernel-level enforcement in cloud/container environments**, emphasizing telemetry overhead, ML placement, detection-to-mitigation latency, enforcement safety, and evaluation practice. Do not claim to be the first review of eBPF cybersecurity.
+---
 
-## Evidence and reporting rules
-- Separate paper-reported results, cross-paper synthesis, inference, and project interpretation.
-- Mark unreported fields as “Not reported”; do not reconstruct missing facts by guesswork.
-- Do not fabricate measurements or claim superiority without direct empirical support.
-- Report experimental repetitions, denominators, variability, event loss, failures, and deviations.
-- Keep raw outputs immutable and derive summaries reproducibly.
-- Store metadata, DOI/official links, acquisition status, and verification notes in the public repository; do not commit unauthorized copyrighted PDFs.
+## Validation Status & Execution Evidence
 
+| Validation Check | Scope / Target | Command Executed | Result | Exit Code | Diagnostic Details |
+| :--- | :--- | :--- | :---: | :---: | :--- |
+| **Matrix Integrity** | All 350 raw JSON files | `python experiments/scripts/validate_matrix.py` | **PASS** | 0 | 35 cells $\times$ 10 reps verified; 0 schema violations, 0 nulls, 0 NaNs. |
+| **Raw Data Immutability** | All 350 raw JSON files | SHA-256 verification against baseline manifest | **PASS** | 0 | 100% byte-for-byte identical; 0 files modified or corrupted. |
+| **Descriptive Statistics** | Raw dataset | `python experiments/scripts/statistical_analysis.py` | **PASS** | 0 | Stratified cell and marginal summaries generated cleanly. |
+| **Processed Reproduction** | Summary tables | `python experiments/scripts/process_results.py` | **PASS** | 0 | Deterministically reproduces all 6 CSV/JSON tables with 0 content diffs. |
+| **Python Unit Tests** | Prototype core | `bash prototype/tests/run_unit_tests.sh` | **PASS** | 0 | 4/4 unit tests passed (`features`, `model`, `policy`, `kernel_lr_feasibility`). |
+| **Software Smoke Test** | Synthetic pipeline | `python prototype/tests/run_software_smoke.py` | **PASS** | 0 | Synthetic fixture ingestion, aggregation, scoring, and policy PASS. |
+| **Toolchain Preflight** | WSL2 environment | `bash prototype/preflight.sh` | **PASS** | 0 | Linux 6.6.87.2-WSL2, Clang 18.1.3, bpftool 7.4.0, libbpf verified. |
+| **Native BPF Compilation**| C probes & loader | `make -C prototype/bpf clean && make -C prototype/bpf` | **PASS** | 0 | Clean ELF objects (`telemetry.bpf.o`, `kernel_lr_feasibility.bpf.o`, `telemetry_loader`). |
+| **Live In-Kernel Load** | BPF program loading | `bpftool prog load prototype/bpf/telemetry.bpf.o ...` | **BLOCKED** | 1 | Unprivileged BPF disabled (`/proc/sys/kernel/unprivileged_bpf_disabled = 2`). Requires `CAP_BPF`/root. |
 
-## Chat 11 interim audit status — 19 October 2026
+---
 
-The remote audit report is `research/CHAT11_FINAL_AUDIT_REPORT.md`. Starting remote `main` HEAD was `8576f5bb12515c28868e7e8cbdbc8b104efe0e1e`. The current session could inspect remote files but could not execute the scripts against the full raw dataset. The validator, descriptive analysis, processing scripts, plot regeneration, and native tests have not been run here. The combined status endpoint returned no status entries; this is not evidence of passing CI.
+## Independent Numerical Reconciliation
 
-Static inspection found a manuscript/processed-summary discrepancy for Config D inference timing (4.19 μs versus 4.238 μs) and the existing generated/submitted telemetry-counter discrepancy remains unresolved. Bibliographic author lists and metadata remain incomplete pending official-source verification. Do not claim submission readiness or end-to-end zero event loss.
+### 1. Configuration D Inference Latency
+The previous apparent conflict between $4.19\ \mu\text{s}$ and $4.238\ \mu\text{s}$ has been fully reconciled from the raw records:
+- **Exclusion of Non-Inference Run:** In run `run_D_B3_rep5.json`, zero events were consumed (`consumed_events = 0`), so no inference took place and $0.0\ \mu\text{s}$ was recorded. This record is excluded from valid inference measurements.
+- **Run-Weighted Mean of Valid Runs ($N=69$):** **$4.247\ \mu\text{s}$** ($4.2469\ \mu\text{s}$; median $3.634\ \mu\text{s}$; order-statistic IQR $1.475\ \mu\text{s}$; linear-interpolation IQR $1.475\ \mu\text{s}$).
+- **Summary Table Mean (`summary_by_configuration.csv`):** **$4.238\ \mu\text{s}$** ($4.2382\ \mu\text{s}$). The processing script (`process_results.py`) filtered out $0.0$ via `if r["latency"].get("inference_latency_us"):` (since `bool(0.0) is False`), calculating the B3 cell mean over the 9 active runs as $3.637\ \mu\text{s}$. The unweighted average of the seven workload cell means ($3.367, 3.956, 4.065, 4.247, 3.953, 3.637, 6.442\ \mu\text{s}$) yields exactly **$4.2382\ \mu\text{s}$**.
+- **Historical Grand Mean ($N=70$):** **$4.186\ \mu\text{s} \approx 4.19\ \mu\text{s}$**. This older figure resulted from diluting the sum of latencies ($293.034\ \mu\text{s}$) by all 70 raw entries including the non-inference zero observation ($293.034 / 70$), which is mathematically invalid as a summary of inference latency.
+- **Speedup Ratios (Config C vs. Valid Config D):** Comparing Config C float scikit-learn ($169.20\ \mu\text{s}$ mean, $76.24\ \mu\text{s}$ median) to valid Config D measurements yields **$39.84\times$** by run-weighted means ($169.20 / 4.247$), **$39.92\times$** by unweighted cell-mean averages ($169.20 / 4.238$), and **$20.98\times$** by medians ($76.24 / 3.634$). Both benchmarks measure **userspace Python execution** (Q16.16 integer arithmetic vs. scikit-learn float), characterizing algorithmic arithmetic feasibility rather than in-kernel execution.
 
-## Chat 10 manuscript status — 19 October 2026
+### 2. Telemetry Event Accounting
+Across the 280 instrumented runs (Configurations B, C, D, and E):
+- **Generated Events:** **16,001**
+- **Submitted Events:** **15,999** (difference of 2 unsubmitted events: 1 in `run_C_A1_rep1.json` and 1 in `run_D_B3_rep4.json`).
+- **Consumed Events:** **15,970** (difference of 29 unconsumed events across 23 runs where the harness polling loop terminated with residual events in the ring buffer).
+- **Reservation Failures:** **0**
+- **Sequence Gaps:** **0**
+- **Ring Buffer Drop Rate:** **$0.0000\%$**.
+- **Claim Boundary:** While ring-buffer transport had zero internal drops or gaps, the presence of 31 unsubmitted/unconsumed boundary events at harness exit precludes an unconditional "zero end-to-end event loss" claim.
 
-- Draft manuscript: paper/MAIN_MANUSCRIPT.md.
-- Claim-to-evidence map and mandatory Chat 11 audit queue: research/CHAT10_CLAIM_TO_EVIDENCE_MAP.md.
-- The manuscript separates direct observations, counter-derived telemetry accounting, Python arithmetic benchmarks, formula-derived latency estimates, simulated policy transitions, and literature findings.
-- The analysis script is revised to provide workload-stratified descriptive summaries and counter reconciliation rather than unsupported paired tests or an equivalence-like interpretation of a non-significant ANOVA. It has not yet been executed in this authoring pass; Chat 11 must run it and record actual output.
-- A critical counter discrepancy remains: project records report 16,001 generated and 15,999 submitted events, while reservation-failure and sequence-gap counters are zero. This is not sufficient to claim reconciled end-to-end zero loss. Raw records remain unchanged.
-- No live kernel-local inference loop or OS-level cgroup/firewall enforcement is claimed for the 350-run matrix. No UI/dashboard is claimed.
-- Chat 11 must verify reference metadata, regenerate derived outputs, reconcile event counters, run validation, and verify the final main-branch commit.
+### 3. Key Detection Findings
+- **A1 Process Bursts:** 7/10 detected (Precision 1.00, Recall 0.70, F1 0.824).
+- **B3 Benign Churn (Builds):** 50%–80% False Positive Rate across C/D/E, demonstrating severe feature confounding with legitimate developer activity.
+- **A2 File Access Bursts:** 0% recall in C/D; 20% in E.
+- **A3 Connection Bursts:** 0% recall across all configurations (failure on held-out network pattern).
 
-## Chat 08 repository verification gate
+---
 
-The supplied Chat 08 summary claims 350 controlled runs and commit abbreviation `5732f2f`, but that commit could not be resolved through GitHub and the claimed report/processed CSVs were not found on `main` during reconciliation. The summary is not a substitute for committed evidence. Follow [the reconciliation protocol](project/CHAT08_REPOSITORY_RECONCILIATION.md) before treating Chat 08 as verified or publishing quantitative conclusions. This does not establish that local work is lost; it establishes that local-to-remote synchronization must be checked. Do not rerun the full matrix before inspecting local Git history and artifacts.
+## Reproduction Guide
 
-**Single-branch rule:** canonical branch is `main`; all future project changes must be committed and pushed directly to `main`. At each handoff verify full local and remote HEAD SHAs, working-tree status, and the presence of required artifact paths. Keep raw data immutable and preserve historical branches/files.
+### Environment & Toolchain Prerequisites
+- **Operating System:** Linux x86_64 (tested on Ubuntu 24.04 LTS under WSL2; kernel 6.6.87.2-microsoft-standard-WSL2).
+- **Compilers & Tools:** Clang/LLVM 18.1.3, GCC 13.3.0, `make`, `bpftool v7.4.0`, `libbpf-dev` (v1.3.0).
+- **Python Runtime:** Python 3.12+ with `numpy` and `scikit-learn`.
+
+### Step-by-Step Reproduction Commands
+
+1. **Verify Raw Data Integrity:**
+   ```bash
+   python experiments/scripts/validate_matrix.py
+   ```
+
+2. **Run Descriptive Statistics:**
+   ```bash
+   python experiments/scripts/statistical_analysis.py
+   ```
+
+3. **Reprocess Derived Summary Tables (Optional / Verification):**
+   ```bash
+   python experiments/scripts/process_results.py
+   ```
+
+4. **Execute Prototype Unit Tests:**
+   ```bash
+   cd prototype && python -m unittest discover -s tests -p 'test_*.py' -v && cd ..
+   ```
+
+5. **Execute Prototype Software Smoke Pipeline:**
+   ```bash
+   cd prototype && python tests/run_software_smoke.py && cd ..
+   ```
+
+6. **Compile Native eBPF Programs (Requires Linux/WSL2):**
+   ```bash
+   make -C prototype/bpf clean && make -C prototype/bpf
+   ```
+
+---
+
+## Remaining Disclosed Limitations & Next Actions
+1. **Live Kernel Probe Loading (BLOCKED):** `sys_bpf(BPF_PROG_LOAD)` requires elevated root privileges or `CAP_BPF` on Linux hosts where `/proc/sys/kernel/unprivileged_bpf_disabled = 2`. Native compilation and BPF verifier feasibility are established, but live probe evaluation remains future work.
+2. **Formula-Derived Latency:** Detection latency values ($T_{\text{detect}}$) are additive architectural estimates incorporating component timings and assumed queuing constants, not direct hardware timestamp intervals.
+3. **Simulated Mitigation:** Configuration E measures Python policy state transitions with synthetic delays; active operating-system enforcement (cgroup v2 freezing, iptables rules) remains simulated.
+4. **Submission Status:** The manuscript is finalized and fully aligned with verified evidence. Reviewers and readers should treat all findings within the disclosed methodological bounds.

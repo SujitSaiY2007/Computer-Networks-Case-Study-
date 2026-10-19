@@ -75,11 +75,11 @@ def main():
             slowdown = ((x - a) / a * 100.0) if a else float("nan")
             print(",".join([config, workload, "%.6f" % a, "%.6f" % x, "%.4f" % slowdown]))
 
-    print("\nInference timing summaries (Python software paths; not kernel-vs-user-space)")
+    print("\nInference timing summaries (Python software paths; valid inference runs only)")
     for config in ["C", "D", "E"]:
         vals = [r["latency"]["inference_latency_us"] for r in runs
-                if r["config_id"] == config and r["latency"].get("inference_latency_us") is not None]
-        print(config + ": n=" + str(len(vals)) + ", mean_us=" + ("%.4f" % mean(vals)) +
+                if r["config_id"] == config and r["latency"].get("inference_latency_us") and r.get("telemetry", {}).get("consumed_events", 0) > 0]
+        print(config + ": n=" + str(len(vals)) + ", run_weighted_mean_us=" + ("%.4f" % mean(vals)) +
               ", median_us=" + ("%.4f" % median(vals)) + ", IQR_us=" + ("%.4f" % iqr(vals)))
 
     print("\nTelemetry counters (instrumented runs only)")
