@@ -1,5 +1,14 @@
 # Controlled Experiments Package (`experiments/`)
 
+# Chat 11 audit caveat — 19 October 2026
+
+The committed processed outputs have not been regenerated during Chat 11. Treat all summary tables and figures as **historical processed artifacts pending reproduction**, not as freshly validated output. The manuscript/map report Configuration D inference mean as 4.19 μs, while `processed/summary_by_configuration.csv` reports 4.238 μs; reconcile from raw records before submission. Telemetry reports 16,001 generated and 15,999 submitted events; zero reservation failures and sequence gaps do not establish end-to-end zero loss. Config D's matrix timing is a Python Q16.16 software-path benchmark; do not label it a measured in-kernel inference result. See `research/CHAT11_FINAL_AUDIT_REPORT.md`.
+
+Chat 11's scripts and native tests were not executed in the available remote-inspection session. Do not record validation as passed until actual command output and exit codes are available.
+
+---
+
+
 **Milestone:** CHAT 08 Controlled Experiments Execution & CHAT 09 Verification  
 **Repository Branch:** `main`  
 **Testbed Environment:** Ubuntu 24.04.3 LTS (`x86_64`), Linux kernel `6.6.87.2-microsoft-standard-WSL2`, Clang 18.1.3, bpftool 7.4.0, libbpf 1.4, Docker 29.1.3, Python 3.12.3.
