@@ -1,5 +1,16 @@
 # Master Execution Plan — Multi-Chat Project Workflow
 
+## Chat 11 interim audit override — 19 October 2026
+
+Chat 11 has performed remote source inspection and committed `research/CHAT11_FINAL_AUDIT_REPORT.md`. Audit status is **PARTIAL**, and the project is **not yet ready for submission review**. The starting remote `main` HEAD was `8576f5bb12515c28868e7e8cbdbc8b104efe0e1e`.
+
+This session could inspect GitHub files but could not execute project scripts against a checked-out repository/raw dataset. The matrix validator, descriptive analysis, processing, plot regeneration, and native tests were not run. Do not treat the empty combined-status response as a CI pass. Static review found Config D mean inference timing differs between the manuscript/map (4.19 μs) and committed configuration summary (4.238 μs). The generated/submitted telemetry discrepancy (16,001 vs 15,999) remains unresolved, and abbreviated bibliography metadata remains unverified.
+
+Do not claim submission readiness, end-to-end zero event loss, or that all Chat 11 criteria passed. The next audit environment must provide an actual checkout or execution-capable CI path. Continue on `main` only, preserve raw JSON and history, regenerate derived outputs before correcting numerical values, and verify bibliography entries against official sources. See the audit report and active handoff for acceptance statuses and the precise next steps.
+
+---
+
+
 ## Current status override — 19 October 2026
 
 This section supersedes older live-status bullets and continuation prompts below where they conflict with the current phase. Chat 10 has prepared the full manuscript draft at paper/MAIN_MANUSCRIPT.md, the claim-to-evidence map at research/CHAT10_CLAIM_TO_EVIDENCE_MAP.md, and a descriptive analysis script revision at experiments/scripts/statistical_analysis.py. These artifacts are committed on main. Chat 10 is **draft prepared; final audit pending**. Chat 11 must run validation, regenerate and compare derived summaries, reconcile telemetry counters, complete and verify bibliography metadata, and audit all claims/citations. Do not claim submission, production readiness, measured in-kernel speedup, end-to-end zero loss, or live OS enforcement. Raw records and historical Git history remain unchanged. See project/CHAT_HANDOFF.md for the exact continuation prompt.
