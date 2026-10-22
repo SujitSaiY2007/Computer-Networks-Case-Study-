@@ -140,10 +140,11 @@ int main(int argc, char **argv)
     clock_gettime(CLOCK_MONOTONIC, &start_ts);
     while (!stop) {
         clock_gettime(CLOCK_MONOTONIC, &now_ts);
-        uint64_t elapsed_ms = (now_ts.tv_sec - start_ts.tv_sec) * 1000ULL + (now_ts.tv_nsec - start_ts.tv_nsec) / 1000000ULL;
-        if (elapsed_ms >= (uint64_t)duration * 1000ULL)
+        int64_t elapsed_ms = ((int64_t)now_ts.tv_sec - (int64_t)start_ts.tv_sec) * 1000LL +
+                             ((int64_t)now_ts.tv_nsec - (int64_t)start_ts.tv_nsec) / 1000000LL;
+        if (elapsed_ms >= (int64_t)duration * 1000LL)
             break;
-        uint64_t remain_ms = (uint64_t)duration * 1000ULL - elapsed_ms;
+        int64_t remain_ms = (int64_t)duration * 1000LL - elapsed_ms;
         int timeout_ms = (remain_ms > 100) ? 100 : (int)remain_ms;
         int rc = ring_buffer__poll(rb, timeout_ms);
         if (rc < 0 && rc != -EINTR) {
