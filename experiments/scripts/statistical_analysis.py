@@ -61,7 +61,7 @@ def main():
         for workload in WORKLOADS:
             cell = grouped[(config, workload)]
             durations = [r["resources"]["workload_duration_seconds"] for r in cell]
-            rss = [r["resources"]["rss_peak_mb"] for r in cell]
+            rss = [r["resources"].get("workload_mem_peak_mb", r["resources"].get("rss_peak_mb", 0.0)) for r in cell]
             row = [config, workload, len(cell), "%.6f" % mean(durations), "%.6f" % median(durations),
                    "%.6f" % iqr(durations), "%.4f" % mean(rss)]
             print(",".join(str(v) for v in row))

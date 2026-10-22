@@ -88,14 +88,14 @@ def main():
                 continue
 
             cpu_vals = [r["resources"]["cpu_utilization_pct"] for r in runs]
-            rss_vals = [r["resources"]["rss_peak_mb"] for r in runs]
+            rss_vals = [r["resources"].get("workload_mem_peak_mb", r["resources"].get("rss_peak_mb", 0.0)) for r in runs]
             dur_vals = [r["resources"]["workload_duration_seconds"] for r in runs]
             
             gen_vals = [r["telemetry"]["generated_events"] for r in runs]
             sub_vals = [r["telemetry"]["submitted_events"] for r in runs]
             loss_vals = [r["telemetry"]["loss_rate"] * 100.0 for r in runs]
             tput_vals = [r["telemetry"]["telemetry_throughput_eps"] for r in runs]
-            tlat_vals = [r["telemetry"]["telemetry_transfer_latency_us"] for r in runs]
+            tlat_vals = [r["telemetry"]["telemetry_transfer_latency_us"] for r in runs if r["telemetry"].get("telemetry_transfer_latency_us") is not None]
 
             agg_lat_vals = [r["latency"]["feature_aggregation_us"] for r in runs if r["latency"].get("feature_aggregation_us")]
             inf_lat_vals = [r["latency"]["inference_latency_us"] for r in runs if r["latency"].get("inference_latency_us")]
@@ -196,7 +196,7 @@ def main():
     # 1. Summary Matrix (all 35 cells)
     summary_matrix_path = PROCESSED_DIR / "summary_matrix_all_cells.csv"
     with open(summary_matrix_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=list(all_cell_rows[0].keys(, lineterminator="\n")))
+        writer = csv.DictWriter(f, fieldnames=list(all_cell_rows[0].keys()), lineterminator="\n")
         writer.writeheader()
         writer.writerows(all_cell_rows)
     print(f"Written: {summary_matrix_path}")
@@ -218,7 +218,7 @@ def main():
         })
     config_csv_path = PROCESSED_DIR / "summary_by_configuration.csv"
     with open(config_csv_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=list(config_rows[0].keys(, lineterminator="\n")))
+        writer = csv.DictWriter(f, fieldnames=list(config_rows[0].keys()), lineterminator="\n")
         writer.writeheader()
         writer.writerows(config_rows)
     print(f"Written: {config_csv_path}")
@@ -237,7 +237,7 @@ def main():
         })
     wl_csv_path = PROCESSED_DIR / "summary_by_workload.csv"
     with open(wl_csv_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=list(wl_rows[0].keys(, lineterminator="\n")))
+        writer = csv.DictWriter(f, fieldnames=list(wl_rows[0].keys()), lineterminator="\n")
         writer.writeheader()
         writer.writerows(wl_rows)
     print(f"Written: {wl_csv_path}")
@@ -260,7 +260,7 @@ def main():
             })
     lat_csv_path = PROCESSED_DIR / "latency_breakdown.csv"
     with open(lat_csv_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=list(lat_rows[0].keys(, lineterminator="\n")))
+        writer = csv.DictWriter(f, fieldnames=list(lat_rows[0].keys()), lineterminator="\n")
         writer.writeheader()
         writer.writerows(lat_rows)
     print(f"Written: {lat_csv_path}")
@@ -286,7 +286,7 @@ def main():
             })
     det_csv_path = PROCESSED_DIR / "detection_performance.csv"
     with open(det_csv_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=list(det_rows[0].keys(, lineterminator="\n")))
+        writer = csv.DictWriter(f, fieldnames=list(det_rows[0].keys()), lineterminator="\n")
         writer.writeheader()
         writer.writerows(det_rows)
     print(f"Written: {det_csv_path}")

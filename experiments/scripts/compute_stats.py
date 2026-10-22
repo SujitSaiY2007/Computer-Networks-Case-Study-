@@ -21,20 +21,21 @@ for f in sorted(files):
         d = json.load(fp)
     c = d['config_id']
     cfg_cpu[c].append(d['resources']['cpu_utilization_pct'])
-    cfg_rss[c].append(d['resources']['rss_peak_mb'])
+    cfg_rss[c].append(d['resources'].get('workload_mem_peak_mb', d['resources'].get('rss_peak_mb', 0.0)))
     if c in cfg_loss:
         cfg_loss[c].append(d['telemetry']['loss_rate'])
     if c == 'C' and d['latency']['inference_latency_us'] > 0:
         inf_c.append(d['latency']['inference_latency_us'])
-        det_c.append(d['latency']['detection_latency_ms'])
+        det_c.append(d['latency'].get('processing_latency_ms', d['latency'].get('detection_latency_ms', 0.0)))
     elif c == 'D' and d['latency']['inference_latency_us'] > 0:
         inf_d.append(d['latency']['inference_latency_us'])
-        det_d.append(d['latency']['detection_latency_ms'])
+        det_d.append(d['latency'].get('processing_latency_ms', d['latency'].get('detection_latency_ms', 0.0)))
     elif c == 'E' and d['latency']['inference_latency_us'] > 0:
-        det_e.append(d['latency']['detection_latency_ms'])
-        if d['latency']['mitigation_latency_ms'] is not None:
-            mit_e.append(d['latency']['mitigation_latency_ms'])
-            dtm_e.append(d['latency']['detection_to_mitigation_ms'])
+        det_e.append(d['latency'].get('processing_latency_ms', d['latency'].get('detection_latency_ms', 0.0)))
+        mit_val = d['latency'].get('mitigation_latency_ms') or d.get('enforcement', {}).get('mitigation_latency_ms')
+        if mit_val is not None:
+            mit_e.append(mit_val)
+            dtm_e.append(d['latency'].get('detection_to_mitigation_ms', 0.0))
 
 print('CPU (%):')
 for k, v in cfg_cpu.items():

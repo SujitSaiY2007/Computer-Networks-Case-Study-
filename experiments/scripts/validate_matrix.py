@@ -110,7 +110,7 @@ def validate_matrix():
         # 5. Resource and telemetry metrics
         res = rec.get("resources", {})
         dur = res.get("workload_duration_seconds", 0)
-        rss = res.get("rss_peak_mb", 0)
+        rss = res.get("workload_mem_peak_mb", res.get("rss_peak_mb", 0))
         if dur <= 0 or not math.isfinite(dur):
             timing_anomalies.append((rid, "non-finite or non-positive workload_duration"))
         if rss <= 0 or not math.isfinite(rss):
