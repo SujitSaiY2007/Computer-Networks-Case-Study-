@@ -92,7 +92,7 @@ def run_single_experiment(
     if events_log.exists():
         events_log.unlink()
 
-    # Step 2a: Before loader starts, create container
+    # Create container before loader starts
     subprocess.run(["docker", "rm", "-f", "cncs_wl"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     subprocess.run([
         "docker", "run", "-d", "--name", "cncs_wl", "--network", "none",
@@ -104,7 +104,7 @@ def run_single_experiment(
     u0, s0 = get_cpu_times()
 
     try:
-        # Step 2b: Find its cgroup
+        # Find container cgroup
         pid_res = subprocess.run(["docker", "inspect", "-f", "{{.State.Pid}}", "cncs_wl"], check=True, capture_output=True, text=True)
         c_pid = int(pid_res.stdout.strip())
         cg_path = None
@@ -117,7 +117,7 @@ def run_single_experiment(
             raise RuntimeError(f"Could not find cgroup path for container pid {c_pid}")
         wl_cgroup_id = os.stat(cg_path).st_ino
 
-        # Step 2c: Start telemetry loader for Configs B, C, D, E
+        # Start telemetry loader for Configs B, C, D, E
         if config_id in ("B", "C", "D", "E"):
             cmd_loader = [str(loader_bin), str(bpf_obj), "--duration", str(int(duration + 4))]
             out_f = open(events_log, "w", encoding="utf-8")
@@ -140,7 +140,7 @@ def run_single_experiment(
                 out_f.close()
                 raise TimeoutError("Timed out waiting for TELEMETRY_RUNNING on loader stderr (5 s limit)")
 
-        # Step 2d: Run workload inside container
+        # Run workload inside container
         t_exec_start = time.perf_counter()
         exec_cmd = ["docker", "exec", "cncs_wl", "python3", "/work/prototype/python/workloads.py", workload_id, "--duration", str(duration), "--seed", str(rep_idx)]
         exec_res = subprocess.run(exec_cmd, capture_output=True, text=True)
@@ -161,7 +161,7 @@ def run_single_experiment(
                 except Exception:
                     pass
 
-        # Step 2e: Before removing container, read cg_path/memory.peak
+        # Read memory.peak before removing container
         workload_mem_peak_mb = None
         try:
             with open(os.path.join(cg_path, "memory.peak"), "r", encoding="utf-8") as f:
@@ -169,7 +169,7 @@ def run_single_experiment(
         except Exception:
             pass
 
-        # Loader peak RSS
+        # Loader peak RSS before terminating
         loader_rss_peak_mb = None
         if loader_proc and loader_proc.poll() is None:
             loader_vmhwm_kb = get_proc_vmhwm_kb(loader_proc.pid)
@@ -186,199 +186,241 @@ def run_single_experiment(
                 loader_proc.kill()
             out_f.close()
 
-    finally:
-        # Step 2h: At the end of each run: docker rm -f cncs_wl
-        subprocess.run(["docker", "rm", "-f", "cncs_wl"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        u1, s1 = get_cpu_times()
+        t0_end = time.perf_counter()
+        elapsed = t0_end - t0_start
+        cpu_user_s = max(u1 - u0, 0.0)
+        cpu_sys_s = max(s1 - s0, 0.0)
+        total_cpu_s = cpu_user_s + cpu_sys_s
+        cpu_utilization_pct = (total_cpu_s / max(elapsed, 0.001)) * 100.0
 
-    u1, s1 = get_cpu_times()
-    t0_end = time.perf_counter()
-    elapsed = t0_end - t0_start
-    cpu_user_s = max(u1 - u0, 0.0)
-    cpu_sys_s = max(s1 - s0, 0.0)
-    total_cpu_s = cpu_user_s + cpu_sys_s
-    cpu_utilization_pct = (total_cpu_s / max(elapsed, 0.001)) * 100.0
+        # Enforcement variables
+        mitigation_triggered = False
+        mitigation_latency_ms = None
+        freeze_verified = None
+        detection_to_mitigation_ms = None
+        rollback_success = None
+        rollback_time_ms = None
 
-    # In Config E, if anomaly, we simulate controlled mitigation (replaced in Step 3)
-    mitigation_triggered = False
-    mitigation_latency_ms = None
-    detection_to_mitigation_ms = None
-    rollback_success = None
-    rollback_time_ms = None
+        # Read events and ring buffer stats
+        events = []
+        stats = {}
+        if events_log.exists():
+            with open(events_log, "r", encoding="utf-8") as f:
+                for line in f:
+                    line = line.strip()
+                    if not line:
+                        continue
+                    try:
+                        rec = json.loads(line)
+                        if rec.get("record_type") == "event":
+                            events.append(rec)
+                        elif rec.get("record_type") == "stats":
+                            stats = rec
+                    except Exception:
+                        pass
+            events_log.unlink(missing_ok=True)
 
-    # Read events and ring buffer stats
-    events = []
-    stats = {}
-    if events_log.exists():
-        with open(events_log, "r", encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if not line:
-                    continue
-                try:
-                    rec = json.loads(line)
-                    if rec.get("record_type") == "event":
-                        events.append(rec)
-                    elif rec.get("record_type") == "stats":
-                        stats = rec
-                except Exception:
-                    pass
-        events_log.unlink(missing_ok=True)
+        gen_events = stats.get("generated_events", len(events))
+        sub_events = stats.get("submitted_events", len(events))
+        res_fails = stats.get("reservation_failures", 0)
+        seq_gaps = stats.get("sequence_gaps", 0)
+        consumed = stats.get("consumed_events", len(events))
+        loss_rate = float(gen_events - consumed) / float(gen_events) if gen_events > 0 else 0.0
 
-    gen_events = stats.get("generated_events", len(events))
-    sub_events = stats.get("submitted_events", len(events))
-    res_fails = stats.get("reservation_failures", 0)
-    seq_gaps = stats.get("sequence_gaps", 0)
-    consumed = stats.get("consumed_events", len(events))
-    loss_rate = float(gen_events - consumed) / float(gen_events) if gen_events > 0 else 0.0
+        # Filter events by workload cgroup ID
+        workload_events = [ev for ev in events if ev.get("cgroup_id") == wl_cgroup_id]
 
-    # Step 2f: Keep only events with cgroup_id == wl_cgroup_id
-    workload_events = [ev for ev in events if ev.get("cgroup_id") == wl_cgroup_id]
+        telemetry_throughput = float(len(workload_events)) / max(measured_duration_s, 0.001) if config_id != "A" else 0.0
 
-    telemetry_throughput = float(len(workload_events)) / max(measured_duration_s, 0.001) if config_id != "A" else 0.0
+        transfer_latencies_us = []
+        if workload_events:
+            for ev in workload_events:
+                t_ns = ev.get("transfer_ns")
+                if t_ns is not None:
+                    transfer_latencies_us.append(t_ns / 1000.0)
+        telemetry_latency_us = (
+            sum(transfer_latencies_us) / len(transfer_latencies_us)
+            if transfer_latencies_us
+            else None
+        )
 
-    transfer_latencies_us = []
-    if workload_events:
-        for ev in workload_events:
-            t_ns = ev.get("transfer_ns")
-            if t_ns is not None:
-                transfer_latencies_us.append(t_ns / 1000.0)
-    telemetry_latency_us = (
-        sum(transfer_latencies_us) / len(transfer_latencies_us)
-        if transfer_latencies_us
-        else None
-    )
+        windows = []
+        predictions = []
+        scores = []
+        inference_latencies_us = []
+        feature_aggregation_latency_us = 0.0
+        decision_latency_us = 0.0
+        processing_latency_ms = 0.0
 
-    windows = []
-    predictions = []
-    scores = []
-    inference_latencies_us = []
-    feature_aggregation_latency_us = 0.0
-    decision_latency_us = 0.0
-    detection_latency_ms = 0.0
+        if config_id in ("C", "D", "E"):
+            t_agg_start = time.perf_counter_ns()
+            windows = aggregate(workload_events, loss_rate=loss_rate)
+            t_agg_end = time.perf_counter_ns()
+            feature_aggregation_latency_us = (t_agg_end - t_agg_start) / 1000.0
 
-    if config_id in ("C", "D", "E"):
-        t_agg_start = time.perf_counter_ns()
-        windows = aggregate(workload_events, loss_rate=loss_rate)
-        t_agg_end = time.perf_counter_ns()
-        feature_aggregation_latency_us = (t_agg_end - t_agg_start) / 1000.0
+            allow_mitigation = (config_id == "E")
+            policy = Policy(artifact["threshold"], allow_mitigation=allow_mitigation)
 
-        allow_mitigation = (config_id == "E")
-        policy = Policy(artifact["threshold"], allow_mitigation=allow_mitigation)
+            for w in windows:
+                if config_id in ("C", "E"):
+                    t_inf_s = time.perf_counter_ns()
+                    res = float_score(artifact, w)
+                    t_inf_e = time.perf_counter_ns()
+                    inf_us = (t_inf_e - t_inf_s) / 1000.0
+                    inference_latencies_us.append(inf_us)
+                    scores.append(res["score"])
+                    predictions.append(res["predicted_class"])
 
-        for w in windows:
-            if config_id in ("C", "E"):
-                t_inf_s = time.perf_counter_ns()
-                res = float_score(artifact, w)
-                t_inf_e = time.perf_counter_ns()
-                inf_us = (t_inf_e - t_inf_s) / 1000.0
-                inference_latencies_us.append(inf_us)
-                scores.append(res["score"])
-                predictions.append(res["predicted_class"])
+                    t_dec_s = time.perf_counter_ns()
+                    stage = policy.evaluate(res["score"], f"container-{workload_id}")
+                    t_dec_e = time.perf_counter_ns()
+                    decision_latency_us += (t_dec_e - t_dec_s) / 1000.0
 
-                t_dec_s = time.perf_counter_ns()
-                stage = policy.evaluate(res["score"], f"container-{workload_id}")
-                t_dec_e = time.perf_counter_ns()
-                decision_latency_us += (t_dec_e - t_dec_s) / 1000.0
+                    proc_ms = (inf_us + feature_aggregation_latency_us) / 1000.0
+                    processing_latency_ms = max(processing_latency_ms, proc_ms)
 
-                det_ms = (inf_us + feature_aggregation_latency_us) / 1000.0 + 1.2
-                detection_latency_ms = max(detection_latency_ms, det_ms)
+                    # Real cgroup v2 freeze enforcement for Config E
+                    if config_id == "E" and res["predicted_class"] == 1:
+                        mitigation_triggered = True
+                        policy.request_mitigation(f"container-{workload_id}")
+                        if policy.stage == Stage.CONTROLLED_MITIGATION:
+                            freeze_file = os.path.join(cg_path, "cgroup.freeze")
+                            events_file = os.path.join(cg_path, "cgroup.events")
 
-                if config_id == "E" and res["predicted_class"] == 1:
-                    mitigation_triggered = True
-                    t_mit_s = time.perf_counter()
-                    mit_ok = policy.request_mitigation(f"container-{workload_id}")
-                    time.sleep(0.001)
-                    t_mit_e = time.perf_counter()
-                    mitigation_latency_ms = (t_mit_e - t_mit_s) * 1000.0
-                    detection_to_mitigation_ms = detection_latency_ms + mitigation_latency_ms
+                            # Mitigation: write 1, poll for frozen 1
+                            t0 = time.perf_counter()
+                            try:
+                                with open(freeze_file, "w") as f:
+                                    f.write("1")
+                            except Exception:
+                                pass
+                            freeze_verified = False
+                            while time.perf_counter() - t0 < 2.0:
+                                try:
+                                    with open(events_file, "r") as f:
+                                        content = f.read()
+                                    if "frozen 1" in content:
+                                        freeze_verified = True
+                                        break
+                                except Exception:
+                                    pass
+                                time.sleep(0.0001)
+                            t1 = time.perf_counter()
+                            mitigation_latency_ms = (t1 - t0) * 1000.0
+                            detection_to_mitigation_ms = processing_latency_ms + mitigation_latency_ms
 
-                    t_rb_s = time.perf_counter()
-                    policy.rollback(f"container-{workload_id}")
-                    t_rb_e = time.perf_counter()
-                    rollback_success = (policy.stage == Stage.OBSERVE)
-                    rollback_time_ms = (t_rb_e - t_rb_s) * 1000.0
+                            # Rollback: write 0, poll for frozen 0
+                            t_rb_s = time.perf_counter()
+                            policy.rollback(f"container-{workload_id}")
+                            try:
+                                with open(freeze_file, "w") as f:
+                                    f.write("0")
+                            except Exception:
+                                pass
+                            rollback_success = False
+                            while time.perf_counter() - t_rb_s < 2.0:
+                                try:
+                                    with open(events_file, "r") as f:
+                                        content = f.read()
+                                    if "frozen 0" in content:
+                                        rollback_success = True
+                                        break
+                                except Exception:
+                                    pass
+                                time.sleep(0.0001)
+                            t_rb_e = time.perf_counter()
+                            rollback_time_ms = (t_rb_e - t_rb_s) * 1000.0
 
-            elif config_id == "D":
-                res_fp = score_kernel_fixed_point(artifact, w)
-                inf_us = res_fp["inference_latency_ns"] / 1000.0
-                inference_latencies_us.append(inf_us)
-                prob = 1.0 / (1.0 + 2.71828 ** (-min(max(res_fp["logit"], -20), 20)))
-                scores.append(prob)
-                predictions.append(res_fp["predicted_class"])
+                elif config_id == "D":
+                    res_fp = score_kernel_fixed_point(artifact, w)
+                    inf_us = res_fp["inference_latency_ns"] / 1000.0
+                    inference_latencies_us.append(inf_us)
+                    prob = 1.0 / (1.0 + 2.71828 ** (-min(max(res_fp["logit"], -20), 20)))
+                    scores.append(prob)
+                    predictions.append(res_fp["predicted_class"])
 
-                decision_latency_us = 0.05
-                det_ms = (inf_us) / 1000.0 + 0.08
-                detection_latency_ms = max(detection_latency_ms, det_ms)
+                    decision_latency_us = 0.05
+                    proc_ms = inf_us / 1000.0
+                    processing_latency_ms = max(processing_latency_ms, proc_ms)
 
-    final_prediction = 1 if (any(p == 1 for p in predictions)) else 0
-    final_score = max(scores) if scores else (0.0 if ground_truth == 0 else 1.0)
-    avg_inference_latency_us = (
-        sum(inference_latencies_us) / len(inference_latencies_us)
-        if inference_latencies_us
-        else 0.0
-    )
+        final_prediction = 1 if (any(p == 1 for p in predictions)) else 0
+        final_score = max(scores) if scores else (0.0 if ground_truth == 0 else 1.0)
+        avg_inference_latency_us = (
+            sum(inference_latencies_us) / len(inference_latencies_us)
+            if inference_latencies_us
+            else 0.0
+        )
 
-    tp = int(ground_truth == 1 and final_prediction == 1)
-    fp = int(ground_truth == 0 and final_prediction == 1)
-    tn = int(ground_truth == 0 and final_prediction == 0)
-    fn = int(ground_truth == 1 and final_prediction == 0)
+        tp = int(ground_truth == 1 and final_prediction == 1)
+        fp = int(ground_truth == 0 and final_prediction == 1)
+        tn = int(ground_truth == 0 and final_prediction == 0)
+        fn = int(ground_truth == 1 and final_prediction == 0)
 
-    legitimate_impact = 1 if (ground_truth == 0 and mitigation_triggered) else 0
+        legitimate_impact = 1 if (ground_truth == 0 and mitigation_triggered) else 0
 
-    record = {
-        "run_id": run_id,
-        "config_id": config_id,
-        "workload_id": workload_id,
-        "rep_idx": rep_idx,
-        "timestamp_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
-        "ground_truth": ground_truth,
-        "prediction": final_prediction,
-        "score": final_score,
-        "classification": {
-            "tp": tp, "fp": fp, "tn": tn, "fn": fn
-        },
-        "resources": {
-            "elapsed_seconds": elapsed,
-            "exec_wall_seconds": exec_wall_seconds,
-            "workload_duration_seconds": measured_duration_s,
-            "cpu_user_seconds": cpu_user_s,
-            "cpu_sys_seconds": cpu_sys_s,
-            "cpu_utilization_pct": cpu_utilization_pct,
-            "workload_mem_peak_mb": workload_mem_peak_mb,
-            "loader_rss_peak_mb": loader_rss_peak_mb
-        },
-        "telemetry": {
-            "cgroup_path": cg_path,
-            "generated_events": gen_events,
-            "workload_events": len(workload_events),
-            "submitted_events": sub_events,
-            "consumed_events": consumed,
-            "reservation_failures": res_fails,
-            "sequence_gaps": seq_gaps,
-            "loss_rate": loss_rate,
-            "telemetry_throughput_eps": telemetry_throughput,
-            "telemetry_transfer_latency_us": telemetry_latency_us
-        },
-        "latency": {
-            "feature_aggregation_us": feature_aggregation_latency_us,
-            "inference_latency_us": avg_inference_latency_us,
-            "decision_latency_us": decision_latency_us,
-            "detection_latency_ms": detection_latency_ms,
-            "mitigation_latency_ms": mitigation_latency_ms,
-            "detection_to_mitigation_ms": detection_to_mitigation_ms,
-            "rollback_time_ms": rollback_time_ms
-        },
-        "enforcement": {
-            "mitigation_triggered": mitigation_triggered,
-            "rollback_success": rollback_success,
-            "legitimate_operations_impacted": legitimate_impact
+        record = {
+            "run_id": run_id,
+            "config_id": config_id,
+            "workload_id": workload_id,
+            "rep_idx": rep_idx,
+            "timestamp_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            "ground_truth": ground_truth,
+            "prediction": final_prediction,
+            "score": final_score,
+            "classification": {
+                "tp": tp, "fp": fp, "tn": tn, "fn": fn
+            },
+            "resources": {
+                "elapsed_seconds": elapsed,
+                "exec_wall_seconds": exec_wall_seconds,
+                "workload_duration_seconds": measured_duration_s,
+                "cpu_user_seconds": cpu_user_s,
+                "cpu_sys_seconds": cpu_sys_s,
+                "cpu_utilization_pct": cpu_utilization_pct,
+                "workload_mem_peak_mb": workload_mem_peak_mb,
+                "loader_rss_peak_mb": loader_rss_peak_mb
+            },
+            "telemetry": {
+                "cgroup_path": cg_path,
+                "generated_events": gen_events,
+                "workload_events": len(workload_events),
+                "submitted_events": sub_events,
+                "consumed_events": consumed,
+                "reservation_failures": res_fails,
+                "sequence_gaps": seq_gaps,
+                "loss_rate": loss_rate,
+                "telemetry_throughput_eps": telemetry_throughput,
+                "telemetry_transfer_latency_us": telemetry_latency_us
+            },
+            "latency": {
+                "feature_aggregation_us": feature_aggregation_latency_us,
+                "inference_latency_us": avg_inference_latency_us,
+                "decision_latency_us": decision_latency_us,
+                "processing_latency_ms": processing_latency_ms,
+                "mitigation_latency_ms": mitigation_latency_ms,
+                "detection_to_mitigation_ms": detection_to_mitigation_ms,
+                "rollback_time_ms": rollback_time_ms
+            },
+            "enforcement": {
+                "mode": "cgroup_v2_freeze_post_run" if config_id == "E" else None,
+                "mitigation_triggered": mitigation_triggered,
+                "mitigation_latency_ms": mitigation_latency_ms,
+                "freeze_verified": freeze_verified,
+                "rollback_success": rollback_success,
+                "rollback_time_ms": rollback_time_ms,
+                "legitimate_operations_impacted": legitimate_impact
+            }
         }
-    }
 
-    with open(raw_file, "w", encoding="utf-8") as f:
-        json.dump(record, f, indent=2)
+        with open(raw_file, "w", encoding="utf-8") as f:
+            json.dump(record, f, indent=2)
 
-    return record
+        return record
+
+    finally:
+        # Container cleanup
+        subprocess.run(["docker", "rm", "-f", "cncs_wl"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 def main():
     parser = argparse.ArgumentParser(description="CHAT 08 Controlled Experiments Runner")

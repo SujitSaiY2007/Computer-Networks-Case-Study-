@@ -100,10 +100,10 @@ def main():
             agg_lat_vals = [r["latency"]["feature_aggregation_us"] for r in runs if r["latency"].get("feature_aggregation_us")]
             inf_lat_vals = [r["latency"]["inference_latency_us"] for r in runs if r["latency"].get("inference_latency_us")]
             dec_lat_vals = [r["latency"]["decision_latency_us"] for r in runs if r["latency"].get("decision_latency_us")]
-            det_lat_vals = [r["latency"]["detection_latency_ms"] for r in runs if r["latency"].get("detection_latency_ms")]
-            mit_lat_vals = [r["latency"]["mitigation_latency_ms"] for r in runs if r["latency"].get("mitigation_latency_ms") is not None]
+            det_lat_vals = [r["latency"].get("processing_latency_ms", r["latency"].get("detection_latency_ms", 0.0)) for r in runs if r["latency"].get("processing_latency_ms") or r["latency"].get("detection_latency_ms")]
+            mit_lat_vals = [r.get("enforcement", {}).get("mitigation_latency_ms", r["latency"].get("mitigation_latency_ms")) for r in runs if r.get("enforcement", {}).get("mitigation_latency_ms") is not None or r["latency"].get("mitigation_latency_ms") is not None]
             dtm_lat_vals = [r["latency"]["detection_to_mitigation_ms"] for r in runs if r["latency"].get("detection_to_mitigation_ms") is not None]
-            rb_lat_vals = [r["latency"]["rollback_time_ms"] for r in runs if r["latency"].get("rollback_time_ms") is not None]
+            rb_lat_vals = [r.get("enforcement", {}).get("rollback_time_ms", r["latency"].get("rollback_time_ms")) for r in runs if r.get("enforcement", {}).get("rollback_time_ms") is not None or r["latency"].get("rollback_time_ms") is not None]
 
             # Security metrics
             tp_sum = sum(r["classification"]["tp"] for r in runs)
