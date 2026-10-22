@@ -150,6 +150,7 @@ def run_single_experiment(
             raise RuntimeError(f"Workload {workload_id} failed in container: {exec_res.stderr}")
 
         measured_duration_s = exec_wall_seconds
+        workload_ops = None
         for line in exec_res.stdout.splitlines():
             line = line.strip()
             if "measured_duration_s" in line:
@@ -157,6 +158,8 @@ def run_single_experiment(
                     import ast
                     d = ast.literal_eval(line)
                     measured_duration_s = float(d["measured_duration_s"])
+                    if "ops" in d:
+                        workload_ops = int(d["ops"])
                     break
                 except Exception:
                     pass
@@ -375,6 +378,8 @@ def run_single_experiment(
                 "elapsed_seconds": elapsed,
                 "exec_wall_seconds": exec_wall_seconds,
                 "workload_duration_seconds": measured_duration_s,
+                "workload_ops": workload_ops,
+                "ops_per_second": (workload_ops / measured_duration_s) if (workload_ops is not None and measured_duration_s > 0) else None,
                 "cpu_user_seconds": cpu_user_s,
                 "cpu_sys_seconds": cpu_sys_s,
                 "cpu_utilization_pct": cpu_utilization_pct,
