@@ -62,17 +62,22 @@ def main():
 
     # Baseline A lookup for slowdown calculation
     baseline_durations = {}
+    baseline_durations = {}
     baseline_cpus = {}
+    baseline_ops = {}
     for w in WORKLOADS:
         runs_a = cell_data[("A", w)]
         if runs_a:
             durs = [r["resources"]["workload_duration_seconds"] for r in runs_a]
             cpus = [r["resources"]["cpu_utilization_pct"] for r in runs_a]
+            ops_vals = [r["resources"].get("ops_per_second") for r in runs_a if r["resources"].get("ops_per_second") is not None]
             baseline_durations[w] = sum(durs) / len(durs)
             baseline_cpus[w] = sum(cpus) / len(cpus)
+            baseline_ops[w] = sum(ops_vals) / len(ops_vals) if ops_vals else 0.0
         else:
             baseline_durations[w] = 1.0
             baseline_cpus[w] = 1.0
+            baseline_ops[w] = 0.0
 
     all_cell_rows = []
     config_summary = defaultdict(lambda: defaultdict(list))
@@ -90,6 +95,7 @@ def main():
             cpu_vals = [r["resources"]["cpu_utilization_pct"] for r in runs]
             rss_vals = [r["resources"].get("workload_mem_peak_mb", r["resources"].get("rss_peak_mb", 0.0)) for r in runs]
             dur_vals = [r["resources"]["workload_duration_seconds"] for r in runs]
+            ops_vals = [r["resources"].get("ops_per_second") for r in runs if r["resources"].get("ops_per_second") is not None]
             
             gen_vals = [r["telemetry"]["generated_events"] for r in runs]
             sub_vals = [r["telemetry"]["submitted_events"] for r in runs]
@@ -125,7 +131,13 @@ def main():
             cpu_m, cpu_s = mean_std(cpu_vals)
             rss_m, rss_s = mean_std(rss_vals)
             dur_m, dur_s = mean_std(dur_vals)
-            slowdown_pct = ((dur_m - baseline_durations[w]) / baseline_durations[w]) * 100.0 if baseline_durations[w] > 0 else 0.0
+            ops_m, ops_s = mean_std(ops_vals)
+
+            # Overhead as percentage change in mean ops_per_second vs A (skip B1)
+            if w != "B1" and baseline_ops[w] > 0:
+                slowdown_pct = ((ops_m - baseline_ops[w]) / baseline_ops[w]) * 100.0
+            else:
+                slowdown_pct = 0.0
 
             gen_m, gen_s = mean_std(gen_vals)
             loss_m, loss_s = mean_std(loss_vals)
@@ -150,6 +162,8 @@ def main():
                 "rss_peak_mean_mb": round(rss_m, 2),
                 "rss_peak_std_mb": round(rss_s, 2),
                 "workload_duration_mean_s": round(dur_m, 3),
+                "ops_per_second_mean": round(ops_m, 2),
+                "ops_per_second_std": round(ops_s, 2),
                 "workload_slowdown_pct": round(slowdown_pct, 2),
                 "events_gen_mean": round(gen_m, 1),
                 "event_loss_rate_mean_pct": round(loss_m, 4),
@@ -186,7 +200,8 @@ def main():
             config_summary[c]["det_lat"].append(det_m)
             config_summary[c]["f1"].append(f1)
             config_summary[c]["fpr"].append(fpr)
-            config_summary[c]["slowdown"].append(slowdown_pct)
+            if w != "B1":
+                config_summary[c]["slowdown"].append(slowdown_pct)
 
             workload_summary[w]["gen_events"].append(gen_m)
             workload_summary[w]["tput"].append(tput_m)

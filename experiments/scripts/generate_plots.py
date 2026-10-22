@@ -43,10 +43,10 @@ def plot_system_overhead():
     rss = [float(r["mean_rss_mb"]) for r in rows]
     slowdowns = [float(r["mean_slowdown_pct"]) for r in rows]
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4.8), dpi=300)
-    
-    # 1. CPU Utilization and Slowdown
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(15, 4.5), dpi=300)
     x = range(len(configs))
+    
+    # 1. CPU Utilization
     ax1.bar(x, cpus, color="#2b5c8f", width=0.55, edgecolor="black", alpha=0.9, label="CPU Util (%)")
     ax1.set_xticks(x)
     ax1.set_xticklabels([f"Config {c}" for c in configs])
@@ -66,6 +66,16 @@ def plot_system_overhead():
     for i, v in enumerate(rss):
         ax2.text(i, v + 0.3, f"{v:.1f}M", ha="center", va="bottom", fontsize=9, fontweight="bold")
 
+    # 3. Throughput Overhead (% change in ops/sec vs Config A, skipping B1)
+    ax3.bar(x, slowdowns, color="#7570b3", width=0.55, edgecolor="black", alpha=0.9)
+    ax3.set_xticks(x)
+    ax3.set_xticklabels([f"Config {c}" for c in configs])
+    ax3.set_ylabel("Throughput Change vs A (%)")
+    ax3.set_title("(c) Mean Ops/Sec Change vs Baseline A")
+    ax3.grid(axis="y", linestyle="--", alpha=0.7)
+    for i, v in enumerate(slowdowns):
+        ax3.text(i, v + (0.3 if v >= 0 else -0.8), f"{v:+.1f}%", ha="center", va="bottom" if v >= 0 else "top", fontsize=9, fontweight="bold")
+
     out_path = PLOTS_DIR / "fig1_system_overhead_comparison.png"
     plt.savefig(out_path)
     plt.close()
@@ -80,8 +90,8 @@ def plot_latency_breakdown():
 
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 4.8), dpi=300)
 
-    # 1. Inference Latency comparison: Userspace float (C, E) vs Kernel fixed-point (D)
-    inf_labels = ["Userspace Float (C)", "Kernel Fixed-Point (D)", "Userspace Float (E)"]
+    # 1. Inference Latency comparison: Userspace float (C, E) vs Python Q16.16 fixed-point (D)
+    inf_labels = ["Userspace Float (C)", "Python Q16.16 Fixed-Point (D)", "Userspace Float (E)"]
     inf_vals = [float(c_row["mean_inference_lat_us"]), float(d_row["mean_inference_lat_us"]), float(e_row["mean_inference_lat_us"])]
     colors = ["#7570b3", "#1b9e77", "#7570b3"]
     
@@ -89,13 +99,13 @@ def plot_latency_breakdown():
     ax1.set_xticks(range(3))
     ax1.set_xticklabels(inf_labels, rotation=15, ha="right")
     ax1.set_ylabel("Inference Latency (microseconds, $\\mu s$)")
-    ax1.set_title("(a) Inference Latency by Placement")
+    ax1.set_title("(a) Inference Latency by Implementation")
     ax1.grid(axis="y", linestyle="--", alpha=0.7)
     for i, v in enumerate(inf_vals):
         ax1.text(i, v + 0.05, f"{v:.2f} $\\mu$s", ha="center", va="bottom", fontsize=9, fontweight="bold")
 
     # 2. End-to-end Detection Latency (ms)
-    det_labels = ["Config C (Userspace)", "Config D (Kernel-Local)", "Config E (Enforcement)"]
+    det_labels = ["Config C (Userspace Float)", "Config D (Python Q16.16)", "Config E (Enforcement)"]
     det_vals = [float(c_row["mean_detection_lat_ms"]), float(d_row["mean_detection_lat_ms"]), float(e_row["mean_detection_lat_ms"])]
     
     ax2.bar(range(3), det_vals, color=["#386cb0", "#f0027f", "#bf5b17"], width=0.5, edgecolor="black", alpha=0.9)

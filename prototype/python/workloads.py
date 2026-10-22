@@ -7,19 +7,26 @@ def idle(duration):
     return 0
 
 def file_processing(duration, seed=0):
-    root = Path(tempfile.mkdtemp(prefix="chat07-files-"))
+    root_str = tempfile.mkdtemp(prefix="chat07-files-")
+    dfd = os.open(root_str, os.O_RDONLY)
+    root = Path(root_str)
     try:
         end = time.monotonic() + duration
         i = 0
         while time.monotonic() < end:
-            p = root / f"f-{seed}-{i%32}.dat"
+            name = f"f-{seed}-{i%32}.dat"
+            p = root / name
             p.write_bytes(b"chat07" * 128)
             _ = p.read_bytes()
             if i % 4 == 0:
-                p.unlink(missing_ok=True)
+                try:
+                    os.unlink(name, dir_fd=dfd)
+                except OSError:
+                    pass
             i += 1
         return i
     finally:
+        os.close(dfd)
         for p in root.glob("*"):
             p.unlink(missing_ok=True)
         root.rmdir()
@@ -77,8 +84,11 @@ def local_client_server(duration, port=39077):
     return ops
 
 def drop_and_execute(duration):
-    root = Path(tempfile.mkdtemp(prefix="cncs-drop-"))
-    payload = root / "payload.sh"
+    root_str = tempfile.mkdtemp(prefix="cncs-drop-")
+    dfd = os.open(root_str, os.O_RDONLY)
+    root = Path(root_str)
+    payload_name = "payload.sh"
+    payload = root / payload_name
     end = time.monotonic() + duration
     ops = 0
     try:
@@ -86,10 +96,17 @@ def drop_and_execute(duration):
             payload.write_bytes(b"#!/bin/sh\nexit 0\n")
             os.chmod(payload, 0o755)
             subprocess.run([str(payload)], check=True)
-            payload.unlink(missing_ok=True)
+            try:
+                os.unlink(payload_name, dir_fd=dfd)
+            except OSError:
+                pass
             ops += 1
     finally:
-        payload.unlink(missing_ok=True)
+        try:
+            os.unlink(payload_name, dir_fd=dfd)
+        except OSError:
+            pass
+        os.close(dfd)
         try:
             root.rmdir()
         except OSError:

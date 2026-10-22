@@ -1,0 +1,58 @@
+{
+  "run_id": "run_C_B4_rep3",
+  "config_id": "C",
+  "workload_id": "B4",
+  "rep_idx": 3,
+  "timestamp_utc": "2026-10-22T09:46:33.697770+00:00",
+  "ground_truth": 0,
+  "prediction": 0,
+  "score": 0.3789842074518733,
+  "classification": {
+    "tp": 0,
+    "fp": 0,
+    "tn": 1,
+    "fn": 0
+  },
+  "resources": {
+    "elapsed_seconds": 2.674166937000109,
+    "exec_wall_seconds": 2.3386779439999827,
+    "workload_duration_seconds": 2.0946037940000224,
+    "workload_ops": 185,
+    "ops_per_second": 88.32219273636913,
+    "cpu_user_seconds": 0.02181500000000014,
+    "cpu_sys_seconds": 0.04090399999999761,
+    "cpu_utilization_pct": 2.345365920586699,
+    "workload_mem_peak_mb": 16.92578125,
+    "loader_rss_peak_mb": 4.21875
+  },
+  "telemetry": {
+    "cgroup_path": "/sys/fs/cgroup/system.slice/docker-2bef70fc019c05b8d189a7e071a9c2e76499615e5d0eb38197847207e14c1d48.scope",
+    "generated_events": 1495,
+    "workload_events": 378,
+    "submitted_events": 1495,
+    "consumed_events": 1495,
+    "reservation_failures": 0,
+    "sequence_gaps": 0,
+    "loss_rate": 0.0,
+    "telemetry_throughput_eps": 180.4637235370137,
+    "telemetry_transfer_latency_us": 107.7700634920635
+  },
+  "latency": {
+    "feature_aggregation_us": 164.049,
+    "inference_latency_us": 19.779666666666667,
+    "decision_latency_us": 7.668,
+    "processing_latency_ms": 0.210935,
+    "mitigation_latency_ms": null,
+    "detection_to_mitigation_ms": null,
+    "rollback_time_ms": null
+  },
+  "enforcement": {
+    "mode": null,
+    "mitigation_triggered": false,
+    "mitigation_latency_ms": null,
+    "freeze_verified": null,
+    "rollback_success": null,
+    "rollback_time_ms": null,
+    "legitimate_operations_impacted": 0
+  }
+}

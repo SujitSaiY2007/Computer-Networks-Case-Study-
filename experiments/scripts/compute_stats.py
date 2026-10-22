@@ -49,7 +49,7 @@ print('\nLoss max (%):', {k: max(v)*100 for k, v in cfg_loss.items()})
 
 print('\nInference Latency (us):')
 print(f"  Config C (User-space Float): mean={np.mean(inf_c):.2f} std={np.std(inf_c):.2f} median={np.median(inf_c):.2f} IQR={np.percentile(inf_c, 75) - np.percentile(inf_c, 25):.2f} p95={np.percentile(inf_c, 95):.2f}")
-print(f"  Config D (Kernel Fixed-Pt): mean={np.mean(inf_d):.2f} std={np.std(inf_d):.2f} median={np.median(inf_d):.2f} IQR={np.percentile(inf_d, 75) - np.percentile(inf_d, 25):.2f} p95={np.percentile(inf_d, 95):.2f}")
+print(f"  Config D (Python Q16.16 Fixed-Pt): mean={np.mean(inf_d):.2f} std={np.std(inf_d):.2f} median={np.median(inf_d):.2f} IQR={np.percentile(inf_d, 75) - np.percentile(inf_d, 25):.2f} p95={np.percentile(inf_d, 95):.2f}")
 speedup = np.mean(inf_c) / np.mean(inf_d)
 print(f"  Mean Ratio (C/D): {speedup:.2f}x")
 
