@@ -12,8 +12,10 @@ from __future__ import annotations
 import argparse
 import datetime
 import json
+import multiprocessing
 import os
 import resource
+import select
 import signal
 import subprocess
 import sys
@@ -31,13 +33,35 @@ from prototype.python.workloads import WORKLOADS
 
 SCALE_FP = 65536
 
-def get_cpu_mem():
+def get_cpu_times():
     ru = resource.getrusage(resource.RUSAGE_CHILDREN)
     ru_self = resource.getrusage(resource.RUSAGE_SELF)
     user_time = ru.ru_utime + ru_self.ru_utime
     sys_time = ru.ru_stime + ru_self.ru_stime
-    max_rss_kb = max(ru.ru_maxrss, ru_self.ru_maxrss)
-    return user_time, sys_time, max_rss_kb
+    return user_time, sys_time
+
+def get_proc_vmhwm_kb(pid: int | str) -> float | None:
+    """Read VmHWM (Peak Resident Set Size) in kB from /proc/<pid>/status."""
+    try:
+        with open(f"/proc/{pid}/status", "r", encoding="utf-8") as f:
+            for line in f:
+                if line.startswith("VmHWM:"):
+                    parts = line.split()
+                    if len(parts) >= 2:
+                        return float(parts[1])
+    except Exception:
+        pass
+    return None
+
+def _workload_runner(workload_id: str, duration: float, rep_idx: int, q: multiprocessing.Queue):
+    wl_fn = WORKLOADS[workload_id]
+    if workload_id == "B2":
+        wl_fn(duration, seed=rep_idx)
+    else:
+        wl_fn(duration)
+    # Read VmHWM from /proc/self/status before child exits
+    hwm = get_proc_vmhwm_kb("self")
+    q.put(hwm)
 
 def score_kernel_fixed_point(artifact, row):
     weights_q16 = artifact["weights_q16"]
@@ -81,18 +105,44 @@ def run_single_experiment(
         
     loader_proc = None
     t0_start = time.perf_counter()
-    u0, s0, rss0 = get_cpu_mem()
+    u0, s0 = get_cpu_times()
     
     # Start telemetry loader for Configs B, C, D, E
     if config_id in ("B", "C", "D", "E"):
         cmd_loader = [str(loader_bin), str(bpf_obj), "--duration", str(int(duration + 4))]
         out_f = open(events_log, "w", encoding="utf-8")
         loader_proc = subprocess.Popen(cmd_loader, stdout=out_f, stderr=subprocess.PIPE, text=True)
-        time.sleep(0.15)  # Allow BPF attach
+        # Wait for TELEMETRY_RUNNING on loader stderr (timeout 5 s, fail run if not seen)
+        ready = False
+        t_wait_start = time.time()
+        while time.time() - t_wait_start < 5.0:
+            if loader_proc.poll() is not None:
+                err_text = loader_proc.stderr.read() if loader_proc.stderr else ""
+                out_f.close()
+                raise RuntimeError(f"Telemetry loader exited prematurely (rc={loader_proc.returncode}): {err_text}")
+            r, _, _ = select.select([loader_proc.stderr], [], [], 0.1)
+            if r:
+                line = loader_proc.stderr.readline()
+                if "TELEMETRY_RUNNING" in line:
+                    ready = True
+                    break
+        if not ready:
+            loader_proc.kill()
+            out_f.close()
+            raise TimeoutError("Timed out waiting for TELEMETRY_RUNNING on loader stderr (5 s limit)")
         
-    # Execute workload
+    # Execute workload in a fresh child process to isolate per-run peak RSS.
+    # We measure per-run peak RSS by reading VmHWM from /proc/<pid>/status for the
+    # loader before termination and from /proc/self/status in the workload child process
+    # before it exits. This avoids RUSAGE_CHILDREN accumulating memory across all 350 runs.
     wl_start = time.perf_counter()
-    wl_fn = WORKLOADS[workload_id]
+    q = multiprocessing.Queue()
+    wl_proc = multiprocessing.Process(target=_workload_runner, args=(workload_id, duration, rep_idx, q))
+    wl_proc.start()
+    wl_proc.join()
+    wl_end = time.perf_counter()
+    workload_duration = wl_end - wl_start
+    workload_vmhwm_kb = q.get() if not q.empty() else None
     
     # In Config E, if anomaly, we simulate controlled mitigation
     mitigation_triggered = False
@@ -101,14 +151,11 @@ def run_single_experiment(
     rollback_success = None
     rollback_time_ms = None
     
-    if workload_id == "B2":
-        wl_fn(duration, seed=rep_idx)
-    else:
-        wl_fn(duration)
-        
-    wl_end = time.perf_counter()
-    workload_duration = wl_end - wl_start
-    
+    # Read loader peak RSS before terminating it
+    loader_vmhwm_kb = None
+    if loader_proc and loader_proc.poll() is None:
+        loader_vmhwm_kb = get_proc_vmhwm_kb(loader_proc.pid)
+
     # Terminate telemetry loader
     if loader_proc:
         time.sleep(0.05)
@@ -119,7 +166,7 @@ def run_single_experiment(
             loader_proc.kill()
         out_f.close()
         
-    u1, s1, rss1 = get_cpu_mem()
+    u1, s1 = get_cpu_times()
     t0_end = time.perf_counter()
     elapsed = t0_end - t0_start
     
@@ -127,7 +174,10 @@ def run_single_experiment(
     cpu_sys_s = max(0.0, s1 - s0)
     cpu_total_s = cpu_user_s + cpu_sys_s
     cpu_utilization_pct = (cpu_total_s / max(elapsed, 0.001)) * 100.0
-    rss_peak_mb = rss1 / 1024.0 if rss1 > 0 else 12.0
+    
+    # Per-run peak RSS: sum of workload and loader peak RSS if available, else null
+    peak_kb_vals = [kb for kb in (workload_vmhwm_kb, loader_vmhwm_kb) if kb is not None]
+    rss_peak_mb = (sum(peak_kb_vals) / 1024.0) if peak_kb_vals else None
     
     # Process events and stats
     events = []
@@ -153,18 +203,21 @@ def run_single_experiment(
     res_fails = stats.get("reservation_failures", 0)
     seq_gaps = stats.get("sequence_gaps", 0)
     consumed = stats.get("consumed_events", len(events))
-    loss_rate = float(res_fails + seq_gaps) / float(gen_events) if gen_events > 0 else 0.0
+    loss_rate = float(gen_events - consumed) / float(gen_events) if gen_events > 0 else 0.0
     telemetry_throughput = float(gen_events) / max(workload_duration, 0.001) if config_id != "A" else 0.0
     
-    # Telemetry transfer latency (T1 - T0 in microseconds)
+    # Telemetry transfer latency (mean of transfer_ns/1000 from events, or None if no events)
     transfer_latencies_us = []
     if events:
-        for ev in events[:50]:  # sample up to 50
-            t0_bpf = ev.get("t0_ns", 0)
-            if t0_bpf > 0:
-                # Approximate kernel monotonic to userspace transfer delay
-                transfer_latencies_us.append(max(0.5, (ev.get("seq", 1) % 5) * 1.2 + 2.1))
-    telemetry_latency_us = sum(transfer_latencies_us) / len(transfer_latencies_us) if transfer_latencies_us else 0.0
+        for ev in events:
+            t_ns = ev.get("transfer_ns")
+            if t_ns is not None:
+                transfer_latencies_us.append(t_ns / 1000.0)
+    telemetry_latency_us = (
+        sum(transfer_latencies_us) / len(transfer_latencies_us)
+        if transfer_latencies_us
+        else None
+    )
     
     # Feature aggregation and ML scoring
     windows = []

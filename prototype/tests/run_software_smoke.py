@@ -97,9 +97,14 @@ assert out0 == out0_b, "FAIL: non-deterministic inference"
 print("[VALIDATED] determinism: score is reproducible")
 
 # ---- STAGE 8: Save artifact ----
-os.makedirs("output", exist_ok=True)
-save(artifact, "output/lr_artifact_smoke.json")
-print("[EXECUTED] artifact saved to output/lr_artifact_smoke.json")
+TESTS_DIR = os.path.dirname(os.path.abspath(__file__))
+PROTOTYPE_DIR = os.path.dirname(TESTS_DIR)
+OUTPUT_DIR = os.path.join(PROTOTYPE_DIR, "output")
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+
+artifact_path = os.path.join(OUTPUT_DIR, "lr_artifact_smoke.json")
+save(artifact, artifact_path)
+print(f"[EXECUTED] artifact saved to {artifact_path}")
 
 # ---- STAGE 9: Reproducibility Manifest ----
 config = {
@@ -124,11 +129,12 @@ config = {
     "windows_produced": len(rows),
     "policy_history_count": len(policy.history),
 }
-write_manifest("output/manifest_smoke.json", config)
-print("[EXECUTED] manifest written to output/manifest_smoke.json")
+manifest_path = os.path.join(OUTPUT_DIR, "manifest_smoke.json")
+write_manifest(manifest_path, config)
+print(f"[EXECUTED] manifest written to {manifest_path}")
 
 # Validate manifest contents
-with open("output/manifest_smoke.json", encoding="utf-8") as f:
+with open(manifest_path, encoding="utf-8") as f:
     mf = json.load(f)
 assert mf["git_sha"] and mf["git_sha"] != "NOT_A_GIT_WORKTREE", "WARN: git sha not captured"
 assert mf["environment"]["python"]

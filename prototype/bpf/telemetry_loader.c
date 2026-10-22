@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/syscall.h>
+#include <time.h>
 #include <unistd.h>
 
 struct bpf_object;
@@ -27,6 +28,7 @@ void bpf_object__close(struct bpf_object *);
 long bpf_link__destroy(struct bpf_link *);
 struct ring_buffer *ring_buffer__new(int, int (*)(void *, void *, size_t), void *, const void *);
 int ring_buffer__poll(struct ring_buffer *, int);
+int ring_buffer__consume(struct ring_buffer *);
 void ring_buffer__free(struct ring_buffer *);
 
 static volatile sig_atomic_t stop;
@@ -61,8 +63,14 @@ static int sample_cb(void *ctx, void *data, size_t size)
     else if (e->seq > last_seq + 1) sequence_gaps += e->seq - last_seq - 1;
     last_seq = e->seq;
     consumed++;
-    printf("{\"record_type\":\"event\",\"t0_ns\":%" PRIu64 ",\"seq\":%" PRIu64 ",\"event_type\":%u,\"pid\":%u,\"tid\":%u,\"cpu\":%u,\"cgroup_id\":%" PRIu64 ",\"status\":%d}\n",
-           e->t0_ns, e->seq, e->event_type, e->pid, e->tid, e->cpu, e->cgroup_id, e->status);
+
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    uint64_t now_ns = (uint64_t)ts.tv_sec * 1000000000ULL + (uint64_t)ts.tv_nsec;
+    uint64_t transfer_ns = (now_ns > e->t0_ns) ? (now_ns - e->t0_ns) : 0;
+
+    printf("{\"record_type\":\"event\",\"t0_ns\":%" PRIu64 ",\"seq\":%" PRIu64 ",\"event_type\":%u,\"pid\":%u,\"tid\":%u,\"cpu\":%u,\"cgroup_id\":%" PRIu64 ",\"status\":%d,\"transfer_ns\":%" PRIu64 "}\n",
+           e->t0_ns, e->seq, e->event_type, e->pid, e->tid, e->cpu, e->cgroup_id, e->status, transfer_ns);
     return 0;
 }
 
@@ -128,14 +136,35 @@ int main(int argc, char **argv)
     if (!rb) { fprintf(stderr, "RINGBUF_INIT_FAIL\n"); return 7; }
 
     fprintf(stderr, "TELEMETRY_RUNNING duration=%d\n", duration);
-    for (int i = 0; !stop && i < duration * 10; ++i) {
-        int rc = ring_buffer__poll(rb, 100);
+    struct timespec start_ts, now_ts;
+    clock_gettime(CLOCK_MONOTONIC, &start_ts);
+    while (!stop) {
+        clock_gettime(CLOCK_MONOTONIC, &now_ts);
+        uint64_t elapsed_ms = (now_ts.tv_sec - start_ts.tv_sec) * 1000ULL + (now_ts.tv_nsec - start_ts.tv_nsec) / 1000000ULL;
+        if (elapsed_ms >= (uint64_t)duration * 1000ULL)
+            break;
+        uint64_t remain_ms = (uint64_t)duration * 1000ULL - elapsed_ms;
+        int timeout_ms = (remain_ms > 100) ? 100 : (int)remain_ms;
+        int rc = ring_buffer__poll(rb, timeout_ms);
         if (rc < 0 && rc != -EINTR) {
             fprintf(stderr, "RINGBUF_POLL_FAIL=%d\n", rc);
             break;
         }
     }
 
+    // At shutdown: destroy all 4 links first
+    for (int i = 0; i < 4; ++i) {
+        if (links[i]) {
+            bpf_link__destroy(links[i]);
+            links[i] = NULL;
+        }
+    }
+
+    // Call ring_buffer__consume(rb) until it returns 0
+    while (ring_buffer__consume(rb) > 0) {
+    }
+
+    // Read the counters map
     struct telemetry_counters c = {0};
     struct bpf_map *cmap = bpf_object__find_map_by_name(obj, "counters");
     if (cmap) {
@@ -145,8 +174,8 @@ int main(int argc, char **argv)
 
     printf("{\"record_type\":\"stats\",\"generated_events\":%" PRIu64 ",\"submitted_events\":%" PRIu64 ",\"reservation_failures\":%" PRIu64 ",\"consumed_events\":%" PRIu64 ",\"sequence_gaps\":%" PRIu64 "}\n",
            c.generated, c.submitted, c.reservation_failures, consumed, sequence_gaps);
+
     ring_buffer__free(rb);
-    for (int i = 0; i < 4; ++i) if (links[i]) bpf_link__destroy(links[i]);
     bpf_object__close(obj);
     return 0;
 }

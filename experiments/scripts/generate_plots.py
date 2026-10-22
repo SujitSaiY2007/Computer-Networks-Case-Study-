@@ -133,7 +133,7 @@ def plot_telemetry_throughput_loss():
         ax1.text(i, v + 3, f"{int(v)} eps", ha="center", va="bottom", fontsize=9)
 
     # Inset or annotation for loss rate
-    ax1.text(0.03, 0.90, "Ring Buffer Loss Rate: 0.00% across all 350 runs (0 reservation failures)",
+    ax1.text(0.03, 0.90, "Ring Buffer Loss Rate: 0.00% across 280 instrumented runs (counter-derived reservation failures only)",
              transform=ax1.transAxes, fontsize=10, bbox=dict(boxstyle="round,pad=0.4", facecolor="#ffffbf", edgecolor="gray"))
 
     out_path = PLOTS_DIR / "fig3_telemetry_throughput_and_loss.png"
