@@ -196,7 +196,7 @@ def main():
     # 1. Summary Matrix (all 35 cells)
     summary_matrix_path = PROCESSED_DIR / "summary_matrix_all_cells.csv"
     with open(summary_matrix_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=list(all_cell_rows[0].keys()))
+        writer = csv.DictWriter(f, fieldnames=list(all_cell_rows[0].keys(, lineterminator="\n")))
         writer.writeheader()
         writer.writerows(all_cell_rows)
     print(f"Written: {summary_matrix_path}")
@@ -218,7 +218,7 @@ def main():
         })
     config_csv_path = PROCESSED_DIR / "summary_by_configuration.csv"
     with open(config_csv_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=list(config_rows[0].keys()))
+        writer = csv.DictWriter(f, fieldnames=list(config_rows[0].keys(, lineterminator="\n")))
         writer.writeheader()
         writer.writerows(config_rows)
     print(f"Written: {config_csv_path}")
@@ -237,7 +237,7 @@ def main():
         })
     wl_csv_path = PROCESSED_DIR / "summary_by_workload.csv"
     with open(wl_csv_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=list(wl_rows[0].keys()))
+        writer = csv.DictWriter(f, fieldnames=list(wl_rows[0].keys(, lineterminator="\n")))
         writer.writeheader()
         writer.writerows(wl_rows)
     print(f"Written: {wl_csv_path}")
@@ -260,7 +260,7 @@ def main():
             })
     lat_csv_path = PROCESSED_DIR / "latency_breakdown.csv"
     with open(lat_csv_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=list(lat_rows[0].keys()))
+        writer = csv.DictWriter(f, fieldnames=list(lat_rows[0].keys(, lineterminator="\n")))
         writer.writeheader()
         writer.writerows(lat_rows)
     print(f"Written: {lat_csv_path}")
@@ -286,7 +286,7 @@ def main():
             })
     det_csv_path = PROCESSED_DIR / "detection_performance.csv"
     with open(det_csv_path, "w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=list(det_rows[0].keys()))
+        writer = csv.DictWriter(f, fieldnames=list(det_rows[0].keys(, lineterminator="\n")))
         writer.writeheader()
         writer.writerows(det_rows)
     print(f"Written: {det_csv_path}")

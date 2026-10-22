@@ -12,7 +12,6 @@ from __future__ import annotations
 import argparse
 import datetime
 import json
-import multiprocessing
 import os
 import resource
 import select
@@ -53,16 +52,6 @@ def get_proc_vmhwm_kb(pid: int | str) -> float | None:
         pass
     return None
 
-def _workload_runner(workload_id: str, duration: float, rep_idx: int, q: multiprocessing.Queue):
-    wl_fn = WORKLOADS[workload_id]
-    if workload_id == "B2":
-        wl_fn(duration, seed=rep_idx)
-    else:
-        wl_fn(duration)
-    # Read VmHWM from /proc/self/status before child exits
-    hwm = get_proc_vmhwm_kb("self")
-    q.put(hwm)
-
 def score_kernel_fixed_point(artifact, row):
     weights_q16 = artifact["weights_q16"]
     intercept_q16 = artifact["intercept_q16"]
@@ -102,84 +91,121 @@ def run_single_experiment(
     events_log = Path(f"/tmp/exp_events_{config_id}_{workload_id}_{rep_idx}.jsonl")
     if events_log.exists():
         events_log.unlink()
-        
+
+    # Step 2a: Before loader starts, create container
+    subprocess.run(["docker", "rm", "-f", "cncs_wl"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.run([
+        "docker", "run", "-d", "--name", "cncs_wl", "--network", "none",
+        "-v", f"{PROJECT_ROOT}:/work:ro", "python:3.12-slim", "sleep", "infinity"
+    ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
+
     loader_proc = None
     t0_start = time.perf_counter()
     u0, s0 = get_cpu_times()
-    
-    # Start telemetry loader for Configs B, C, D, E
-    if config_id in ("B", "C", "D", "E"):
-        cmd_loader = [str(loader_bin), str(bpf_obj), "--duration", str(int(duration + 4))]
-        out_f = open(events_log, "w", encoding="utf-8")
-        loader_proc = subprocess.Popen(cmd_loader, stdout=out_f, stderr=subprocess.PIPE, text=True)
-        # Wait for TELEMETRY_RUNNING on loader stderr (timeout 5 s, fail run if not seen)
-        ready = False
-        t_wait_start = time.time()
-        while time.time() - t_wait_start < 5.0:
-            if loader_proc.poll() is not None:
-                err_text = loader_proc.stderr.read() if loader_proc.stderr else ""
-                out_f.close()
-                raise RuntimeError(f"Telemetry loader exited prematurely (rc={loader_proc.returncode}): {err_text}")
-            r, _, _ = select.select([loader_proc.stderr], [], [], 0.1)
-            if r:
-                line = loader_proc.stderr.readline()
-                if "TELEMETRY_RUNNING" in line:
-                    ready = True
+
+    try:
+        # Step 2b: Find its cgroup
+        pid_res = subprocess.run(["docker", "inspect", "-f", "{{.State.Pid}}", "cncs_wl"], check=True, capture_output=True, text=True)
+        c_pid = int(pid_res.stdout.strip())
+        cg_path = None
+        with open(f"/proc/{c_pid}/cgroup", "r", encoding="utf-8") as f:
+            for line in f:
+                if line.startswith("0::"):
+                    cg_path = "/sys/fs/cgroup" + line.strip().split("0::", 1)[1]
                     break
-        if not ready:
-            loader_proc.kill()
+        if not cg_path or not os.path.exists(cg_path):
+            raise RuntimeError(f"Could not find cgroup path for container pid {c_pid}")
+        wl_cgroup_id = os.stat(cg_path).st_ino
+
+        # Step 2c: Start telemetry loader for Configs B, C, D, E
+        if config_id in ("B", "C", "D", "E"):
+            cmd_loader = [str(loader_bin), str(bpf_obj), "--duration", str(int(duration + 4))]
+            out_f = open(events_log, "w", encoding="utf-8")
+            loader_proc = subprocess.Popen(cmd_loader, stdout=out_f, stderr=subprocess.PIPE, text=True)
+            ready = False
+            t_wait_start = time.time()
+            while time.time() - t_wait_start < 5.0:
+                if loader_proc.poll() is not None:
+                    err_text = loader_proc.stderr.read() if loader_proc.stderr else ""
+                    out_f.close()
+                    raise RuntimeError(f"Telemetry loader exited prematurely (rc={loader_proc.returncode}): {err_text}")
+                r, _, _ = select.select([loader_proc.stderr], [], [], 0.1)
+                if r:
+                    line = loader_proc.stderr.readline()
+                    if "TELEMETRY_RUNNING" in line:
+                        ready = True
+                        break
+            if not ready:
+                loader_proc.kill()
+                out_f.close()
+                raise TimeoutError("Timed out waiting for TELEMETRY_RUNNING on loader stderr (5 s limit)")
+
+        # Step 2d: Run workload inside container
+        t_exec_start = time.perf_counter()
+        exec_cmd = ["docker", "exec", "cncs_wl", "python3", "/work/prototype/python/workloads.py", workload_id, "--duration", str(duration), "--seed", str(rep_idx)]
+        exec_res = subprocess.run(exec_cmd, capture_output=True, text=True)
+        t_exec_end = time.perf_counter()
+        exec_wall_seconds = t_exec_end - t_exec_start
+        if exec_res.returncode != 0:
+            raise RuntimeError(f"Workload {workload_id} failed in container: {exec_res.stderr}")
+
+        measured_duration_s = exec_wall_seconds
+        for line in exec_res.stdout.splitlines():
+            line = line.strip()
+            if "measured_duration_s" in line:
+                try:
+                    import ast
+                    d = ast.literal_eval(line)
+                    measured_duration_s = float(d["measured_duration_s"])
+                    break
+                except Exception:
+                    pass
+
+        # Step 2e: Before removing container, read cg_path/memory.peak
+        workload_mem_peak_mb = None
+        try:
+            with open(os.path.join(cg_path, "memory.peak"), "r", encoding="utf-8") as f:
+                workload_mem_peak_mb = float(f.read().strip()) / 1048576.0
+        except Exception:
+            pass
+
+        # Loader peak RSS
+        loader_rss_peak_mb = None
+        if loader_proc and loader_proc.poll() is None:
+            loader_vmhwm_kb = get_proc_vmhwm_kb(loader_proc.pid)
+            if loader_vmhwm_kb is not None:
+                loader_rss_peak_mb = loader_vmhwm_kb / 1024.0
+
+        # Terminate telemetry loader
+        if loader_proc:
+            time.sleep(0.05)
+            loader_proc.send_signal(signal.SIGTERM)
+            try:
+                loader_proc.wait(timeout=2.0)
+            except subprocess.TimeoutExpired:
+                loader_proc.kill()
             out_f.close()
-            raise TimeoutError("Timed out waiting for TELEMETRY_RUNNING on loader stderr (5 s limit)")
-        
-    # Execute workload in a fresh child process to isolate per-run peak RSS.
-    # We measure per-run peak RSS by reading VmHWM from /proc/<pid>/status for the
-    # loader before termination and from /proc/self/status in the workload child process
-    # before it exits. This avoids RUSAGE_CHILDREN accumulating memory across all 350 runs.
-    wl_start = time.perf_counter()
-    q = multiprocessing.Queue()
-    wl_proc = multiprocessing.Process(target=_workload_runner, args=(workload_id, duration, rep_idx, q))
-    wl_proc.start()
-    wl_proc.join()
-    wl_end = time.perf_counter()
-    workload_duration = wl_end - wl_start
-    workload_vmhwm_kb = q.get() if not q.empty() else None
-    
-    # In Config E, if anomaly, we simulate controlled mitigation
+
+    finally:
+        # Step 2h: At the end of each run: docker rm -f cncs_wl
+        subprocess.run(["docker", "rm", "-f", "cncs_wl"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+    u1, s1 = get_cpu_times()
+    t0_end = time.perf_counter()
+    elapsed = t0_end - t0_start
+    cpu_user_s = max(u1 - u0, 0.0)
+    cpu_sys_s = max(s1 - s0, 0.0)
+    total_cpu_s = cpu_user_s + cpu_sys_s
+    cpu_utilization_pct = (total_cpu_s / max(elapsed, 0.001)) * 100.0
+
+    # In Config E, if anomaly, we simulate controlled mitigation (replaced in Step 3)
     mitigation_triggered = False
     mitigation_latency_ms = None
     detection_to_mitigation_ms = None
     rollback_success = None
     rollback_time_ms = None
-    
-    # Read loader peak RSS before terminating it
-    loader_vmhwm_kb = None
-    if loader_proc and loader_proc.poll() is None:
-        loader_vmhwm_kb = get_proc_vmhwm_kb(loader_proc.pid)
 
-    # Terminate telemetry loader
-    if loader_proc:
-        time.sleep(0.05)
-        loader_proc.send_signal(signal.SIGTERM)
-        try:
-            loader_proc.wait(timeout=2.0)
-        except subprocess.TimeoutExpired:
-            loader_proc.kill()
-        out_f.close()
-        
-    u1, s1 = get_cpu_times()
-    t0_end = time.perf_counter()
-    elapsed = t0_end - t0_start
-    
-    cpu_user_s = max(0.0, u1 - u0)
-    cpu_sys_s = max(0.0, s1 - s0)
-    cpu_total_s = cpu_user_s + cpu_sys_s
-    cpu_utilization_pct = (cpu_total_s / max(elapsed, 0.001)) * 100.0
-    
-    # Per-run peak RSS: sum of workload and loader peak RSS if available, else null
-    peak_kb_vals = [kb for kb in (workload_vmhwm_kb, loader_vmhwm_kb) if kb is not None]
-    rss_peak_mb = (sum(peak_kb_vals) / 1024.0) if peak_kb_vals else None
-    
-    # Process events and stats
+    # Read events and ring buffer stats
     events = []
     stats = {}
     if events_log.exists():
@@ -197,19 +223,22 @@ def run_single_experiment(
                 except Exception:
                     pass
         events_log.unlink(missing_ok=True)
-        
+
     gen_events = stats.get("generated_events", len(events))
     sub_events = stats.get("submitted_events", len(events))
     res_fails = stats.get("reservation_failures", 0)
     seq_gaps = stats.get("sequence_gaps", 0)
     consumed = stats.get("consumed_events", len(events))
     loss_rate = float(gen_events - consumed) / float(gen_events) if gen_events > 0 else 0.0
-    telemetry_throughput = float(gen_events) / max(workload_duration, 0.001) if config_id != "A" else 0.0
-    
-    # Telemetry transfer latency (mean of transfer_ns/1000 from events, or None if no events)
+
+    # Step 2f: Keep only events with cgroup_id == wl_cgroup_id
+    workload_events = [ev for ev in events if ev.get("cgroup_id") == wl_cgroup_id]
+
+    telemetry_throughput = float(len(workload_events)) / max(measured_duration_s, 0.001) if config_id != "A" else 0.0
+
     transfer_latencies_us = []
-    if events:
-        for ev in events:
+    if workload_events:
+        for ev in workload_events:
             t_ns = ev.get("transfer_ns")
             if t_ns is not None:
                 transfer_latencies_us.append(t_ns / 1000.0)
@@ -218,8 +247,7 @@ def run_single_experiment(
         if transfer_latencies_us
         else None
     )
-    
-    # Feature aggregation and ML scoring
+
     windows = []
     predictions = []
     scores = []
@@ -227,20 +255,18 @@ def run_single_experiment(
     feature_aggregation_latency_us = 0.0
     decision_latency_us = 0.0
     detection_latency_ms = 0.0
-    
+
     if config_id in ("C", "D", "E"):
         t_agg_start = time.perf_counter_ns()
-        windows = aggregate(events, loss_rate=loss_rate)
+        windows = aggregate(workload_events, loss_rate=loss_rate)
         t_agg_end = time.perf_counter_ns()
         feature_aggregation_latency_us = (t_agg_end - t_agg_start) / 1000.0
-        
-        # Policy setup
+
         allow_mitigation = (config_id == "E")
         policy = Policy(artifact["threshold"], allow_mitigation=allow_mitigation)
-        
+
         for w in windows:
             if config_id in ("C", "E"):
-                # User-space float LR
                 t_inf_s = time.perf_counter_ns()
                 res = float_score(artifact, w)
                 t_inf_e = time.perf_counter_ns()
@@ -248,51 +274,42 @@ def run_single_experiment(
                 inference_latencies_us.append(inf_us)
                 scores.append(res["score"])
                 predictions.append(res["predicted_class"])
-                
-                # Decision latency
+
                 t_dec_s = time.perf_counter_ns()
                 stage = policy.evaluate(res["score"], f"container-{workload_id}")
                 t_dec_e = time.perf_counter_ns()
                 decision_latency_us += (t_dec_e - t_dec_s) / 1000.0
-                
-                # Detection latency T5 - T0
+
                 det_ms = (inf_us + feature_aggregation_latency_us) / 1000.0 + 1.2
                 detection_latency_ms = max(detection_latency_ms, det_ms)
-                
-                # Staged enforcement for Config E
+
                 if config_id == "E" and res["predicted_class"] == 1:
                     mitigation_triggered = True
                     t_mit_s = time.perf_counter()
                     mit_ok = policy.request_mitigation(f"container-{workload_id}")
-                    # Simulate kernel containment check (SIGSTOP verify)
                     time.sleep(0.001)
                     t_mit_e = time.perf_counter()
                     mitigation_latency_ms = (t_mit_e - t_mit_s) * 1000.0
                     detection_to_mitigation_ms = detection_latency_ms + mitigation_latency_ms
-                    
-                    # Rollback recovery
+
                     t_rb_s = time.perf_counter()
                     policy.rollback(f"container-{workload_id}")
                     t_rb_e = time.perf_counter()
                     rollback_success = (policy.stage == Stage.OBSERVE)
                     rollback_time_ms = (t_rb_e - t_rb_s) * 1000.0
-                    
+
             elif config_id == "D":
-                # Kernel-local fixed-point LR
                 res_fp = score_kernel_fixed_point(artifact, w)
                 inf_us = res_fp["inference_latency_ns"] / 1000.0
                 inference_latencies_us.append(inf_us)
-                # Sigmoid of logit for reporting
                 prob = 1.0 / (1.0 + 2.71828 ** (-min(max(res_fp["logit"], -20), 20)))
                 scores.append(prob)
                 predictions.append(res_fp["predicted_class"])
-                
-                # In-kernel decision is concurrent with tracepoint
+
                 decision_latency_us = 0.05
-                det_ms = (inf_us) / 1000.0 + 0.08  # Microsecond order
+                det_ms = (inf_us) / 1000.0 + 0.08
                 detection_latency_ms = max(detection_latency_ms, det_ms)
-                
-    # Aggregate predictions for run
+
     final_prediction = 1 if (any(p == 1 for p in predictions)) else 0
     final_score = max(scores) if scores else (0.0 if ground_truth == 0 else 1.0)
     avg_inference_latency_us = (
@@ -300,15 +317,14 @@ def run_single_experiment(
         if inference_latencies_us
         else 0.0
     )
-    
-    # Classification correctness
+
     tp = int(ground_truth == 1 and final_prediction == 1)
     fp = int(ground_truth == 0 and final_prediction == 1)
     tn = int(ground_truth == 0 and final_prediction == 0)
     fn = int(ground_truth == 1 and final_prediction == 0)
-    
+
     legitimate_impact = 1 if (ground_truth == 0 and mitigation_triggered) else 0
-    
+
     record = {
         "run_id": run_id,
         "config_id": config_id,
@@ -323,14 +339,18 @@ def run_single_experiment(
         },
         "resources": {
             "elapsed_seconds": elapsed,
-            "workload_duration_seconds": workload_duration,
+            "exec_wall_seconds": exec_wall_seconds,
+            "workload_duration_seconds": measured_duration_s,
             "cpu_user_seconds": cpu_user_s,
             "cpu_sys_seconds": cpu_sys_s,
             "cpu_utilization_pct": cpu_utilization_pct,
-            "rss_peak_mb": rss_peak_mb
+            "workload_mem_peak_mb": workload_mem_peak_mb,
+            "loader_rss_peak_mb": loader_rss_peak_mb
         },
         "telemetry": {
+            "cgroup_path": cg_path,
             "generated_events": gen_events,
+            "workload_events": len(workload_events),
             "submitted_events": sub_events,
             "consumed_events": consumed,
             "reservation_failures": res_fails,
@@ -354,20 +374,21 @@ def run_single_experiment(
             "legitimate_operations_impacted": legitimate_impact
         }
     }
-    
+
     with open(raw_file, "w", encoding="utf-8") as f:
         json.dump(record, f, indent=2)
-        
+
     return record
 
 def main():
     parser = argparse.ArgumentParser(description="CHAT 08 Controlled Experiments Runner")
-    parser.add_argument("--duration", type=float, default=1.2, help="Workload duration per repetition")
+    parser.add_argument("--duration", type=float, default=2.0, help="Workload duration per repetition")
     parser.add_argument("--reps", type=int, default=10, help="Repetitions per cell (default: 10)")
     parser.add_argument("--configs", nargs="+", default=["A", "B", "C", "D", "E"], help="Configurations to evaluate")
     parser.add_argument("--workloads", nargs="+", default=["B1", "B2", "B3", "B4", "A1", "A2", "A3"], help="Workloads to evaluate")
+    parser.add_argument("--output-dir", type=str, default=str(PROJECT_ROOT / "experiments" / "raw"), help="Output directory for raw JSON records")
     args = parser.parse_args()
-    
+
     print("==================================================================")
     print("CHAT 08 — CONTROLLED EXPERIMENTS EXECUTION (10 REPETITIONS / CELL)")
     print("==================================================================")
@@ -377,20 +398,19 @@ def main():
     print(f"Run duration: {args.duration}s")
     total_runs = len(args.configs) * len(args.workloads) * args.reps
     print(f"Total planned runs: {total_runs}")
-    
-    # Load calibrated model artifact
+
     calib_file = PROJECT_ROOT / "experiments" / "calibration" / "lr_model_frozen.json"
     assert calib_file.exists(), f"Calibrated model artifact not found at {calib_file}! Run calibrate_model.py first."
     with open(calib_file, "r", encoding="utf-8") as f:
         artifact = json.load(f)
     print(f"Loaded frozen model artifact: {artifact['model_hash'][:16]}...")
-    
-    raw_dir = PROJECT_ROOT / "experiments" / "raw"
+
+    raw_dir = Path(args.output_dir)
     raw_dir.mkdir(parents=True, exist_ok=True)
-    
+
     t_start_all = time.time()
     completed = 0
-    
+
     for cfg in args.configs:
         print(f"\n>>> Configuration {cfg}:")
         for wl in args.workloads:
@@ -401,7 +421,7 @@ def main():
                 pred_char = "!" if rec["prediction"] == 1 else "."
                 print(pred_char, end="", flush=True)
             print(f" [{args.reps}/{args.reps}]")
-            
+
     t_end_all = time.time()
     total_time = t_end_all - t_start_all
     print(f"\n==================================================================")

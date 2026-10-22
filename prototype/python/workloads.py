@@ -78,7 +78,10 @@ WORKLOADS={"B1":idle,"B2":file_processing,"B3":process_churn,"B4":local_client_s
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument("workload",choices=sorted(WORKLOADS)); ap.add_argument("--duration",type=float,default=10); ap.add_argument("--seed",type=int,default=0)
     args=ap.parse_args(); fn=WORKLOADS[args.workload]
+    t0=time.monotonic()
     if args.workload=="B2": fn(args.duration,args.seed)
     else: fn(args.duration)
-    print({"workload_id":args.workload,"duration":args.duration,"seed":args.seed,"pid":os.getpid()})
+    t1=time.monotonic()
+    measured_duration_s=t1-t0
+    print({"workload_id":args.workload,"duration":args.duration,"seed":args.seed,"pid":os.getpid(),"measured_duration_s":measured_duration_s})
 if __name__=="__main__": main()

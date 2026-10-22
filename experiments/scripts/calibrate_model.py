@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import select
 import signal
 import subprocess
 import sys
@@ -35,26 +36,67 @@ def run_calibration_telemetry(workload_id: str, duration: float = 2.0, seed: int
     events_log = Path(f"/tmp/calib_events_{workload_id}.jsonl")
     if events_log.exists():
         events_log.unlink()
-        
-    cmd_loader = [str(loader_bin), str(bpf_obj), "--duration", str(int(duration + 2))]
-    with open(events_log, "w", encoding="utf-8") as out_f:
-        loader_proc = subprocess.Popen(cmd_loader, stdout=out_f, stderr=subprocess.PIPE, text=True)
-        
-    time.sleep(0.3)  # Allow BPF attach
-    
-    # Run workload
-    wl_fn = WORKLOADS[workload_id]
-    if workload_id == "B2":
-        wl_fn(duration, seed)
-    else:
-        wl_fn(duration)
-        
-    time.sleep(0.1)
-    loader_proc.send_signal(signal.SIGTERM)
+
+    # Create container
+    subprocess.run(["docker", "rm", "-f", "cncs_wl"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.run([
+        "docker", "run", "-d", "--name", "cncs_wl", "--network", "none",
+        "-v", f"{PROJECT_ROOT}:/work:ro", "python:3.12-slim", "sleep", "infinity"
+    ], check=True, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
+
     try:
-        loader_proc.wait(timeout=2.0)
-    except subprocess.TimeoutExpired:
-        loader_proc.kill()
+        # Find its cgroup
+        pid_res = subprocess.run(["docker", "inspect", "-f", "{{.State.Pid}}", "cncs_wl"], check=True, capture_output=True, text=True)
+        c_pid = int(pid_res.stdout.strip())
+        cg_path = None
+        with open(f"/proc/{c_pid}/cgroup", "r", encoding="utf-8") as f:
+            for line in f:
+                if line.startswith("0::"):
+                    cg_path = "/sys/fs/cgroup" + line.strip().split("0::", 1)[1]
+                    break
+        if not cg_path or not os.path.exists(cg_path):
+            raise RuntimeError(f"Could not find cgroup path for container pid {c_pid}")
+        wl_cgroup_id = os.stat(cg_path).st_ino
+
+        # Start telemetry loader
+        cmd_loader = [str(loader_bin), str(bpf_obj), "--duration", str(int(duration + 4))]
+        out_f = open(events_log, "w", encoding="utf-8")
+        loader_proc = subprocess.Popen(cmd_loader, stdout=out_f, stderr=subprocess.PIPE, text=True)
+            
+        # Wait for TELEMETRY_RUNNING on loader stderr (timeout 5 s)
+        ready = False
+        t_wait_start = time.time()
+        while time.time() - t_wait_start < 5.0:
+            if loader_proc.poll() is not None:
+                err_text = loader_proc.stderr.read() if loader_proc.stderr else ""
+                out_f.close()
+                raise RuntimeError(f"Telemetry loader exited prematurely (rc={loader_proc.returncode}): {err_text}")
+            r, _, _ = select.select([loader_proc.stderr], [], [], 0.1)
+            if r:
+                line = loader_proc.stderr.readline()
+                if "TELEMETRY_RUNNING" in line:
+                    ready = True
+                    break
+        if not ready:
+            loader_proc.kill()
+            out_f.close()
+            raise TimeoutError("Timed out waiting for TELEMETRY_RUNNING on loader stderr (5 s limit)")
+
+        # Run workload inside container
+        exec_cmd = ["docker", "exec", "cncs_wl", "python3", "/work/prototype/python/workloads.py", workload_id, "--duration", str(duration), "--seed", str(seed)]
+        exec_res = subprocess.run(exec_cmd, capture_output=True, text=True)
+        if exec_res.returncode != 0:
+            raise RuntimeError(f"Workload {workload_id} failed in container: {exec_res.stderr}")
+            
+        time.sleep(0.05)
+        loader_proc.send_signal(signal.SIGTERM)
+        try:
+            loader_proc.wait(timeout=2.0)
+        except subprocess.TimeoutExpired:
+            loader_proc.kill()
+        out_f.close()
+    finally:
+        subprocess.run(["docker", "rm", "-f", "cncs_wl"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         
     # Read events and ring buffer stats
     events = []
@@ -76,11 +118,13 @@ def run_calibration_telemetry(workload_id: str, duration: float = 2.0, seed: int
         events_log.unlink(missing_ok=True)
         
     gen = stats.get("generated_events", len(events))
-    rfail = stats.get("reservation_failures", 0)
-    gaps = stats.get("sequence_gaps", 0)
-    loss_rate = float(rfail + gaps) / float(gen) if gen > 0 else 0.0
+    consumed = stats.get("consumed_events", len(events))
+    loss_rate = float(gen - consumed) / float(gen) if gen > 0 else 0.0
+
+    # Filter events by workload cgroup ID
+    workload_events = [ev for ev in events if ev.get("cgroup_id") == wl_cgroup_id]
     
-    windows = aggregate(events, loss_rate=loss_rate)
+    windows = aggregate(workload_events, loss_rate=loss_rate)
     return windows
 
 def main():
@@ -131,15 +175,12 @@ def main():
     print("\n[2/3] Fitting Logistic Regression model...")
     artifact = train(training_data, training_labels, threshold=0.5)
     
-    # Derive fixed-point parameters for Kernel-Local LR (Gate G)
+    # Derive fixed-point parameters for Gate G
     weights = artifact["coefficients"]
     intercept = artifact["intercept"]
     mean = artifact["mean"]
     scale = artifact["scale"]
     
-    # Normalization-folded linear weights:
-    # dot = sum_i (w_i * (x_i - mean_i) / scale_i) + b
-    #     = sum_i (w_i / scale_i * x_i) + (b - sum_i (w_i * mean_i / scale_i))
     effective_weights = [w / s for w, s in zip(weights, scale)]
     effective_intercept = intercept - sum(w * m / s for w, m, s in zip(weights, mean, scale))
     
@@ -159,11 +200,9 @@ def main():
     mismatches = 0
     for w in training_data:
         x = [float(w[n]) for n in FEATURE_NAMES]
-        # Float logit
         fl_logit = sum(ew * xi for ew, xi in zip(effective_weights, x)) + effective_intercept
         fl_pred = int(fl_logit >= 0.0)
         
-        # Fixed-point logit
         fp_dot = intercept_q16 + sum(wq * int(xi) for wq, xi in zip(weights_q16, x))
         fp_logit = fp_dot / float(SCALE_FP)
         fp_pred = int(fp_dot >= 0)
