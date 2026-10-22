@@ -44,11 +44,39 @@ def local_client_server(duration,port=39077):
         try: srv.close()
         except OSError: pass
         cw.join(timeout=0.1)
-def exec_burst(duration,count=100):
-    end=time.monotonic()+duration
-    while time.monotonic()<end:
-        for _ in range(count): subprocess.run(["true"],check=True)
-def abnormal_file_access(duration): file_processing(duration,seed=991)
+def drop_and_execute(duration):
+    root = Path(tempfile.mkdtemp(prefix="cncs-drop-"))
+    payload = root / "payload.sh"
+    end = time.monotonic() + duration
+    try:
+        while time.monotonic() < end:
+            payload.write_bytes(b"#!/bin/sh\nexit 0\n")
+            os.chmod(payload, 0o755)
+            subprocess.run([str(payload)], check=True)
+            payload.unlink(missing_ok=True)
+    finally:
+        payload.unlink(missing_ok=True)
+        try:
+            root.rmdir()
+        except OSError:
+            pass
+def abnormal_file_access(duration):
+    dirs = ["/etc", "/usr/local/lib/python3.12"]
+    end = time.monotonic() + duration
+    while time.monotonic() < end:
+        for d in dirs:
+            for root, _, files in os.walk(d):
+                for f in files:
+                    if time.monotonic() >= end:
+                        break
+                    p = os.path.join(root, f)
+                    try:
+                        with open(p, "rb") as fp:
+                            _ = fp.read(1024)
+                    except OSError:
+                        pass
+                if time.monotonic() >= end:
+                    break
 def local_connection_burst(duration,port=39078):
     import threading
     end=time.monotonic()+duration
@@ -74,7 +102,7 @@ def local_connection_burst(duration,port=39078):
         if srv:
             try: srv.close()
             except OSError: pass
-WORKLOADS={"B1":idle,"B2":file_processing,"B3":process_churn,"B4":local_client_server,"A1":exec_burst,"A2":abnormal_file_access,"A3":local_connection_burst}
+WORKLOADS={"B1":idle,"B2":file_processing,"B3":process_churn,"B4":local_client_server,"A1":drop_and_execute,"A2":abnormal_file_access,"A3":local_connection_burst}
 def main():
     ap=argparse.ArgumentParser(); ap.add_argument("workload",choices=sorted(WORKLOADS)); ap.add_argument("--duration",type=float,default=10); ap.add_argument("--seed",type=int,default=0)
     args=ap.parse_args(); fn=WORKLOADS[args.workload]

@@ -80,15 +80,15 @@
       "id": "A1",
       "category": "anomaly",
       "ground_truth_label": 1,
-      "name": "Abnormal Process Execution Burst",
-      "description": "Anomalous high-intensity fork/exec burst of short-lived processes"
+      "name": "Drop and Execute Payload",
+      "description": "Anomalous drop-and-execute payload delivery: write executable to /tmp, execute, and unlink"
     },
     {
       "id": "A2",
       "category": "anomaly",
       "ground_truth_label": 1,
-      "name": "Abnormal File Access Burst",
-      "description": "Anomalous high-frequency filesystem churn and abnormal access patterns"
+      "name": "Abnormal File Access",
+      "description": "Anomalous read-only filesystem sweep across /etc and Python runtime libraries"
     },
     {
       "id": "A3",

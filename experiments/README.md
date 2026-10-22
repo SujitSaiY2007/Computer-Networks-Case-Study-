@@ -67,7 +67,7 @@ The controlled experimental design evaluates **5 Configurations** across **7 Wor
 
 ### Workloads
 - **Benign ($y=0$):** `B1` (idle), `B2` (file processing), `B3` (process churn), `B4` (local socket client-server).
-- **Anomaly ($y=1$):** `A1` (exec burst), `A2` (abnormal file access), `A3` (local connection burst).
+- **Anomaly ($y=1$):** `A1` (drop and execute), `A2` (read-only file sweep), `A3` (local connection burst).
 
 ---
 

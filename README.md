@@ -94,7 +94,7 @@ Confirmed by [`experiments/manifests/experiment_matrix_manifest.json`](experimen
   - `E`: Detection + Mitigation Workflow (telemetry + scoring + simulated rollback).
 - **Workloads:**
   - Benign: `B1` (idle), `B2` (file processing), `B3` (process churn), `B4` (local socket client-server).
-  - Anomaly: `A1` (exec burst), `A2` (abnormal file access), `A3` (local connection burst).
+  - Anomaly: `A1` (drop and execute), `A2` (read-only file sweep), `A3` (local connection burst).
 
 ---
 
