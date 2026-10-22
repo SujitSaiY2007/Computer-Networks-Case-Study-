@@ -1,3 +1,5 @@
+Superseded by research/CHAT11_FINAL_AUDIT_REPORT.md. Retained for audit trail.
+
 # Authoritative Project Status Correction — 13 October 2026
 
 ## Chat 11 interim audit override — 19 October 2026

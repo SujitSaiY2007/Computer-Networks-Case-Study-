@@ -66,8 +66,8 @@ The controlled experimental design evaluates **5 Configurations** across **7 Wor
 - **E — eBPF + ML + Staged Enforcement:** Full pipeline with staged policy state machine (`OBSERVE` $\rightarrow$ `DETECT_LOG` $\rightarrow$ `CONTROLLED_MITIGATION` $\rightarrow$ `ROLLBACK`) and safe defaults.
 
 ### Workloads
-- **Benign ($y=0$):** `B1` (Idle), `B2` (File processing), `B3` (Process churn), `B4` (Client-server socket).
-- **Anomaly ($y=1$):** `A1` (Process execution burst), `A2` (Abnormal file access), `A3` (Connection burst to test sink).
+- **Benign ($y=0$):** `B1` (idle), `B2` (file processing), `B3` (process churn), `B4` (local socket client-server).
+- **Anomaly ($y=1$):** `A1` (exec burst), `A2` (abnormal file access), `A3` (local connection burst).
 
 ---
 
@@ -108,7 +108,7 @@ python3 experiments/scripts/statistical_analysis.py
 ## 5. Scientific Integrity & Measurement Characterization
 
 In accordance with `research/CHAT09_SCIENTIFIC_INTEGRITY_CORRECTION.md`:
-- **Direct Measurements:** System overhead (<0.20% slowdown, $F=0.0264, p=0.9987$), peak host RSS (~0.35–0.55 MB overhead), zero event loss across 280 runs ($16,001$ events), and classification metrics ($A1$ F1=0.824, $B3$ FPR=50%–80%, $A3$ Recall=0%).
-- **Fixed-Point Arithmetic Benchmark:** Inference latency in Config D measures a Python Q16.16 integer arithmetic benchmark (40.42x speedup over Python float LR), serving as the algorithmic baseline for Gate G BPF-verifiable in-kernel inference.
+- **Direct Measurements:** System overhead (<0.20% slowdown, $F=0.0264, p=0.9987$), peak host RSS (~0.35–0.55 MB overhead), ring buffer accounting across 280 runs ($16,001$ events with zero reservation failures or sequence gaps), and classification metrics ($A1$ F1=0.824, $B3$ FPR=50%–80%, $A3$ Recall=0%).
+- **Fixed-Point Arithmetic Benchmark:** Inference latency in Config D measures a Python Q16.16 integer arithmetic benchmark (39.84x run-weighted speedup over Python float LR), evaluated in Python Q16.16 integer arithmetic, not kernel execution, serving as the algorithmic baseline for Gate G BPF-verifiable in-kernel inference.
 - **Formula-Derived Estimates:** End-to-end detection latencies ($1.57$ ms vs $0.08$ ms) are additive architectural estimates incorporating measured inference/aggregation plus standard transport queuing models.
 - **Simulated Policy Workflow:** Mitigation latency ($1.17$ ms) and rollback ($15\ \mu\text{s}$) measure in-memory policy state transitions with synthetic verification sleep; kernel-level cgroup v2 freezes remain simulated.

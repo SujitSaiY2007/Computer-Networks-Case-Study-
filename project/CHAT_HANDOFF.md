@@ -1,7 +1,7 @@
 # Active Chat Handoff — BACSE203 Project
 
 ## How to use this file
-Read this handoff first, then the status correction, master execution plan, and phase-specific evidence. Follow only the active continuation prompt. Historical chat logs and older plan sections may contain superseded status; the current source of truth is `project/STATUS_CORRECTION_2026-10-13.md`.
+Read this handoff first, then the status correction, master execution plan, and phase-specific evidence. Follow only the active continuation prompt. Historical chat logs and older plan sections may contain superseded status; the current source of truth is `research/CHAT11_FINAL_AUDIT_REPORT.md` (superseding `project/STATUS_CORRECTION_2026-10-13.md`).
 
 ## Project identity
 **Title:** eBPF-Assisted Machine Learning for Cloud-Native Runtime Security: Telemetry Overhead, Kernel Enforcement, and Detection Trade-offs  

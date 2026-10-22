@@ -93,8 +93,8 @@ Confirmed by [`experiments/manifests/experiment_matrix_manifest.json`](experimen
   - `D`: Fixed-Point Feasibility (telemetry + Python Q16.16 integer scoring).
   - `E`: Detection + Mitigation Workflow (telemetry + scoring + simulated rollback).
 - **Workloads:**
-  - Benign: `B1` (Idle), `B2` (HTTP API), `B3` (Build / Process Churn), `B4` (Mixed I/O).
-  - Anomaly: `A1` (Process Burst), `A2` (Suspicious File Access), `A3` (Outbound Connection Burst).
+  - Benign: `B1` (idle), `B2` (file processing), `B3` (process churn), `B4` (local socket client-server).
+  - Anomaly: `A1` (exec burst), `A2` (abnormal file access), `A3` (local connection burst).
 
 ---
 
@@ -110,7 +110,7 @@ Confirmed by [`experiments/manifests/experiment_matrix_manifest.json`](experimen
 | **Software Smoke Test** | Synthetic pipeline | `python prototype/tests/run_software_smoke.py` | **PASS** | 0 | Synthetic fixture ingestion, aggregation, scoring, and policy PASS. |
 | **Toolchain Preflight** | WSL2 environment | `bash prototype/preflight.sh` | **PASS** | 0 | Linux 6.6.87.2-WSL2, Clang 18.1.3, bpftool 7.4.0, libbpf verified. |
 | **Native BPF Compilation**| C probes & loader | `make -C prototype/bpf clean && make -C prototype/bpf` | **PASS** | 0 | Clean ELF objects (`telemetry.bpf.o`, `kernel_lr_feasibility.bpf.o`, `telemetry_loader`). |
-| **Live In-Kernel Load** | BPF program loading | `bpftool prog load prototype/bpf/telemetry.bpf.o ...` | **BLOCKED** | 1 | Unprivileged BPF disabled (`/proc/sys/kernel/unprivileged_bpf_disabled = 2`). Requires `CAP_BPF`/root. |
+| **Live In-Kernel Load** | BPF program loading | `bpftool prog load prototype/bpf/telemetry.bpf.o ...` | **PASS / BLOCKED** | 0 / 1 | The 13 Oct matrix loaded the probe as root on WSL2 with full `CAP_BPF` / `CAP_SYS_ADMIN` privileges; only the later Chat 11 audit environment lacked privilege (`/proc/sys/kernel/unprivileged_bpf_disabled = 2`). |
 
 ---
 

@@ -1,3 +1,5 @@
+Superseded by research/CHAT11_FINAL_AUDIT_REPORT.md. Retained for audit trail.
+
 # Manuscript Results and Discussion: Empirical Evaluation and Literature Synthesis
 
 **Document Class:** Academic Manuscript Component (Results & Discussion Sections)  

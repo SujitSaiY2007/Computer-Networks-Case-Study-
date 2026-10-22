@@ -1,3 +1,5 @@
+Superseded by research/CHAT11_FINAL_AUDIT_REPORT.md. Retained for audit trail.
+
 # Scientific Integrity Audit and Empirical Correction Report
 
 **Project:** BACSE203 Computer Networks Case Study  
