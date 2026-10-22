@@ -5,7 +5,7 @@ from typing import Iterable
 import json
 
 EVENT_NAMES={1:"exec_count",2:"open_count",3:"connect_count",4:"unlink_count"}
-FEATURE_NAMES=["exec_count","open_count","connect_count","unlink_count","unique_process_count","failed_operation_count","event_count","event_rate","event_loss_rate"]
+FEATURE_NAMES=["exec_count","open_count","connect_count","unlink_count","unique_process_count"]
 
 @dataclass
 class Window:
@@ -18,26 +18,28 @@ class Window:
     def vector(self, loss_rate:float=0.0)->dict[str,float]:
         d={k:float(self.counts.get(k,0)) for k in EVENT_NAMES.values()}
         d["unique_process_count"]=float(len(self.pids))
-        d["failed_operation_count"]=float(self.failed)
-        d["event_count"]=float(sum(self.counts.values()))
-        duration=max((self.end_ns-self.start_ns)/1e9,1e-9)
-        d["event_rate"]=d["event_count"]/duration
-        d["event_loss_rate"]=float(loss_rate)
         return d
 
 def aggregate(events:Iterable[dict],window_ns:int=1_000_000_000,loss_rate:float=0.0):
     windows={}
     for e in events:
-        t=int(e["t0_ns"])
-        start=(t//window_ns)*window_ns
+        t=int(e.get("t0", e.get("t0_ns", 0)))
+        w_idx=e.get("w")
+        if w_idx is not None:
+            start=int(w_idx)*window_ns
+        else:
+            start=(t//window_ns)*window_ns
         w=windows.get(start)
         if w is None:
             w=Window(start,start+window_ns,defaultdict(int),set())
             windows[start]=w
-        name=EVENT_NAMES.get(int(e["event_type"]))
+        ev_type=int(e.get("ty", e.get("event_type", 0)))
+        name=EVENT_NAMES.get(ev_type)
         if name:
             w.counts[name]+=1
-        w.pids.add(int(e["pid"]))
+        pid=int(e.get("pid", 0))
+        if pid:
+            w.pids.add(pid)
         if int(e.get("status",0))<0:
             w.failed+=1
     return [w.vector(loss_rate) | {"window_start_ns":w.start_ns,"window_end_ns":w.end_ns} for w in sorted(windows.values(),key=lambda x:x.start_ns)]

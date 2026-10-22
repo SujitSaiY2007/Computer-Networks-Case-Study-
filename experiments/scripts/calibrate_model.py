@@ -14,6 +14,7 @@ import select
 import signal
 import subprocess
 import sys
+import threading
 import time
 from pathlib import Path
 
@@ -59,28 +60,64 @@ def run_calibration_telemetry(workload_id: str, duration: float = 2.0, seed: int
         wl_cgroup_id = os.stat(cg_path).st_ino
 
         # Start telemetry loader
-        cmd_loader = [str(loader_bin), str(bpf_obj), "--duration", str(int(duration + 4))]
-        out_f = open(events_log, "w", encoding="utf-8")
-        loader_proc = subprocess.Popen(cmd_loader, stdout=out_f, stderr=subprocess.PIPE, text=True)
+        cmd_loader = [str(loader_bin), str(bpf_obj), "--cgroup", cg_path, "--max-seconds", str(int(duration + 10))]
+        loader_proc = subprocess.Popen(
+            cmd_loader,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            bufsize=1
+        )
             
-        # Wait for TELEMETRY_RUNNING on loader stderr (timeout 5 s)
+        # Wait for {"r":"ready"} on loader stdout (timeout 5 s)
         ready = False
         t_wait_start = time.time()
         while time.time() - t_wait_start < 5.0:
             if loader_proc.poll() is not None:
                 err_text = loader_proc.stderr.read() if loader_proc.stderr else ""
-                out_f.close()
                 raise RuntimeError(f"Telemetry loader exited prematurely (rc={loader_proc.returncode}): {err_text}")
-            r, _, _ = select.select([loader_proc.stderr], [], [], 0.1)
-            if r:
-                line = loader_proc.stderr.readline()
-                if "TELEMETRY_RUNNING" in line:
+            r_ready, _, _ = select.select([loader_proc.stdout], [], [], 0.1)
+            if r_ready:
+                line = loader_proc.stdout.readline()
+                if '"r":"ready"' in line or '"ready"' in line:
                     ready = True
                     break
         if not ready:
             loader_proc.kill()
-            out_f.close()
-            raise TimeoutError("Timed out waiting for TELEMETRY_RUNNING on loader stderr (5 s limit)")
+            raise TimeoutError("Timed out waiting for {\"r\":\"ready\"} on loader stdout (5 s limit)")
+
+        # Send GO <anchor_ns>
+        anchor_ns = time.monotonic_ns()
+        loader_proc.stdin.write(f"GO {anchor_ns}\n")
+        loader_proc.stdin.flush()
+
+        # Wait for {"r":"armed"} on loader stdout (timeout 5 s)
+        armed = False
+        t_wait_start = time.time()
+        while time.time() - t_wait_start < 5.0:
+            if loader_proc.poll() is not None:
+                err_text = loader_proc.stderr.read() if loader_proc.stderr else ""
+                raise RuntimeError(f"Telemetry loader exited prematurely (rc={loader_proc.returncode}): {err_text}")
+            r_armed, _, _ = select.select([loader_proc.stdout], [], [], 0.1)
+            if r_armed:
+                line = loader_proc.stdout.readline()
+                if '"r":"armed"' in line or '"armed"' in line:
+                    armed = True
+                    break
+        if not armed:
+            loader_proc.kill()
+            raise TimeoutError("Timed out waiting for {\"r\":\"armed\"} on loader stdout (5 s limit)")
+
+        raw_lines = []
+        def _drain_stdout():
+            for line in loader_proc.stdout:
+                s = line.strip()
+                if s:
+                    raw_lines.append(s)
+
+        reader_thread = threading.Thread(target=_drain_stdout, daemon=True)
+        reader_thread.start()
 
         # Run workload inside container
         exec_cmd = ["docker", "exec", "cncs_wl", "python3", "/work/prototype/python/workloads.py", workload_id, "--duration", str(duration), "--seed", str(seed)]
@@ -90,41 +127,33 @@ def run_calibration_telemetry(workload_id: str, duration: float = 2.0, seed: int
             
         time.sleep(0.05)
         loader_proc.send_signal(signal.SIGTERM)
+        loader_proc.stdin.close()
         try:
-            loader_proc.wait(timeout=2.0)
+            loader_proc.wait(timeout=10.0)
         except subprocess.TimeoutExpired:
             loader_proc.kill()
-        out_f.close()
+        reader_thread.join(timeout=5.0)
     finally:
         subprocess.run(["docker", "rm", "-f", "cncs_wl"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         
     # Read events and ring buffer stats
     events = []
     stats = {}
-    if events_log.exists():
-        with open(events_log, "r", encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if not line:
-                    continue
-                try:
-                    rec = json.loads(line)
-                    if rec.get("record_type") == "event":
-                        events.append(rec)
-                    elif rec.get("record_type") == "stats":
-                        stats = rec
-                except Exception:
-                    pass
-        events_log.unlink(missing_ok=True)
+    for line in raw_lines:
+        try:
+            rec = json.loads(line)
+            if rec.get("r") == "e":
+                events.append(rec)
+            elif rec.get("r") == "stats":
+                stats = rec
+        except Exception:
+            pass
         
-    gen = stats.get("generated_events", len(events))
-    consumed = stats.get("consumed_events", len(events))
+    gen = stats.get("generated", len(events))
+    consumed = stats.get("consumed", len(events))
     loss_rate = float(gen - consumed) / float(gen) if gen > 0 else 0.0
 
-    # Filter events by workload cgroup ID
-    workload_events = [ev for ev in events if ev.get("cgroup_id") == wl_cgroup_id]
-    
-    windows = aggregate(workload_events, loss_rate=loss_rate)
+    windows = aggregate(events, loss_rate=loss_rate)
     return windows
 
 def main():
@@ -191,6 +220,8 @@ def main():
     artifact["effective_intercept"] = effective_intercept
     artifact["weights_q16"] = weights_q16
     artifact["intercept_q16"] = intercept_q16
+    artifact["w_q16"] = weights_q16
+    artifact["b_q16"] = intercept_q16
     artifact["scale_fp"] = SCALE_FP
     artifact["model_hash"] = hashlib.sha256(json.dumps(artifact, sort_keys=True).encode()).hexdigest()
     

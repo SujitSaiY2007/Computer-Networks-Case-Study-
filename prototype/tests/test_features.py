@@ -10,6 +10,6 @@ class FeatureTests(unittest.TestCase):
         self.assertEqual(a[0]["exec_count"],1.0)
         self.assertEqual(a[0]["connect_count"],1.0)
         self.assertEqual(a[0]["unique_process_count"],1.0)
-        self.assertEqual(len(FEATURE_NAMES),9)
+        self.assertEqual(len(FEATURE_NAMES),5)
 
 if __name__=="__main__": unittest.main()
