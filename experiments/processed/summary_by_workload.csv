@@ -1,8 +1,8 @@
 workload_id,category,mean_cpu_pct,mean_generated_events,mean_telemetry_tput_eps,mean_loss_rate_pct
-B1,benign,1.67,356.8,73.9,0.0
-B2,benign,13.77,47966.3,23876.1,0.0
-B3,benign,5.59,21010.1,10410.4,0.0
-B4,benign,2.07,525.5,144.2,0.0
-A1,anomaly,5.6,16503.3,8149.3,0.0
-A2,anomaly,13.89,75557.9,37660.7,0.0
-A3,anomaly,6.87,19196.4,9504.6,0.0
+B1,benign,1.99,148.0,73.9,0.0
+B2,benign,37.51,44553.9,22259.2,0.0
+B3,benign,12.76,19292.2,9644.7,0.0
+B4,benign,2.8,302.4,144.6,0.0
+A1,anomaly,13.5,14468.9,7230.1,0.0
+A2,anomaly,35.16,80456.7,40226.7,0.0
+A3,anomaly,19.31,18197.3,9098.2,0.0

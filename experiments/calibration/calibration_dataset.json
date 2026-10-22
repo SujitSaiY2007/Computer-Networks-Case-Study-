@@ -1,0 +1,174 @@
+{
+  "feature_names": [
+    "exec_count",
+    "open_count",
+    "connect_count",
+    "unlink_count",
+    "unique_process_count"
+  ],
+  "samples": [
+    {
+      "exec_count": 1.0,
+      "open_count": 184.0,
+      "connect_count": 0.0,
+      "unlink_count": 0.0,
+      "unique_process_count": 1.0,
+      "window_start_ns": 0,
+      "window_end_ns": 1000000000
+    },
+    {
+      "exec_count": 1.0,
+      "open_count": 21819.0,
+      "connect_count": 0.0,
+      "unlink_count": 2705.0,
+      "unique_process_count": 1.0,
+      "window_start_ns": 0,
+      "window_end_ns": 1000000000
+    },
+    {
+      "exec_count": 0.0,
+      "open_count": 26497.0,
+      "connect_count": 0.0,
+      "unlink_count": 3313.0,
+      "unique_process_count": 1.0,
+      "window_start_ns": 1000000000,
+      "window_end_ns": 2000000000
+    },
+    {
+      "exec_count": 0.0,
+      "open_count": 3446.0,
+      "connect_count": 0.0,
+      "unlink_count": 454.0,
+      "unique_process_count": 1.0,
+      "window_start_ns": 2000000000,
+      "window_end_ns": 3000000000
+    },
+    {
+      "exec_count": 7286.0,
+      "open_count": 3098.0,
+      "connect_count": 0.0,
+      "unlink_count": 0.0,
+      "unique_process_count": 1458.0,
+      "window_start_ns": 0,
+      "window_end_ns": 1000000000
+    },
+    {
+      "exec_count": 8950.0,
+      "open_count": 3580.0,
+      "connect_count": 0.0,
+      "unlink_count": 0.0,
+      "unique_process_count": 1790.0,
+      "window_start_ns": 1000000000,
+      "window_end_ns": 2000000000
+    },
+    {
+      "exec_count": 1945.0,
+      "open_count": 778.0,
+      "connect_count": 0.0,
+      "unlink_count": 0.0,
+      "unique_process_count": 389.0,
+      "window_start_ns": 2000000000,
+      "window_end_ns": 3000000000
+    },
+    {
+      "exec_count": 1.0,
+      "open_count": 192.0,
+      "connect_count": 70.0,
+      "unlink_count": 0.0,
+      "unique_process_count": 1.0,
+      "window_start_ns": 0,
+      "window_end_ns": 1000000000
+    },
+    {
+      "exec_count": 0.0,
+      "open_count": 0.0,
+      "connect_count": 90.0,
+      "unlink_count": 0.0,
+      "unique_process_count": 1.0,
+      "window_start_ns": 1000000000,
+      "window_end_ns": 2000000000
+    },
+    {
+      "exec_count": 0.0,
+      "open_count": 0.0,
+      "connect_count": 21.0,
+      "unlink_count": 0.0,
+      "unique_process_count": 1.0,
+      "window_start_ns": 2000000000,
+      "window_end_ns": 3000000000
+    },
+    {
+      "exec_count": 1278.0,
+      "open_count": 5294.0,
+      "connect_count": 0.0,
+      "unlink_count": 1278.0,
+      "unique_process_count": 1278.0,
+      "window_start_ns": 0,
+      "window_end_ns": 1000000000
+    },
+    {
+      "exec_count": 1492.0,
+      "open_count": 5968.0,
+      "connect_count": 0.0,
+      "unlink_count": 1492.0,
+      "unique_process_count": 1493.0,
+      "window_start_ns": 1000000000,
+      "window_end_ns": 2000000000
+    },
+    {
+      "exec_count": 290.0,
+      "open_count": 1159.0,
+      "connect_count": 0.0,
+      "unlink_count": 291.0,
+      "unique_process_count": 291.0,
+      "window_start_ns": 2000000000,
+      "window_end_ns": 3000000000
+    },
+    {
+      "exec_count": 1.0,
+      "open_count": 14349.0,
+      "connect_count": 0.0,
+      "unlink_count": 0.0,
+      "unique_process_count": 1.0,
+      "window_start_ns": 0,
+      "window_end_ns": 1000000000
+    },
+    {
+      "exec_count": 0.0,
+      "open_count": 50528.0,
+      "connect_count": 0.0,
+      "unlink_count": 0.0,
+      "unique_process_count": 1.0,
+      "window_start_ns": 1000000000,
+      "window_end_ns": 2000000000
+    },
+    {
+      "exec_count": 0.0,
+      "open_count": 10584.0,
+      "connect_count": 0.0,
+      "unlink_count": 0.0,
+      "unique_process_count": 1.0,
+      "window_start_ns": 2000000000,
+      "window_end_ns": 3000000000
+    }
+  ],
+  "labels": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "seed": 999
+}
