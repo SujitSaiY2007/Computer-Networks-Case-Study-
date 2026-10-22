@@ -33,9 +33,8 @@ void ring_buffer__free(struct ring_buffer *);
 
 static volatile sig_atomic_t stop;
 static uint64_t consumed;
-static uint64_t first_seq;
-static uint64_t last_seq;
-static uint64_t sequence_gaps;
+static uint64_t min_seq;
+static uint64_t max_seq;
 
 struct telemetry_counters { uint64_t generated; uint64_t submitted; uint64_t reservation_failures; };
 
@@ -59,9 +58,13 @@ static int sample_cb(void *ctx, void *data, size_t size)
     if (size < sizeof(struct event))
         return 0;
     const struct event *e = (const struct event *)data;
-    if (consumed == 0) first_seq = e->seq;
-    else if (e->seq > last_seq + 1) sequence_gaps += e->seq - last_seq - 1;
-    last_seq = e->seq;
+    if (consumed == 0) {
+        min_seq = e->seq;
+        max_seq = e->seq;
+    } else {
+        if (e->seq < min_seq) min_seq = e->seq;
+        if (e->seq > max_seq) max_seq = e->seq;
+    }
     consumed++;
 
     struct timespec ts;
@@ -171,6 +174,13 @@ int main(int argc, char **argv)
     if (cmap) {
         int cfd = bpf_map__fd(cmap);
         map_lookup(cfd, 0, &c);
+    }
+
+    uint64_t sequence_gaps = 0;
+    if (consumed > 0 && max_seq >= min_seq) {
+        uint64_t expected = (max_seq - min_seq + 1);
+        if (expected > consumed)
+            sequence_gaps = expected - consumed;
     }
 
     printf("{\"record_type\":\"stats\",\"generated_events\":%" PRIu64 ",\"submitted_events\":%" PRIu64 ",\"reservation_failures\":%" PRIu64 ",\"consumed_events\":%" PRIu64 ",\"sequence_gaps\":%" PRIu64 "}\n",
