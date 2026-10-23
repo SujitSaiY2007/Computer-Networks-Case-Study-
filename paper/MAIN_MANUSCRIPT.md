@@ -1,3 +1,7 @@
+> **Journal-submission synchronization notice (2026-10-23):** This file is the earlier course-project manuscript and is **not** the authoritative journal-submission version. Its title, author metadata, and multiple reported values do not match the final 13-page submission PDF. Do not submit this file as the journal manuscript. The authoritative submission metadata and frozen claims are recorded in [JOURNAL_SUBMISSION_RECORD.md](JOURNAL_SUBMISSION_RECORD.md). The final PDF with the requested support-author addition is being supplied separately and must be committed as the binary submission artifact before the repository can be called fully synchronized.
+
+---
+
 # eBPF-Assisted Machine Learning for Cloud-Native Runtime Security: Telemetry Overhead, Kernel Enforcement, and Detection Trade-offs
 
 **Author:** Sujit Sai  
