@@ -1,3 +1,7 @@
+> **Journal-submission status (2026-10-23):** The journal submission title is **“eBPF-Assisted Machine Learning for Cloud-Native Runtime Security: Telemetry Overhead, In-Kernel Inference, and Containment Trade-offs.”** Requested author line: **Giri Nikhil Vaishnav, Sujit Sai Y, Shaik Mohammad Asif, and Ragavan K.** The supplied final PDF is the source of truth for the journal version. See [paper/JOURNAL_SUBMISSION_RECORD.md](paper/JOURNAL_SUBMISSION_RECORD.md) for frozen claims and the synchronization boundary. The existing [paper/MAIN_MANUSCRIPT.md](paper/MAIN_MANUSCRIPT.md) is explicitly marked as superseded; the repository is **not yet fully synchronized** until the final PDF and matching editable source are committed. No experiments are to be rerun or results re-evaluated.
+
+---
+
 # BACSE203 Computer Networks Case Study — Canonical Source of Truth
 
 ## Topic
