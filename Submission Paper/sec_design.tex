@@ -1,0 +1,41 @@
+\section{System Design}
+\label{sec:design}
+
+The pipeline has five stages: a kernel probe, a user-space consumer, feature aggregation, a classifier and a staged policy (Fig.~\ref{fig:pipeline}). All configurations use the same probe, consumer, features and model. They differ only in which stages are active and where the classifier runs.
+
+\begin{figure*}[!t]
+\centering
+\includegraphics[width=0.93\textwidth]{figures/fig1_pipeline.pdf}
+\caption{Pipeline and experimental configurations. The probe filters events by cgroup inside the kernel (green). Configuration D also scores each window inside the probe. Configurations C and E score the windows in user space after the run (orange). Configuration E freezes and thaws the container's cgroup (purple).}
+\label{fig:pipeline}
+\end{figure*}
+
+\subsection{Kernel Probe}
+
+The probe is an eBPF program attached to five syscall-entry tracepoints: \texttt{execve}, \texttt{openat}, \texttt{connect}, \texttt{unlink} and \texttt{unlinkat}. These calls cover process execution, file access, network activity and file deletion, the behaviours in our threat model (Section~\ref{sec:threat}). A configuration map holds the identifier of the target cgroup, an \emph{anchor} time, the window length and, optionally, the classifier parameters.
+
+On each hit, the probe checks that it is armed, that the calling task belongs to the target cgroup and that the event is not earlier than the anchor time. Events that fail a check are dropped at once, so the probe records only the workload container. For a recorded event, the probe reads the kernel clock, increments a \emph{generated} counter, reserves a 56-byte record in a 4~MiB ring buffer and fills it with the timestamp, a sequence number, the window index, the event type, the process and thread identifiers and the CPU. It then submits the record and increments a \emph{submitted} counter. A failed reservation increments a \emph{reservation-failure} counter instead.
+
+\subsection{In-Kernel Classifier}
+
+When inference is enabled, the probe classifies the current window after each recorded event. It keeps five counts for the window in an array map: the numbers of \texttt{execve}, \texttt{openat}, \texttt{connect} and unlink events, and the number of distinct processes. A hash map records the last window in which each process identifier was seen, so that each process is counted once per window. When an event falls into a new window, the counts reset.
+
+The probe then computes the logit $b + \sum_i w_i c_i$ in Q16.16 fixed point, where $c_i$ are the integer counts and $w_i$ and $b$ are the model parameters as Q16.16 integers. If the logit is zero or above, which corresponds to a probability of at least 0.5, and the window has not yet raised an alert, the probe submits a second record of type \emph{alert}. The alert carries the timestamp of the triggering syscall, a second kernel timestamp taken after the decision, and the logit. The difference between the two timestamps is the in-kernel decision latency. Because the probe records the event before it classifies the window, this latency includes the cost of recording the triggering event. The window state is not updated atomically across CPUs, so the counts are exact when the events of a window arrive on one CPU and approximate when several CPUs update them at once.
+
+\subsection{User-Space Consumer}
+
+The consumer is a C program built on libbpf. It loads the probe, writes the configuration, attaches the five tracepoints and reports that it is ready. It then waits for a start command from the harness that carries the anchor time, arms the probe and reports that it is armed. From then on, it polls the ring buffer until a wall-clock deadline or a termination signal. For each record, it reads the monotonic clock and writes the record and its receive time as one JSON line. The difference between the receive time and the kernel timestamp is the \emph{transfer latency}. Because \texttt{bpf\_ktime\_get\_ns} and \texttt{CLOCK\_MONOTONIC} use the same clock, it is a direct measurement.
+
+At shutdown, the consumer disarms the probe, drains every record left in the ring buffer, reads the counters and only then detaches the tracepoints. The generated, submitted and consumed counts therefore describe the same events. Section~\ref{sec:validation} explains why the loop is bounded by elapsed time and not by the number of poll calls.
+
+\subsection{Features and User-Space Classifier}
+
+In user space, the harness groups the events by the window index that the probe assigned and computes the same five counts per window. Windows are one second long and aligned to the anchor time. The harness scores each window with a logistic regression trained on standardized features with the liblinear solver and a threshold of 0.5. After training, we fold the standardization into the model: each effective weight is $w_i / s_i$, and the effective bias is $b - \sum_i w_i \mu_i / s_i$, where $\mu_i$ and $s_i$ are the training mean and standard deviation of feature $i$. Rounding these effective parameters to Q16.16 integers gives the parameters of the in-kernel classifier. The two classifiers therefore apply the same model to the same windows, one in floating point after the run and one in fixed point inside the probe. A run is classified as anomalous if any of its windows is.
+
+\subsection{Staged Response}
+
+The policy has four stages: \textsc{Observe}, \textsc{Detect-Log}, \textsc{Controlled-Mitigation} and \textsc{Rollback}. A score below the threshold keeps the policy in \textsc{Observe}, and a score at or above it moves the policy to \textsc{Detect-Log}, which records the alert. Mitigation is disabled by default, and only configuration E enables it. When enabled, the policy moves to \textsc{Controlled-Mitigation} and freezes the container's cgroup by writing \texttt{1} to \texttt{cgroup.freeze}. It then reads \texttt{cgroup.events}, with a 0.1~ms sleep between reads, until the kernel reports \texttt{frozen 1} or two seconds pass. The policy then enters \textsc{Rollback} at once, writes \texttt{0} and waits for \texttt{frozen 0}. Immediate rollback lets us measure both transitions in every run and returns the container to its original state.
+
+\subsection{Configurations}
+
+Configuration A is the baseline without instrumentation. B adds the probe and consumer. C adds the user-space floating-point classifier, and D replaces it with the in-kernel fixed-point classifier. E adds the freeze and thaw to C. Fig.~\ref{fig:pipeline} summarizes them.

@@ -1,0 +1,51 @@
+\documentclass[journal]{IEEEtran}
+
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage[american]{babel}
+\usepackage{csquotes}
+\usepackage[style=apa,backend=biber,sortcites=true,doi=true,url=false]{biblatex}
+\DeclareLanguageMapping{american}{american-apa}
+\addbibresource{references.bib}
+\renewcommand*{\bibfont}{\footnotesize\raggedright}
+\setlength{\bibitemsep}{2pt}
+\usepackage{url}
+\usepackage[hidelinks]{hyperref}
+
+\hyphenation{eBPF Docker Kubernetes Tetragon}
+
+\begin{document}
+
+\title{eBPF-Assisted Machine Learning for Cloud-Native Runtime Security: Telemetry Overhead, In-Kernel Inference, and Containment Trade-offs}
+
+\author{Giri Nikhil Vaishnav, Sujit Sai Y, and Shaik Mohammad Asif}
+
+\markboth{eBPF-Assisted Machine Learning for Cloud-Native Runtime Security}{Vaishnav \MakeLowercase{\textit{et al.}}}
+
+\maketitle
+
+\begin{abstract}
+Detectors that learn from eBPF telemetry are widely proposed for container runtime security, but the cost of each pipeline stage and the effect of where the model runs are rarely measured under one protocol. We built a pipeline of cgroup-scoped syscall tracing, ring-buffer transport, count features, a logistic-regression detector and containment through the cgroup v2 freezer. We ran it in five configurations on seven Docker workloads (four benign, three anomalous, one of them held out of training), for 350 randomized runs on one WSL2 host. Telemetry cost 12 to 15~\textmu s per recorded file or process event and about 25~\textmu s per connection event, so throughput loss followed the event rate: nothing measurable at 180 events/s and 54\% to 57\% at 48{,}000 events/s. None of 8.87 million events was lost. Running the same model in Q16.16 fixed point inside the eBPF probe added no measurable overhead, agreed with the user-space classifier on every run and raised its alert a median 11.4~\textmu s after the triggering syscall (about 20~\textmu s until user space received it), a time that includes recording that event. The user-space path needed a median 9.1~ms to build features after the run. The detector flagged all 20 trained-anomaly runs with no false positives but missed all 10 runs of the held-out connection burst, because its learned weight on connections was negative. A cgroup freeze took a median 0.044~ms. We also report two silent defects that produced plausible but invalid results in earlier versions, and the tests that now catch them.
+\end{abstract}
+
+\begin{IEEEkeywords}
+eBPF, container security, runtime monitoring, machine learning, cgroup, telemetry overhead, Linux kernel.
+\end{IEEEkeywords}
+
+\input{sec_intro}
+\input{sec_background}
+\input{sec_related}
+\input{sec_design}
+\input{sec_method}
+\input{sec_results}
+\input{sec_discussion}
+\input{sec_threats}
+
+\printbibliography[title={References}]
+
+\end{document}

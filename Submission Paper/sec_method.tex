@@ -1,0 +1,63 @@
+\section{Experimental Methodology}
+\label{sec:method}
+
+\subsection{Testbed}
+
+All experiments ran on one host under Windows Subsystem for Linux 2 (WSL2) with Ubuntu 24.04.3 LTS and the Linux kernel 6.6.87.2-microsoft-standard-WSL2 on x86-64. The virtual machine had 20 logical CPUs and about 7.6~GiB of memory. We compiled the probe with Clang 18.1.3 and linked the consumer against libbpf 1.3.0. Docker 29.1.3 ran the workloads, and every workload container used the \texttt{python:3.12-slim} image. The harness used Python 3.12.3 and scikit-learn 1.4.1. The probe, consumer and harness ran as root.
+
+\subsection{Workloads}
+
+Table~\ref{tab:workloads} describes the seven workloads. Each is a function in one Python script that runs for a fixed duration and returns the number of operations it completed. The anomalous workloads implement the three behaviours of the threat model. We designed each of them to differ from the benign workloads in its mix of system calls, not only in file names or arguments, because the probe records only the type of each call (Section~\ref{sec:validation}).
+
+\begin{table*}[t]
+\centering
+\caption{Workloads. Each runs for 2~s inside a fresh container. The last column defines the operation that is counted for throughput.}
+\label{tab:workloads}
+\small
+\begin{tabularx}{\textwidth}{@{}l l X l@{}}
+\toprule
+ID & Class & Behaviour & Operation \\
+\midrule
+B1 & Benign & Idle: sleeps for the whole duration & None \\
+B2 & Benign & File processing: writes and reads back a 768-byte file from a set of 32 names in a temporary directory, deletes every fourth file & One write, read and optional delete \\
+B3 & Benign & Process churn: starts the \texttt{true} program and waits for it, repeatedly & One process \\
+B4 & Benign & Local client and server: a request and a reply over loopback TCP with a 10~ms pause & One round trip \\
+A1 & Anomalous & Drop and execute: writes a shell script, marks it executable, runs it and deletes it & One payload run \\
+A2 & Anomalous & File sweep: reads the first 1{,}024 bytes of every file under \texttt{/etc} and the Python library tree, read only & One file opened \\
+A3 & Anomalous (held out) & Connection burst: opens loopback TCP connections to a local sink with no pause & One connection \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+\subsection{Run Procedure}
+
+Each run follows the same steps. The harness starts a new container without a network interface and with a read-only mount of the project directory, and resolves the container's cgroup path and identifier. For configurations B to E, it starts the consumer with that cgroup, waits until the consumer reports that the probe is attached, sends the start command with the current monotonic time as anchor, and waits until the consumer reports that the probe is armed. Each wait fails the run after five seconds. The harness then runs the workload inside the container with \texttt{docker exec} for 2.0~s. The workload measures its own duration and operation count. After the workload ends, the harness reads the container's peak memory from the cgroup, stops the consumer, computes the features and runs the configuration's user-space classifier and policy. In configuration D, the run's decision is the set of alerts that the probe raised during the workload. Configuration E freezes and thaws the still-running container if the run is flagged. Finally, the harness removes the container and writes one JSON record for the run.
+
+\subsection{Experimental Matrix}
+
+The matrix crosses five configurations, seven workloads and ten repetitions, for 350 runs. Repetitions use seeds 0 to 9. The harness shuffled the 350 combinations with a fixed seed (2026), stored the order with the data and ran the combinations in that order, so that slow changes in the host state spread over all configurations.
+
+\subsection{Calibration}
+
+We trained the model once, before the matrix, on separate calibration runs with seed 999. Each workload except A3 ran once for 2~s under the same container and telemetry setup. The resulting 16 windows (10 benign, 6 anomalous) formed the training set. A3 was not run during calibration, so the model never saw a connection burst. We froze the trained model, its fixed-point parameters and its hash before any matrix run. On the training windows, the fixed-point and floating-point logits differed by at most 3.4\% and never led to different decisions.
+
+\subsection{Metrics}
+
+\begin{itemize}
+  \item \textbf{Throughput overhead.} The change in mean operations per second relative to configuration A for the same workload. Every workload runs for a fixed time, so throughput, not duration, reflects slowdown. B1 performs no operations and is excluded.
+  \item \textbf{Per-event cost.} The increase in time per operation in configuration B, divided by the number of recorded events per operation.
+  \item \textbf{Telemetry completeness.} The generated, submitted and consumed counts, reservation failures and sequence gaps over all instrumented runs. A gap is a sequence number in the run's range that the consumer never received.
+  \item \textbf{Transfer latency.} The per-event time from probe timestamp to consumer receipt, averaged per run.
+  \item \textbf{Inference latency.} In configuration C, the time to score a window, measured around the scoring call with Python's nanosecond counter. In configuration D, the time from the kernel timestamp of the triggering syscall to the kernel timestamp taken after the decision, for the first alert of each run, and the time from that decision until the consumer received the alert.
+  \item \textbf{Detection.} Precision, recall and F1 on A1 and A2, the false-positive rate on each benign workload, and recall on the held-out A3.
+  \item \textbf{Containment.} In configuration E, the time from the freeze request until the kernel reports the cgroup as frozen, the corresponding thaw time, and whether the kernel confirmed each transition.
+\end{itemize}
+
+\subsection{Telemetry Validation}
+\label{sec:validation}
+
+Two defects in earlier versions of this pipeline would have invalidated its results without any visible error. We describe them because both are easy to repeat.
+
+The first was in the consumer. Its main loop called \texttt{ring\_buffer\_\_poll} with a timeout a fixed number of times, intending to run for a set duration. Under load, the call returns as soon as records are available, so the loop finished in about 0.1~s. The consumer then stopped while the workload was still running. Its counters still showed zero reservation failures and zero sequence gaps, because every event that the probe did see was delivered. Only the event totals revealed the problem. A test that runs 100 executions of \texttt{/bin/true} inside a test cgroup captured between 11 and 33 \texttt{execve} events with the old loop and 101 with the corrected loop, which is bounded by elapsed time. We confirmed that the test fails when the old loop is restored and passes with the fix. Three further integration tests run against the live kernel: one checks the cgroup filter, one checks that the in-kernel classifier alerts exactly when its logit reaches zero, and one checks that the consumer stays alive under event load.
+
+The second defect was in the workloads. In an earlier version, the anomalous file workload called the same function as the benign file workload with a different seed, which changed only file names, and the anomalous execution workload started \texttt{true} exactly as the benign process-churn workload did. The probe records only syscall types, so each pair was indistinguishable to the classifier, yet the training data labelled the pairs differently. The detection scores of that version reflected the labels and not the behaviour. We replaced both anomalous workloads with the designs in Table~\ref{tab:workloads}. The datasets from before each correction are released with the final one (Data Availability).

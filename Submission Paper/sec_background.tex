@@ -1,0 +1,31 @@
+\section{Background and Threat Model}
+\label{sec:background}
+
+\subsection{eBPF Programs, Maps and the Verifier}
+
+An eBPF program is bytecode that the kernel loads, checks and runs when an attached hook fires. Before loading, the in-kernel verifier walks every path through the program. It rejects the program if it could read memory out of bounds, loop without a bound or exceed the limit of one million verified instructions. Each program has a 512-byte stack, and the instruction set has no floating-point operations. Programs keep state in \emph{maps}, which are kernel data structures shared with user space, such as arrays, hash tables and ring buffers.
+
+These rules make eBPF safe enough for production kernels. They also limit what a program can compute. A model that runs inside eBPF needs integer arithmetic, a fixed number of operations and a small, fixed amount of state. Verifier correctness is itself an active research topic \parencite{R043}, and eBPF can be misused as an attack vector \parencite{P039,R041,R042}.
+
+\subsection{Tracepoints and the Ring Buffer}
+
+Our probe attaches to syscall tracepoints, which fire when a thread enters a system call, before the kernel executes it. We hook \texttt{execve}, \texttt{openat}, \texttt{connect}, \texttt{unlink} and \texttt{unlinkat}. A hook on syscall entry sees the call and its caller but not the return value, so it cannot tell whether the call succeeded.
+
+The probe passes events to user space through a BPF ring buffer (Linux 5.8 and later), a single memory region shared by all CPUs. The probe reserves a slot, fills it and submits it. If no slot is free, the reservation fails and the event is lost, and a counter records the failure. In libbpf, \texttt{ring\_buffer\_\_poll} returns as soon as records are available, not after its timeout. A consumer loop that counts calls instead of measuring elapsed time therefore ends early under load. Section~\ref{sec:validation} shows that this behaviour broke an earlier version of our pipeline.
+
+\subsection{Control Groups and the Freezer}
+
+Linux control groups (cgroups) organize processes into a hierarchy. Container runtimes such as Docker place each container in its own cgroup. Under cgroup v2, each cgroup is a directory, and its inode number identifies it. An eBPF program reads the identifier of the current task with the helper \texttt{bpf\_get\_current\_cgroup\_id}, so a probe can keep only the events of one container.
+
+The cgroup v2 freezer stops every process in a cgroup. Writing \texttt{1} to the \texttt{cgroup.freeze} file asks the kernel to freeze the group, and the file \texttt{cgroup.events} reports \texttt{frozen 1} once all tasks have stopped. Writing \texttt{0} thaws the group. Freezing keeps process state intact, needs no cooperation from the container and can be undone. It is therefore a natural first-stage response for an automated detector.
+
+\subsection{Fixed-Point Logistic Regression}
+
+Logistic regression scores a feature vector $\mathbf{x}$ as $p = \sigma(\mathbf{w}^\top \mathbf{x} + b)$ and raises an alert when $p \ge 0.5$. Because $\sigma$ is monotonic, this test is equivalent to testing the logit, $\mathbf{w}^\top \mathbf{x} + b \ge 0$. The logit needs only multiplications and additions. In Q16.16 fixed point, each real number $r$ is stored as the integer $\lfloor r \cdot 2^{16} \rceil$. The weights and bias are converted once after training. Feature counts are integers, so the logit is a sum of integer products that the verifier accepts. The only approximation is the rounding of the weights and bias, which we check by comparing fixed-point and floating-point decisions on the same inputs.
+
+\subsection{Threat Model}
+\label{sec:threat}
+
+We consider an adversary who controls code inside one container on a shared host. The adversary can start processes, read and write files that the container can reach, and open network connections. We model three behaviours that such an adversary commonly shows after gaining a foothold: \emph{drop and execute} (write a payload, run it and delete it), \emph{file sweep} (read many files across system directories, as in reconnaissance) and \emph{connection burst} (open many connections in a short time, as in scanning). Only the connection burst is withheld from training, as a stand-in for an attack the detector has not seen.
+
+We assume that the host kernel and the monitoring components are trusted. The probe and consumer run with root privileges on the host. The adversary cannot load eBPF programs, change the probe or leave the container. We do not consider kernel exploits or container escapes \parencite{P033,P039}, attackers who imitate benign syscall patterns, or adversarial manipulation of the model.

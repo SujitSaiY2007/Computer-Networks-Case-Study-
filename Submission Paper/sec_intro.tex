@@ -1,0 +1,28 @@
+\section{Introduction}
+\label{sec:intro}
+
+Cloud-native applications run as containers that share one host kernel. A compromised container can write and run a payload, read many files or open many connections, and each of these actions reaches the kernel as a system call. Runtime security therefore depends on observing system calls cheaply and acting on them quickly \parencite{R048,R049}.
+
+Extended Berkeley Packet Filter (eBPF) has become the standard way to do this. eBPF programs attach to kernel hooks, pass a safety verifier and run without kernel modules \parencite{P007}. Open-source tools such as Falco, Tetragon, Tracee and KubeArmor use eBPF to observe and constrain containers \parencite{P001,P040}. Rules describe known behaviour, and machine learning (ML) can classify behaviour that is hard to write as a rule. Many recent studies combine eBPF telemetry with ML detectors for containers \parencite{P005,P006,P016,P018,P034}.
+
+This combination raises a design question that the 40 primary studies we reviewed do not answer for container system-call telemetry: \emph{where should the model run?} Exporting every event to user space keeps the model flexible but adds transport and scheduling delay. Running the model inside the eBPF program removes that delay, but it limits the model to what the verifier accepts: no floating point, bounded loops and a small stack. In-kernel inference has been studied for network traffic \parencite{P012,P014,P031}. \textcite{P012} compare kernel and user-space placement of the same models for packet classification. We ask the same question for container system-call telemetry, and we add what a security pipeline needs besides a classifier: the cost of the telemetry, the time to a decision and the cost of the response.
+
+We built one pipeline and evaluated it under one protocol. The pipeline records system calls with eBPF tracepoints, transports them through a ring buffer, aggregates them into one-second windows, scores each window with a logistic-regression detector and contains a flagged container by freezing its cgroup. Five configurations differ only in what runs: no instrumentation, telemetry only, user-space floating-point scoring, fixed-point scoring inside the probe, and user-space scoring with containment. Each configuration ran seven workloads (four benign, three anomalous, one of them held out of training) ten times each inside Docker containers, in randomized order, for 350 runs.
+
+We address four research questions. Each corresponds to a gap that our review of the corpus identified (Section~\ref{sec:related}).
+\begin{itemize}
+  \item \textbf{RQ1 (G1).} How complete is container-scoped eBPF syscall telemetry, and what does it cost the workload?
+  \item \textbf{RQ2 (G3).} How do decision latency and overhead change when the same model runs inside the eBPF probe instead of in user space?
+  \item \textbf{RQ3 (G2).} How well does a count-based detector separate trained anomalies from benign activity, and does it generalize to an unseen anomaly?
+  \item \textbf{RQ4 (G4).} How fast is ML-triggered containment, and does it affect benign workloads?
+\end{itemize}
+
+The paper makes four contributions.
+\begin{enumerate}
+  \item \textbf{A per-event cost model of syscall telemetry.} Each recorded event added 12 to 15~\textmu s to the workload for file and process events and about 25~\textmu s for connection events. Because throughput loss equals this cost times the event rate, the event rate predicts the overhead across workloads.
+  \item \textbf{A controlled placement comparison.} The same logistic-regression model, the same telemetry and the same workloads run with scoring in user space and inside the probe. We measure the in-kernel decision latency inside the kernel and compare it with the user-space path.
+  \item \textbf{A measured containment cost and a held-out failure.} Freezing a cgroup took a median of 0.044~ms. The detector missed an unseen attack completely, and the trained weights explain why.
+  \item \textbf{Two measured telemetry defects, the tests that catch them, and open data.} An earlier version of our consumer captured only a fraction of events while its loss counters reported zero loss. We describe the defect, the failure-verified test, and the superseded datasets that we release with the final one.
+\end{enumerate}
+
+The paper does not propose a new detector and does not claim production readiness. The workloads are synthetic, the testbed is one host, and classification runs after each workload ends (Section~\ref{sec:threats}). Section~\ref{sec:background} introduces the mechanisms and the threat model, and Section~\ref{sec:related} reviews related work. Sections~\ref{sec:design} and~\ref{sec:method} describe the system and the experiments. Sections~\ref{sec:results} and~\ref{sec:discussion} report and discuss the results, and Sections~\ref{sec:threats} and~\ref{sec:conclusion} cover threats to validity and conclusions.

@@ -1,0 +1,66 @@
+\section{Related Work}
+\label{sec:related}
+
+We reviewed 40 primary studies (36 journal articles and 4 peer-reviewed conference papers) and 10 supporting references, published between 2021 and 2026. We extracted each primary study along five dimensions: the telemetry source, the placement of ML inference, the detection evidence, the enforcement mechanism, and the reporting of overhead and environment. The supporting references cover eBPF safety, cloud-native telemetry and secondary reviews, and we use them for context only. This section follows the five dimensions and ends with the gap that motivates our study.
+
+\subsection{eBPF Telemetry and Runtime-Security Tooling}
+
+\textcite{P007} describe the hook families that eBPF offers on cloud-native platforms: tracepoints, kprobes, traffic control, the eXpress Data Path (XDP) and Linux Security Module (LSM) hooks. Several studies evaluate the open-source tools built on these hooks. \textcite{P001} compare KubeArmor, Falco, Tetragon and Tracee across Kubernetes security cases. \textcite{P022} build a container activity analysis system and compare Tetragon, Falco and Tracee. \textcite{P040} report mean time to detect, detection rate, false-positive rate, CPU and memory for Falco, Tetragon and Tracee on container-escape, denial-of-service (DoS) and cryptomining scenarios. These studies give useful baselines, but they evaluate rule-based tools, not learned detectors.
+
+Other work uses eBPF mainly as a measurement layer. \textcite{P037} provide container-granular auditing, and \textcite{P021} use per-container syscall data to model web-server performance. Among the supporting references, \textcite{R044} trace microservice packets with eBPF and kernel timestamps, \textcite{R045} build a flow monitor for containers, and \textcite{R046} shorten the service-mesh data path. Together these studies show that eBPF telemetry is practical at container granularity. They rarely quantify how complete the telemetry stream is, that is, whether every relevant kernel event reaches the consumer.
+
+\subsection{Machine-Learning Detection on eBPF Telemetry}
+
+A growing group of studies feeds eBPF telemetry into ML detectors. For containers, \textcite{P016} combine syscall monitoring with AdaBoost to detect Dirty COW and Dirty Cred attacks in database containers. \textcite{P006} detect cryptojacking containers from Tetragon telemetry with several ML models. \textcite{P018} combine host syscall and network-flow telemetry with multiclass ML over ten container scenarios. \textcite{P017} detect abnormal file access with an attention-enhanced autoencoder, and \textcite{P038} pair an eBPF sensor with an ML ensemble for cloud-native malware. \textcite{P015} compare an LSTM autoencoder with traditional ML on Linux host behaviour.
+
+Several detectors target one attack class. \textcite{P003} and \textcite{P024} detect application-layer CPU-exhaustion DoS in containers, and \textcite{P011} detect DoS in Kubernetes from XDP traffic monitoring. \textcite{P013} compare tree, forest and support-vector models on DoS traffic captured with eBPF. Outside the container setting, \textcite{P002} detect IoT traffic anomalies with an XDP front end and a lightweight deep model, and \textcite{P004} detect AIoT gateway anomalies from eBPF timing traces.
+
+The closest systems to an end-to-end pipeline are DeSFAM \parencite{P005} and the service-mesh system of \textcite{P034}. DeSFAM profiles syscalls dynamically, scores risk with a variational autoencoder and an isolation forest, and enforces through BPF-LSM. \textcite{P034} collect syscalls with zero-copy eBPF, apply lightweight online learning per container and isolate compromised workloads. Both report detection and response, but each evaluates one design under its own workloads and metrics. Across this group, detection evidence is mostly within-scenario: training and test data come from the same attack classes. \textcite{P034} show that adaptation to evolving workloads is feasible, but standardized tests under distribution shift remain rare.
+
+\subsection{Placement of Inference}
+
+In the studies above, eBPF serves mainly as the collection layer, and the learned model is a tree ensemble, an autoencoder or a recurrent network. A smaller set places inference or decision logic in the kernel, and these studies concern network traffic. \textcite{P012} compare a quantized neural network and a decision tree in kernel space and in user space for packet classification, and expose trade-offs between verifier limits and throughput. \textcite{P014} run a quantization-aware autoencoder inside eBPF for network intrusion detection. \textcite{P031} convert an offline random forest into thresholds for XDP pre-filtering on Docker Swarm. \textcite{R047} split an intrusion detection system into in-kernel pattern pre-filtering and user-space rule matching. Packet-processing systems \parencite{P035,P008} show that complex processing can run in the kernel with a user-space control plane.
+
+\textcite{P012} is the closest to our question, because it compares placements with the models held constant. It addresses packet classification, not container runtime behaviour, and it does not measure the cost of telemetry or of a response. Elsewhere in the corpus, placement is confounded with differences in model, workload and metrics (gap G3 below).
+
+\subsection{Enforcement and Mitigation}
+
+eBPF enforcement is well developed. \textcite{P010} combine Tracee monitoring with BPF-LSM policies for Kubernetes. Cordon \parencite{P019} generates eBPF and LSM policies from deployment files, and BPFGuard \parencite{P020} enforces mandatory access control at syscall, LSM and kernel-function granularity. Optimus \parencite{P023}, KubeRosy \parencite{P030} and Hela \parencite{P025} restrict system calls dynamically or across the container lifecycle. BeaCon \parencite{P026} generates container policies through dynamic analysis, and Vaccine \parencite{P027} controls processes dynamically to mitigate injection vulnerabilities. At the network layer, \textcite{P009} secure inter-container traffic with XDP, \textcite{P028} block IP spoofing in Kubernetes, and Kunerva \parencite{P032}, KubeAegis \parencite{P029} and ESX \parencite{P036} derive or unify policies.
+
+Most of these systems enforce policies derived from specifications or rules, not from a learned detector. Where ML drives the response \parencite{P005,P034}, the studies report that enforcement works. They report less consistently what it costs: how quickly containment takes effect, whether benign workloads are affected, and whether the action can be reversed.
+
+\subsection{eBPF Safety and the Container Threat Model}
+
+Running security logic in the kernel enlarges the trusted computing base. \textcite{P039} show that eBPF itself can be abused for cross-container attacks. \textcite{R043} found previously unknown logic bugs in the verifier, BeeBox \parencite{R042} hardens BPF against transient-execution attacks, and KrakenGuard \parencite{R041} proposes fine-grained isolation for eBPF programs. On the threat side, \textcite{P033} analyse chained escapes from container to cluster, and \textcite{R049} survey container exploits and defences. Verifier limits constrain model size, and a kernel-resident model is itself attack surface. Two secondary studies add that reproducibility is weak and benchmarks are missing \parencite{R048}, and that standardized evaluation is absent \parencite{R050}.
+
+\subsection{Research Gap}
+
+Table~\ref{tab:related} summarizes the studies that combine eBPF telemetry with ML. The components of an eBPF and ML runtime-security pipeline are well studied. Four gaps remain. \textbf{G1:} no study measures, under one protocol, how complete the telemetry is, what it costs the workload, how long the decision takes and how long the response takes. \textbf{G2:} detection is usually tested on the same attack classes that were used for training. \textbf{G3:} kernel and user-space inference are rarely compared with the model, features and workloads held constant, and not for container syscall telemetry. \textbf{G4:} the latency, false-positive impact and reversibility of ML-triggered containment are not measured consistently. Our study addresses these gaps with a controlled comparison. It holds the telemetry, features, model and workloads constant and varies only where inference runs and whether a response is taken. It does not propose a new detector.
+
+\begin{table*}[t]
+\centering
+\caption{Primary studies that combine eBPF telemetry with machine learning. Entries summarize what each study reports.}
+\label{tab:related}
+\footnotesize
+\renewcommand{\arraystretch}{1.08}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.17\textwidth} >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+\toprule
+Study & Role of eBPF & Model & Response and scope \\
+\midrule
+\textcite{P003} & Runtime telemetry & Semantic DDoS detector & Detection; semantic DoS in containers \\
+\textcite{P005} & Dynamic syscall profiling, BPF-LSM & VAE + isolation forest & BPF-LSM enforcement; containers \\
+\textcite{P006} & Tetragon syscall and flow telemetry & Several ML classifiers & Detection; cryptojacking containers \\
+\textcite{P012} & XDP packet processing, kernel and user space & Quantized NN, decision tree & Classification; packet IDS \\
+\textcite{P013} & Kernel packet capture & DT, RF, SVM, TwinSVM & Detection; DoS traffic \\
+\textcite{P014} & In-kernel inference & Quantization-aware autoencoder & Detection; network IDS \\
+\textcite{P016} & Syscall monitoring & AdaBoost & Detection; container exploits \\
+\textcite{P017} & File-access monitoring & Attention autoencoder & Detection; container file access \\
+\textcite{P018} & Host syscall and network-flow telemetry & Multiclass ML & Detection; ten container scenarios \\
+\textcite{P031} & XDP pre-filtering with rules from an offline model & Random forest to thresholds & Pre-filtering; Docker Swarm \\
+\textcite{P034} & Zero-copy syscall collection & Lightweight online ML & Isolation; service mesh \\
+\textcite{P038} & eBPF sensor & ML ensemble & Detection; cloud-native malware \\
+\midrule
+This study & Syscall telemetry; in-kernel scoring (config. D) & Logistic regression, float and Q16.16 & cgroup freeze; containers \\
+\bottomrule
+\end{tabularx}
+\end{table*}

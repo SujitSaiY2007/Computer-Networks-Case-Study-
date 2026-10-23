@@ -1,0 +1,32 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\subsection{Telemetry Cost Is a Per-Event Cost}
+
+The main cost of the pipeline is not the model. It is recording each event. On our testbed, every recorded file or process event added 12 to 15~\textmu s to the workload, and every connection event about 25~\textmu s. The overhead of a workload is roughly its event rate multiplied by this cost. A service that makes a few hundred monitored calls per second, like B4, pays nothing measurable. A workload that opens tens of thousands of files per second, like A2, loses more than half of its throughput.
+
+The in-kernel timestamps suggest where this time goes. For the events that raised an alert, the probe's own execution, from its first clock read to the clock read after the decision, took a median of 11.4~\textmu s. That is the same magnitude as the per-event overhead, which indicates that most of the cost is spent inside the probe and not in the consumer. Configurations B and D show the same overhead, so the cost does not come from the classifier. The remaining candidates are the syscall-tracepoint path, the ring-buffer reservation and submission, and the virtualization layer of WSL2. We have not separated them, and the cost may be lower on bare metal. Whatever its source, a design that records every event scales poorly with the event rate, and reducing the number of recorded events by filtering or counting earlier attacks the dominant cost directly.
+
+\subsection{What In-Kernel Inference Changes}
+
+Moving the classifier into the probe had three effects. First, it added no overhead that we could distinguish from run-to-run variation. The probe already paid for recording each event, and a five-term integer sum and a hash-map update are small in comparison. Second, it changed no decision. The fixed-point classifier agreed with the floating-point classifier on every run, even though some of its weights round to very small integers. Third, it changed when a decision becomes available. The probe evaluates the classifier after every event and alerts at the first event that pushes the logit across the threshold, about 20~\textmu s before user space learns of it. A user-space classifier that scores complete windows must wait at least until the window closes, one second in our design, and then spend milliseconds building features.
+
+The latency advantage therefore does not come from faster arithmetic. It comes from incremental evaluation inside the event path, which lets the decision happen mid-window. This advantage only matters if the response is equally fast. In our enforcement configuration, the freeze is still requested from user space after the run. A design that acts on the in-kernel alert at once, either from the consumer or from the kernel itself, would turn the 20~\textmu s decision into a response within tens of microseconds. Our measurements of each stage bound what such a design can achieve.
+
+The coarse fixed-point weights are a warning for larger models. With integer counts in the thousands, small effective weights round to a few units in Q16.16, and the logit carries an error of a few percent. Our decisions were unaffected because the margins between classes were wide. Models with finer decision boundaries would need scaled features or more fractional bits.
+
+\subsection{Detection on Synthetic Workloads}
+
+The detector separated the two trained anomalies from all four benign workloads without error. This shows that the pipeline works end to end. It does not show that a count-based logistic regression detects real attacks. The workloads are synthetic, and each was designed to have a distinct mix of system calls, so their per-window counts differ by orders of magnitude and a linear model separates them easily.
+
+The held-out workload is the more informative result. A3 opens 11{,}000 to 15{,}000 connections per second, depending on the configuration, an obvious anomaly to a human analyst, yet every A3 run scored below 0.001. The trained weights explain why. The only training workload that made connections was the benign client and server B4, so the model learned a negative weight for the \texttt{connect} count (standardized coefficient $-0.63$). More connections pushed the score down, and the connection burst looked more benign, not less. The model learned which counts distinguished its training classes, not what makes behaviour anomalous. This is the distribution-shift gap (G2) in its simplest form: a supervised detector trained on a few attack types should be expected to miss new ones, and evaluations that test only on trained attack types overstate detection.
+
+\subsection{Containment Through the cgroup Freezer}
+
+Freezing a container through cgroup v2 was fast, reliable and reversible in our runs. Every freeze took effect in well under a millisecond, the kernel confirmed every one, and every container thawed cleanly. The freeze itself was a median 0.5\% of the time to a confirmed freeze, so the delay before containment lies in feature processing, not in the freezer. The detector raised no false positives, so no benign container was frozen, and we could not measure the cost of a wrong freeze.
+
+Two properties make the freezer a good first-stage response for an ML detector. It needs no knowledge of the container's internals, and it can be undone if the alert proves false, which limits the damage of false positives compared with killing the container. Its speed in our runs is, however, a lower bound. Each freeze happened after the workload had ended, when only an idle process remained. Freezing a container with many active threads, some of them inside system calls, is likely to take longer.
+
+\subsection{Lessons for Evaluating eBPF Pipelines}
+
+The two defects in Section~\ref{sec:validation} share a pattern. Each produced plausible numbers and passed the checks in place at the time. The consumer reported zero loss while capturing only a fraction of events, and the classifier reported meaningful scores while separating workloads that were identical to the probe. Loss counters measure the transport, not the coverage, and labels measure intent, not behaviour. We recommend that evaluations of eBPF security pipelines include a capture test with a known number of events, confirm that the test fails on a known-bad consumer, and check that labelled workload classes differ in the features the probe can observe.

@@ -1,0 +1,109 @@
+\section{Results}
+\label{sec:results}
+
+All results come from the 350 run records of the final dataset. We report means with sample standard deviations over the ten repetitions of each cell, unless stated otherwise.
+
+\subsection{Telemetry Completeness (RQ1)}
+\label{sec:res-telemetry}
+
+Across the 280 instrumented runs (configurations B to E), the probe recorded 8{,}870{,}971 events from the workload containers. All of them were submitted to the ring buffer and all were consumed. There were no reservation failures and no sequence gaps. The probe filters by cgroup in the kernel, so every recorded event belongs to a workload. Before the matrix, the capture test counted 101 \texttt{execve} events for 100 executions of \texttt{/bin/true}, which meets its pass criterion of at least 100. At the event rates of our workloads, up to about 48{,}000 events per second for A2, the pipeline delivered every event that the probe recorded.
+
+\subsection{Throughput Overhead and Per-Event Cost (RQ1)}
+
+Table~\ref{tab:overhead} and Fig.~\ref{fig:throughput} show the throughput of each workload. The overhead differs by more than two orders of magnitude across workloads. B4, which makes about 180 monitored calls per second, showed no measurable loss. The file workloads lost the most: B2 lost 43\% to 47\% and A2 lost 54\% to 57\%. The process and connection workloads lost between 9\% and 27\%.
+
+\begin{table*}[t]
+\centering
+\caption{Throughput in operations per second (mean $\pm$ standard deviation over 10 runs) and change relative to configuration A. Event rate is the mean number of recorded events per second in configuration B. Per-event cost is the increase in time per operation in B divided by the events per operation. B1 performs no operations and is omitted.}
+\label{tab:overhead}
+\small
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{@{}l r r r r r r r r@{}}
+\toprule
+Workload & Events/s & Cost (\textmu s/event) & A (ops/s) & B & C & D & E \\
+\midrule
+B2 file processing & 28{,}885 & 14.9 & 22{,}508 $\pm$ 1{,}304 & $-43.2\%$ & $-45.1\%$ & $-46.6\%$ & $-46.2\%$ \\
+B3 process churn & 11{,}783 & 14.4 & 2{,}010 $\pm$ 122 & $-16.9\%$ & $-12.2\%$ & $-15.2\%$ & $-15.7\%$ \\
+B4 client-server & 180 & n/a & 88 $\pm$ 1 & $+0.0\%$ & $+0.6\%$ & $+1.1\%$ & $-0.6\%$ \\
+A1 drop and execute & 8{,}980 & 13.0 & 1{,}677 $\pm$ 147 & $-11.7\%$ & $-8.9\%$ & $-14.7\%$ & $-9.1\%$ \\
+A2 file sweep & 48{,}114 & 11.8 & 96{,}615 $\pm$ 8{,}938 & $-56.8\%$ & $-55.1\%$ & $-53.9\%$ & $-53.8\%$ \\
+A3 connection burst & 10{,}806 & 24.9 & 14{,}659 $\pm$ 1{,}314 & $-26.9\%$ & $-21.8\%$ & $-20.6\%$ & $-23.0\%$ \\
+\bottomrule
+\end{tabular}
+\end{table*}
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.93\textwidth]{figures/fig3_throughput.pdf}
+\caption{Change in throughput relative to configuration A (mean of 10 runs). Whiskers show one standard deviation of the run values, relative to the mean of A. The numbers above the axis give the mean change. The recorded event rate of each workload (configuration B) is shown below its name.}
+\label{fig:throughput}
+\end{figure*}
+
+During the workload, configurations B, C and E run identical code, and D differs only in that the probe also evaluates the classifier. The spread within each row of Table~\ref{tab:overhead} is at most 6.3 percentage points (A3), and D is not consistently slower than B. In-kernel inference therefore added no overhead that we could distinguish from run-to-run variation.
+
+The overhead tracks the event rate, not the type of workload. In configuration B, the throughput loss equals the per-event cost multiplied by the recorded event rate, so each workload lies on a line through the origin whose slope is its per-event cost (Fig.~\ref{fig:model}). For the four file and process workloads, this cost lies between 11.8 and 14.9~\textmu s per event (A2: 11.8, A1: 13.0, B3: 14.4, B2: 14.9). The connection burst A3 costs 24.9~\textmu s per event. The estimate for B4 is not meaningful, because its overhead is within noise.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\columnwidth]{figures/fig2_overhead_model.pdf}
+\caption{Throughput loss against recorded event rate. Large markers show configuration B, small markers show C, D and E. The band is the loss predicted by a fixed cost of 12 to 15~\textmu s per event. A3 lies above the band at about 25~\textmu s per event.}
+\label{fig:model}
+\end{figure}
+
+Memory overhead was small. The consumer's peak resident memory was 10.3~MB in every instrumented configuration. The peak memory of the workload container was 18.8~MB in configuration A and between 18.2 and 18.6~MB in configurations B to E.
+
+\subsection{Decision Latency (RQ2)}
+
+Fig.~\ref{fig:latency} summarizes the latency of each stage. In configuration D, the probe decided a median of 11.4~\textmu s after the kernel timestamp of the triggering syscall (95th percentile 16.8~\textmu s, maximum 19.1~\textmu s), measured inside the probe for the first alert of each of the 20 flagged runs. This time includes recording the triggering event. The alert then reached the consumer a median of 8.7~\textmu s later. A decision made in the kernel was therefore available in user space about 20~\textmu s after the syscall that caused it.
+
+In configuration C, the decision depends on a whole window. Each event reached the consumer with a median transfer latency of 21.3~\textmu s (95th percentile 106.7~\textmu s, maximum 137.2~\textmu s). After the run, building the windows from the events took a median of 9.1~ms (95th percentile 42.6~ms, maximum 49.6~ms), and scoring a window took a median of 26.3~\textmu s in Python (95th percentile 95.1~\textmu s, maximum 191.5~\textmu s).
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.93\textwidth]{figures/fig4_latency.pdf}
+\caption{Latency of each stage of the decision path on a logarithmic scale. Bars show the median and whiskers the 95th percentile. The in-kernel decision time includes recording the triggering event. Feature aggregation covers the whole run.}
+\label{fig:latency}
+\end{figure*}
+
+The in-kernel and user-space classifiers reached the same decision on every run (Table~\ref{tab:detection}), although the fixed-point weights are coarse: the weight of the \texttt{openat} count rounds to the integer 3 in Q16.16 units.
+
+\subsection{Detection (RQ3)}
+
+Table~\ref{tab:detection} shows how many runs each configuration flagged. All three classifier configurations flagged all 20 runs of the trained anomalies A1 and A2 and none of the 40 benign runs. On the trained workloads, precision, recall and F1 are therefore 1.0, and the false-positive rate is 0 for every benign workload. The in-kernel classifier raised no alert on any benign run. The held-out connection burst A3 was never flagged, so its recall is 0.
+
+\begin{table}[t]
+\centering
+\caption{Runs flagged as anomalous, out of 10 per cell. A3 was held out of training.}
+\label{tab:detection}
+\footnotesize
+\setlength{\tabcolsep}{3.2pt}
+\begin{tabular}{@{}l c c c c c c c@{}}
+\toprule
+Config & B1 & B2 & B3 & B4 & A1 & A2 & A3 \\
+\midrule
+C & 0 & 0 & 0 & 0 & 10 & 10 & 0 \\
+D & 0 & 0 & 0 & 0 & 10 & 10 & 0 \\
+E & 0 & 0 & 0 & 0 & 10 & 10 & 0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+In configuration C, the highest score of any benign run was 0.420, and the lowest score of any trained anomaly was 0.585, against a threshold of 0.5. Every A3 run scored below 0.001 (Fig.~\ref{fig:detection}a). The trained weights show why (Fig.~\ref{fig:detection}b).
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.93\textwidth]{figures/fig5_detection.pdf}
+\caption{Detection. (a) The score of every run in configuration C against the threshold of 0.5. Blue, green and purple points are benign workloads, orange and yellow points are trained anomalies, and magenta points are the held-out connection burst. (b) The standardized coefficients of the frozen model.}
+\label{fig:detection}
+\end{figure*}
+
+\subsection{Containment (RQ4)}
+
+Configuration E triggered containment in all 20 runs that it flagged (A1 and A2) and in no benign run. The kernel confirmed the freeze, and the thaw succeeded, in every one of these runs. The latencies below are those of the last freeze and thaw in each run. The median time from the freeze request until the kernel reported the cgroup as frozen was 0.044~ms (95th percentile 0.365~ms, maximum 0.401~ms). The median thaw time was 0.041~ms (95th percentile 0.061~ms, maximum 0.066~ms). Counting from the end of the workload, the median time to a confirmed freeze, which adds feature aggregation and scoring, was 24.4~ms, and the freeze itself was a median 0.5\% of it (Fig.~\ref{fig:containment}). These freezes happened after the workload had finished, when the only process left in the container was its idle entry process.
+
+\begin{figure*}[t]
+\centering
+\includegraphics[width=0.93\textwidth]{figures/fig6_containment.pdf}
+\caption{Containment in configuration E. (a) Freeze and thaw latency of the 20 flagged runs, with the median as a black line. (b) The time to a confirmed freeze for each flagged run, split into feature aggregation and scoring (orange) and the freeze itself (purple).}
+\label{fig:containment}
+\end{figure*}
